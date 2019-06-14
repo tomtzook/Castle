@@ -1,6 +1,6 @@
 package com.castle.nio;
 
-import com.castle.util.Throwables;
+import com.castle.util.throwables.Throwables;
 
 import java.io.IOException;
 import java.nio.file.AccessMode;

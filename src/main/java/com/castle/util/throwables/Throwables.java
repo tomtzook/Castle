@@ -1,4 +1,4 @@
-package com.castle.util;
+package com.castle.util.throwables;
 
 import java.util.function.Consumer;
 
