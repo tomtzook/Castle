@@ -97,7 +97,7 @@ public class TempPathGenerator {
 
     private void createFile(Path path, FileAttribute<?>... attributes) throws IOException {
         EnumSet<StandardOpenOption> options =
-                EnumSet.<StandardOpenOption>of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+                EnumSet.of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
 
         mFileSystemProvider.newByteChannel(path, options, attributes).close();
     }
