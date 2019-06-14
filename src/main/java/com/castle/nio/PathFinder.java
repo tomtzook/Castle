@@ -27,6 +27,37 @@ public class PathFinder {
         mFileSystem = fileSystem;
     }
 
+    public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
+        return findOne(matcher, MAX_DEPTH, options);
+    }
+
+    public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, Path root, FileVisitOption... options) throws IOException {
+        return findOne(matcher, root, MAX_DEPTH, options);
+    }
+
+    public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, FileVisitOption... options) throws IOException {
+        return findOne(matcher, roots, MAX_DEPTH, options);
+    }
+
+    public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, int maxDepth, FileVisitOption... options) throws IOException {
+        return findOne(matcher, mFileSystem.getRootDirectories(), maxDepth, options);
+    }
+
+    public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, Path root, int maxDepth, FileVisitOption... options) throws IOException {
+        return findOne(matcher, Collections.singleton(root), maxDepth, options);
+    }
+
+    public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
+        try (Stream<Path> stream = find(matcher, roots, maxDepth, options)) {
+            if (stream.count() != 1) {
+                throw new IOException("Only 1 path wanted. Found: " + stream.count());
+            }
+
+            //noinspection OptionalGetWithoutIsPresent
+            return stream.findAny().get();
+        }
+    }
+
     public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
         return findAll(matcher, MAX_DEPTH, options);
     }
