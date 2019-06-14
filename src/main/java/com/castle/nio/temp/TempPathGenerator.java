@@ -1,7 +1,10 @@
 package com.castle.nio.temp;
 
+import com.castle.nio.SystemPaths;
+
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.spi.FileSystemProvider;
@@ -74,6 +77,10 @@ public class TempPathGenerator {
 
     public TempPathGenerator(Path parent, String prefix, String suffix) {
         this(parent, new Random(), prefix, suffix);
+    }
+
+    public TempPathGenerator(String prefix, String suffix) {
+        this(SystemPaths.tempDirectory(), prefix, suffix);
     }
 
     public TempPath generateFile(FileAttribute<?>... attributes) throws IOException {

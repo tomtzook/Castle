@@ -4,6 +4,7 @@ import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -16,6 +17,15 @@ public class ZipEntryExtractor {
     public ZipEntryExtractor(TempPathGenerator pathGenerator, ZipEntryFinder zipEntryFinder) {
         mPathGenerator = pathGenerator;
         mZipEntryFinder = zipEntryFinder;
+    }
+
+    public ZipEntryExtractor(TempPathGenerator pathGenerator, FileSystem zipFileSystem) {
+        this(pathGenerator, new ZipEntryFinder(zipFileSystem));
+    }
+
+    public ZipEntryExtractor(FileSystem zipFileSystem) {
+        this(new TempPathGenerator(zipFileSystem.provider().getScheme(), "zipEntry"),
+                zipFileSystem);
     }
 
     public TempPath extract(Pattern pattern) throws IOException {
