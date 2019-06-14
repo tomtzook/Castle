@@ -1,31 +1,32 @@
 package com.castle.nio.temp;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 public class TempPathGeneratorTest {
 
-    private FileSystemProvider mFileSystemProvider;
+    @Rule
+    public TemporaryFolder mTemporaryFolder = new TemporaryFolder();
+
     private Path mParent;
+    private FileSystemProvider mFileSystemProvider;
 
     @Before
     public void setup() throws Exception {
-        FileSystem fileSystem = FileSystems.getDefault();
-
-        mFileSystemProvider = fileSystem.provider();
-        mParent = fileSystem.getRootDirectories().iterator().next();
+        mParent = mTemporaryFolder.getRoot().toPath();
+        mFileSystemProvider = mParent.getFileSystem().provider();
     }
 
     @Test
@@ -62,6 +63,22 @@ public class TempPathGeneratorTest {
         assertEquals(SIZE, size);
     }
 
+    @Test
+    public void generateFile_normal_createsFile() throws Exception {
+        TempPathGenerator tempPathGenerator = createGenerator();
+        TempPath tempPath = tempPathGenerator.generateFile();
+
+        assertTrue(isFile(tempPath.originalPath()));
+    }
+
+    @Test
+    public void generateDirectory_normal_createsDirectory() throws Exception {
+        TempPathGenerator tempPathGenerator = createGenerator();
+        TempPath tempPath = tempPathGenerator.generateDirectory();
+
+        assertTrue(isDirectory(tempPath.originalPath()));
+    }
+
     private TempPathGenerator createGenerator() {
         return createGenerator("", "");
     }
@@ -71,5 +88,13 @@ public class TempPathGeneratorTest {
                 mParent,
                 new Random(),
                 prefix, suffix);
+    }
+
+    private boolean isFile(Path path) throws IOException {
+        return mFileSystemProvider.readAttributes(path, BasicFileAttributes.class).isRegularFile();
+    }
+
+    private boolean isDirectory(Path path) throws IOException {
+        return mFileSystemProvider.readAttributes(path, BasicFileAttributes.class).isDirectory();
     }
 }

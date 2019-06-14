@@ -22,6 +22,10 @@ public class TempPath extends DelegatingPath implements Closeable {
         this(path.getFileSystem().provider(), path);
     }
 
+    public Path originalPath() {
+        return mPath;
+    }
+
     @Override
     public void close() throws IOException {
         mFileSystemProvider.deleteIfExists(mPath);
