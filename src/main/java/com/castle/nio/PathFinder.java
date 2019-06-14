@@ -3,14 +3,17 @@ package com.castle.nio;
 import com.castle.util.Throwables;
 
 import java.io.IOException;
+import java.nio.file.AccessMode;
 import java.nio.file.FileSystem;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.rmi.AccessException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -30,16 +33,48 @@ public class PathFinder {
         return findFirst(matcher, MAX_DEPTH, options);
     }
 
+    public Optional<Path> findFirst(PathMatcher matcher, Path root, FileVisitOption... options) throws IOException {
+        return findFirst(matcher, root, MAX_DEPTH, options);
+    }
+
+    public Optional<Path> findFirst(PathMatcher matcher, Iterable<Path> roots, FileVisitOption... options) throws IOException {
+        return findFirst(matcher, roots, MAX_DEPTH, options);
+    }
+
     public Optional<Path> findFirst(PathMatcher matcher, int maxDepth, FileVisitOption... options) throws IOException {
         return findFirst(predicateFromPathMatcher(matcher), maxDepth, options);
+    }
+
+    public Optional<Path> findFirst(PathMatcher matcher, Path root, int maxDepth, FileVisitOption... options) throws IOException {
+        return findFirst(predicateFromPathMatcher(matcher), root, maxDepth, options);
+    }
+
+    public Optional<Path> findFirst(PathMatcher matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
+        return findFirst(predicateFromPathMatcher(matcher), roots, maxDepth, options);
     }
 
     public Optional<Path> findFirst(BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
         return findFirst(matcher, MAX_DEPTH, options);
     }
 
+    public Optional<Path> findFirst(BiPredicate<Path, BasicFileAttributes> matcher, Path root, FileVisitOption... options) throws IOException {
+        return findFirst(matcher, root, MAX_DEPTH, options);
+    }
+
+    public Optional<Path> findFirst(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, FileVisitOption... options) throws IOException {
+        return findFirst(matcher, roots, MAX_DEPTH, options);
+    }
+
     public Optional<Path> findFirst(BiPredicate<Path, BasicFileAttributes> matcher, int maxDepth, FileVisitOption... options) throws IOException {
-        try (Stream<Path> stream = findInFileSystem(maxDepth, matcher, options)) {
+        return findFirst(matcher, mFileSystem.getRootDirectories(), maxDepth, options);
+    }
+
+    public Optional<Path> findFirst(BiPredicate<Path, BasicFileAttributes> matcher, Path root, int maxDepth, FileVisitOption... options) throws IOException {
+        return findFirst(matcher, Collections.singleton(root), maxDepth, options);
+    }
+
+    public Optional<Path> findFirst(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
+        try (Stream<Path> stream = findInRoots(roots, maxDepth, matcher, options)) {
             return stream.findFirst();
         }
     }
@@ -48,25 +83,57 @@ public class PathFinder {
         return findAll(matcher, MAX_DEPTH, options);
     }
 
+    public Collection<Path> findAll(PathMatcher matcher, Path root, FileVisitOption... options) throws IOException {
+        return findAll(matcher, root, MAX_DEPTH, options);
+    }
+
+    public Collection<Path> findAll(PathMatcher matcher, Iterable<Path> roots, FileVisitOption... options) throws IOException {
+        return findAll(matcher, roots, MAX_DEPTH, options);
+    }
+
     public Collection<Path> findAll(PathMatcher matcher, int maxDepth, FileVisitOption... options) throws IOException {
         return findAll(predicateFromPathMatcher(matcher), maxDepth, options);
+    }
+
+    public Collection<Path> findAll(PathMatcher matcher, Path root, int maxDepth, FileVisitOption... options) throws IOException {
+        return findAll(predicateFromPathMatcher(matcher), root, maxDepth, options);
+    }
+
+    public Collection<Path> findAll(PathMatcher matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
+        return findAll(predicateFromPathMatcher(matcher), roots, maxDepth, options);
     }
 
     public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
         return findAll(matcher, MAX_DEPTH, options);
     }
 
+    public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, Path root, FileVisitOption... options) throws IOException {
+        return findAll(matcher, root, MAX_DEPTH, options);
+    }
+
+    public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, FileVisitOption... options) throws IOException {
+        return findAll(matcher, roots, MAX_DEPTH, options);
+    }
+
     public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, int maxDepth, FileVisitOption... options) throws IOException {
-        try (Stream<Path> stream = findInFileSystem(maxDepth, matcher, options)) {
+        return findAll(matcher, mFileSystem.getRootDirectories(), maxDepth, options);
+    }
+
+    public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, Path root, int maxDepth, FileVisitOption... options) throws IOException {
+        return findAll(matcher, Collections.singleton(root), maxDepth, options);
+    }
+
+    public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
+        try (Stream<Path> stream = findInRoots(roots, maxDepth, matcher, options)) {
             return stream.collect(Collectors.toList());
         }
     }
 
-    private Stream<Path> findInFileSystem(int maxDepth, BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
+    private Stream<Path> findInRoots(Iterable<Path> roots, int maxDepth, BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
         Stream.Builder<Stream<Path>> builder = Stream.builder();
         Collection<AutoCloseable> closeables = new ArrayList<>();
 
-        for (Path root : mFileSystem.getRootDirectories()) {
+        for (Path root : roots) {
             Stream<Path> stream = findInRoot(root, maxDepth, matcher, options);
             closeables.add(stream);
 
@@ -79,7 +146,12 @@ public class PathFinder {
     }
 
     private Stream<Path> findInRoot(Path root, int maxDepth, BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
-        return Files.find(root, maxDepth, matcher, options);
+        try {
+            mFileSystem.provider().checkAccess(root, AccessMode.READ);
+            return Files.find(root, maxDepth, matcher, options);
+        } catch (AccessException e) {
+            return Stream.empty();
+        }
     }
 
     private BiPredicate<Path, BasicFileAttributes> predicateFromPathMatcher(PathMatcher pathMatcher) {
