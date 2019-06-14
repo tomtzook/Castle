@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
-import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,7 +42,7 @@ public class PathFinderTest {
 
         PathMatcher pathMatcher = mFileSystem.getPathMatcher(String.format("regex:%s",
                 createPathRegex(".*" + BASE_NAME + ".*")));
-        Collection<Path> foundPaths = pathFinder.findAll(pathMatcher, mRoot);
+        Collection<Path> foundPaths = pathFinder.findAll(PathMatching.pathMatcher(pathMatcher), mRoot);
 
         assertThat(foundPaths, containsInAnyOrder(paths.toArray()));
     }
@@ -61,7 +59,7 @@ public class PathFinderTest {
 
         PathMatcher pathMatcher = mFileSystem.getPathMatcher(String.format("regex:%s",
                 createPathRegex(".*" + BASE_NAME + ".*")));
-        Collection<Path> foundPaths = pathFinder.findAll(pathMatcher, mRoot);
+        Collection<Path> foundPaths = pathFinder.findAll(PathMatching.pathMatcher(pathMatcher), mRoot);
 
         assertThat(foundPaths, containsInAnyOrder(paths.toArray()));
     }
