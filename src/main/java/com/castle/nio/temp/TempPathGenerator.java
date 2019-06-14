@@ -90,16 +90,16 @@ public class TempPathGenerator {
         return new TempPath(mFileSystemProvider, path);
     }
 
+    public Path generatePath() {
+        String name = generateRandomName();
+        return mParent.resolve(name);
+    }
+
     private void createFile(Path path, FileAttribute<?>... attributes) throws IOException {
         EnumSet<StandardOpenOption> options =
                 EnumSet.<StandardOpenOption>of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
 
         mFileSystemProvider.newByteChannel(path, options, attributes).close();
-    }
-
-    private Path generatePath() {
-        String name = generateRandomName();
-        return mParent.resolve(name);
     }
 
     private String generateRandomName() {

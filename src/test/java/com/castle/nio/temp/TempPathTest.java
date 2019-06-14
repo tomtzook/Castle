@@ -20,6 +20,6 @@ public class TempPathTest {
         TempPath tempPath = new TempPath(provider, path);
         tempPath.close();
 
-        verify(provider, times(1)).deleteIfExists(eq(path))
+        verify(provider, times(1)).deleteIfExists(eq(path));
     }
 }
