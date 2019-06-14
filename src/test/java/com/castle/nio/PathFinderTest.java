@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -21,6 +23,9 @@ public class PathFinderTest {
 
     @Rule
     public TemporaryFolder mTemporaryFolder = new TemporaryFolder();
+
+    @Rule
+    public TemporaryFolder mTemporaryFolder2 = new TemporaryFolder();
 
     private FileSystem mFileSystem;
     private Path mRoot;
@@ -82,6 +87,28 @@ public class PathFinderTest {
         assertThat(foundPaths, containsInAnyOrder(paths.toArray()));
     }
 
+    @Test
+    public void findAll_multipleRoots_findsFromAllRoots() throws IOException {
+        final int FILE_COUNT = 10;
+        final String BASE_NAME = "base";
+
+        Collection<Path> paths = new ArrayList<>();
+        paths.addAll(createFiles(mTemporaryFolder, BASE_NAME, FILE_COUNT));
+        paths.addAll(createFiles(mTemporaryFolder2, BASE_NAME, FILE_COUNT));
+
+        PathFinder pathFinder = new PathFinder(mFileSystem);
+
+        PathMatcher pathMatcher = mFileSystem.getPathMatcher(String.format("regex:%s",
+                String.format("%s/.*/.*%s.*", mRoot.getParent().toAbsolutePath().toString(),
+                        BASE_NAME)));
+
+        Collection<Path> foundPaths = pathFinder.findAll(
+                PathMatching.pathMatcher(pathMatcher),
+                Arrays.asList(mTemporaryFolder.getRoot().toPath(), mTemporaryFolder2.getRoot().toPath()));
+
+        assertThat(foundPaths, containsInAnyOrder(paths.toArray()));
+    }
+
     private String createPathRegex(String nameRegex) {
         return String.format("%s/%s",
                 mRoot.toAbsolutePath().toString(),
@@ -89,9 +116,13 @@ public class PathFinderTest {
     }
 
     private Collection<Path> createFiles(String baseName, int count) throws IOException {
+        return createFiles(mTemporaryFolder, baseName, count);
+    }
+
+    private Collection<Path> createFiles(TemporaryFolder temporaryFolder, String baseName, int count) throws IOException {
         IntFunction<Path> function = i -> {
             try {
-                return mTemporaryFolder.newFile(String.format("%s%d", baseName, i)).toPath();
+                return temporaryFolder.newFile(String.format("%s%d", baseName, i)).toPath();
             } catch (IOException e) {
                 return null;
             }
