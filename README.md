@@ -1,6 +1,6 @@
 # Castle
-![Travis (.org) branch](https://img.shields.io/travis/tomtzook/castle/master.svg)
-![GitHub](https://img.shields.io/github/license/tomtzook/castle.svg)
+![Travis (.org) branch](https://img.shields.io/travis/tomtzook/Castle/master.svg)
+![GitHub](https://img.shields.io/github/license/tomtzook/Castle.svg)
 
 A Java toolbox library for performing all things.
 
