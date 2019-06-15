@@ -4,38 +4,19 @@ import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.regex.Pattern;
 
 public class ZipEntryExtractor {
 
     private final TempPathGenerator mPathGenerator;
-    private final ZipEntryFinder mZipEntryFinder;
 
-    public ZipEntryExtractor(TempPathGenerator pathGenerator, ZipEntryFinder zipEntryFinder) {
+    public ZipEntryExtractor(TempPathGenerator pathGenerator) {
         mPathGenerator = pathGenerator;
-        mZipEntryFinder = zipEntryFinder;
     }
 
-    public ZipEntryExtractor(TempPathGenerator pathGenerator, FileSystem zipFileSystem) {
-        this(pathGenerator, new ZipEntryFinder(zipFileSystem));
-    }
-
-    public ZipEntryExtractor(FileSystem zipFileSystem) {
-        this(new TempPathGenerator(zipFileSystem.provider().getScheme(), "zipEntry"),
-                zipFileSystem);
-    }
-
-    public TempPath extract(Pattern pattern) throws IOException {
-        Path entryPath = mZipEntryFinder.findFile(pattern);
-        return extract(entryPath);
-    }
-
-    public void extractInto(Pattern pattern, Path destination) throws IOException {
-        Path entryPath = mZipEntryFinder.findFile(pattern);
-        extractInto(entryPath, destination);
+    public ZipEntryExtractor() {
+        this(new TempPathGenerator("", "zipEntry"));
     }
 
     public TempPath extract(Path entryPath) throws IOException {
@@ -46,6 +27,10 @@ public class ZipEntryExtractor {
     }
 
     public void extractInto(Path entryPath, Path destination) throws IOException {
+        if (!entryPath.getFileSystem().isOpen()) {
+            throw new IOException("Zip filesystem is closed");
+        }
+
         Files.copy(entryPath, destination);
     }
 }
