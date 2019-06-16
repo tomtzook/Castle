@@ -1,11 +1,11 @@
 package com.castle.util.os;
 
-public class OperatingSystem {
+public class System {
 
     private static final String X86_ARCH = "x86";
 
     public Bitness getBitness() {
-        String property = System.getProperty("os.arch");
+        String property = java.lang.System.getProperty("os.arch");
         if (X86_ARCH.equalsIgnoreCase(property)) {
             return Bitness.x86;
         }
@@ -13,18 +13,14 @@ public class OperatingSystem {
         return Bitness.x64;
     }
 
-    public Platform getCurrentPlatform() {
-        String osName = System.getProperty("os.name").toLowerCase();
-        for (Platform platform : Platform.values()) {
-            if (platform.doesNameMatch(osName)) {
-                return platform;
+    public OperatingSystem getCurrentPlatform() {
+        String osName = java.lang.System.getProperty("os.name").toLowerCase();
+        for (OperatingSystem operatingSystem : OperatingSystem.values()) {
+            if (operatingSystem.doesNameMatch(osName)) {
+                return operatingSystem;
             }
         }
 
         throw new Error("unable to find current platform");
-    }
-
-    public Architecture getCurrentArchitecture() {
-        return new Architecture(getCurrentPlatform(), getBitness());
     }
 }

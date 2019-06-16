@@ -1,6 +1,6 @@
 package com.castle.util.os;
 
-public enum Platform {
+public enum OperatingSystem {
     Windows {
         @Override
         public boolean doesNameMatch(String osName) {
