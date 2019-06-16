@@ -16,3 +16,10 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.7.22'
     testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
 }
+
+jar {
+
+    manifest {
+        attributes 'Main-Class': 'test.Main'
+    }
+}

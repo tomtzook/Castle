@@ -1,6 +1,6 @@
 package com.castle.nio;
 
-import com.castle.util.throwables.Throwables;
+import com.castle.io.Closeables;
 
 import java.io.IOException;
 import java.nio.file.AccessMode;
@@ -21,7 +21,7 @@ public class PathFinder {
 
     private static final int MAX_DEPTH = 10;
 
-    private final FileSystem mFileSystem;
+    protected final FileSystem mFileSystem;
 
     public PathFinder(FileSystem fileSystem) {
         mFileSystem = fileSystem;
@@ -48,14 +48,12 @@ public class PathFinder {
     }
 
     public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
-        try (Stream<Path> stream = find(matcher, roots, maxDepth, options)) {
-            if (stream.count() != 1) {
-                throw new IOException("Only 1 path wanted. Found: " + stream.count());
-            }
-
-            //noinspection OptionalGetWithoutIsPresent
-            return stream.findAny().get();
+        Collection<Path> pathsFound = findAll(matcher, roots, maxDepth, options);
+        if (pathsFound.size() != 1) {
+            throw new IOException("Only 1 path wanted. Found: " + pathsFound.size());
         }
+
+        return pathsFound.iterator().next();
     }
 
     public Collection<Path> findAll(BiPredicate<Path, BasicFileAttributes> matcher, FileVisitOption... options) throws IOException {
@@ -108,7 +106,7 @@ public class PathFinder {
         }
 
         return builder.build()
-                .onClose(()->closeables.forEach(Throwables.silentCloser()))
+                .onClose(()->closeables.forEach(Closeables.silentCloser()))
                 .flatMap(i -> i);
     }
 

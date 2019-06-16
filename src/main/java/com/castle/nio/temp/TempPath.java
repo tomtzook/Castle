@@ -30,4 +30,9 @@ public class TempPath extends DelegatingPath implements Closeable {
     public void close() throws IOException {
         mFileSystemProvider.deleteIfExists(mPath);
     }
+
+    @Override
+    public String toString() {
+        return mPath.toString();
+    }
 }

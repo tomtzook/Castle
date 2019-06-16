@@ -5,6 +5,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.BiPredicate;
 import java.util.function.LongPredicate;
+import java.util.function.Predicate;
 
 public class PathMatching {
 
@@ -14,16 +15,20 @@ public class PathMatching {
         return (path, basicFileAttributes) -> pathMatcher.matches(path);
     }
 
-    public static BiPredicate<Path, BasicFileAttributes> fileMatcher() {
-        return (path, basicFileAttributes) -> basicFileAttributes.isRegularFile();
+    public static BiPredicate<Path, BasicFileAttributes> pathMatcher(PathMatcher pathMatcher, Predicate<BasicFileAttributes> fileAttributesPredicate) {
+        return (path, basicFileAttributes) -> pathMatcher.matches(path) && fileAttributesPredicate.test(basicFileAttributes);
+    }
+
+    public static Predicate<BasicFileAttributes> fileMatcher() {
+        return BasicFileAttributes::isRegularFile;
     }
 
     public static BiPredicate<Path, BasicFileAttributes> fileMatcher(PathMatcher pathMatcher) {
         return (path, basicFileAttributes) -> pathMatcher.matches(path) && basicFileAttributes.isRegularFile();
     }
 
-    public static BiPredicate<Path, BasicFileAttributes> directoryMatcher() {
-        return (path, basicFileAttributes) -> basicFileAttributes.isDirectory();
+    public static Predicate<BasicFileAttributes> directoryMatcher() {
+        return BasicFileAttributes::isDirectory;
     }
 
     public static BiPredicate<Path, BasicFileAttributes> directoryMatcher(PathMatcher pathMatcher) {

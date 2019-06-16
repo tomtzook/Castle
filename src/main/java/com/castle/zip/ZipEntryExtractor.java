@@ -6,6 +6,7 @@ import com.castle.nio.temp.TempPathGenerator;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class ZipEntryExtractor {
 
@@ -31,6 +32,6 @@ public class ZipEntryExtractor {
             throw new IOException("Zip filesystem is closed");
         }
 
-        Files.copy(entryPath, destination);
+        Files.copy(entryPath, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
     }
 }

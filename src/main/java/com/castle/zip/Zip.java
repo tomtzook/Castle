@@ -1,6 +1,5 @@
 package com.castle.zip;
 
-import com.castle.nio.temp.TempPathGenerator;
 import com.sun.nio.zipfs.ZipFileSystemProvider;
 
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class Zip {
 
     public synchronized OpenZip open() throws IOException {
         OpenZip openZip = mOpenZipReference.get();
-        if (openZip.isOpen()) {
+        if (openZip != null && openZip.isOpen()) {
             return openZip;
         }
 
