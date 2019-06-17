@@ -3,6 +3,7 @@ package com.castle.io;
 import com.castle.util.throwables.ThrowableHandler;
 import com.castle.util.throwables.Throwables;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public class Closeables {
@@ -19,6 +20,14 @@ public class Closeables {
 
     public static <T extends AutoCloseable> void silentClose(T closeable) {
         close(closeable, Throwables.silentHandler());
+    }
+
+    public static void close(Collection<? extends AutoCloseable> closeables, ThrowableHandler handler) {
+        closeables.forEach(closer(handler));
+    }
+
+    public static void silentClose(Collection<? extends AutoCloseable> closeables) {
+        close(closeables, Throwables.silentHandler());
     }
 
     public static <T extends AutoCloseable> Consumer<T> closer(ThrowableHandler handler) {

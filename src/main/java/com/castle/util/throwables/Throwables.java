@@ -9,4 +9,8 @@ public class Throwables {
     public static ThrowableHandler silentHandler() {
         return SILENT_HANDLER;
     }
+
+    public static ThrowableChain newChain() {
+        return new ThrowableChain();
+    }
 }
