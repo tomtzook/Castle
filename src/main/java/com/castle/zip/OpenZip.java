@@ -13,6 +13,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public class OpenZip implements Closeable {
@@ -20,19 +21,21 @@ public class OpenZip implements Closeable {
     private final FileSystem mFileSystem;
     private final ZipEntryExtractor mEntryExtractor;
     private final PatternPathFinder mPathFinder;
+    private final AtomicInteger mUsageReferences;
 
-    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder) {
+    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, AtomicInteger usageReferences) {
         mFileSystem = zipFileSystem;
         mEntryExtractor = entryExtractor;
         mPathFinder = pathFinder;
+        mUsageReferences = usageReferences;
     }
 
-    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator) {
-        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem));
+    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, AtomicInteger usageReferences) {
+        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), usageReferences);
     }
 
-    public OpenZip(FileSystem zipFileSystem) {
-        this(zipFileSystem, new TempPathGenerator("zip", "generated"));
+    public OpenZip(FileSystem zipFileSystem, AtomicInteger usageReferences) {
+        this(zipFileSystem, new TempPathGenerator("zip", "generated"), usageReferences);
     }
 
     public boolean isOpen() {
@@ -84,7 +87,9 @@ public class OpenZip implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-        mFileSystem.close();
+    public synchronized void close() throws IOException {
+        if (mUsageReferences.decrementAndGet() <= 0) {
+            mFileSystem.close();
+        }
     }
 }
