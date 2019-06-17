@@ -78,6 +78,8 @@ public class Closer implements AutoCloseable {
             throwableChain.throwAsRuntime();
         }
 
+        // should not be reached. On exception, will be thrown from chain
+        // on success, will be returned from try
         throw new IllegalStateException();
     }
 
