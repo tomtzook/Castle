@@ -1,7 +1,7 @@
 package com.castle.io.streams.data.zip;
 
 import com.castle.io.streams.TempPathInputStream;
-import com.castle.io.streams.data.StreamableData;
+import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
 import com.castle.zip.OpenZip;
 import com.castle.zip.Zip;
@@ -11,12 +11,12 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
-public class LazyOpenZipData implements StreamableData {
+public class ZipPathStreamable implements ReadOnlyStreamable {
 
     private final Zip mZip;
     private final Pattern mPattern;
 
-    public LazyOpenZipData(Zip zip, Pattern pattern) {
+    public ZipPathStreamable(Zip zip, Pattern pattern) {
         mZip = zip;
         mPattern = pattern;
     }

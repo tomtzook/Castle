@@ -1,7 +1,7 @@
 package com.castle.zip;
 
-import com.castle.io.streams.data.zip.LazyExtractZipData;
-import com.castle.io.streams.data.StreamableData;
+import com.castle.io.streams.data.zip.OpenZipPathStreamable;
+import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
 import com.castle.nio.temp.TempPath;
@@ -51,12 +51,12 @@ public class OpenZip implements Closeable {
         return mFileSystem.getPath(first, more);
     }
 
-    public StreamableData getPathData(Path path) {
+    public ReadOnlyStreamable getPathData(Path path) {
         if (!Files.isRegularFile(path)) {
             throw new IllegalArgumentException("Cannot stream data of non-file");
         }
 
-        return new LazyExtractZipData(mEntryExtractor, path);
+        return new OpenZipPathStreamable(mEntryExtractor, path);
     }
 
     public Path findFile(Pattern pattern) throws IOException {

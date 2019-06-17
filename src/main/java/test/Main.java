@@ -2,7 +2,7 @@ package test;
 
 import com.castle.io.Closeables;
 import com.castle.io.streams.Streams;
-import com.castle.io.streams.data.StreamableData;
+import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
 import com.castle.zip.OpenZip;
 import com.castle.zip.Zip;
@@ -38,7 +38,7 @@ public class Main {
             tempPaths.forEach(Closeables.silentCloser());
 
             Path path = openZip.findFile(Pattern.compile("^/fs/hello$"));
-            StreamableData data = openZip.getPathData(path);
+            ReadOnlyStreamable data = openZip.getPathData(path);
             try (InputStream inputStream = data.openRead()) {
                 Streams.copy(inputStream, System.out);
             }

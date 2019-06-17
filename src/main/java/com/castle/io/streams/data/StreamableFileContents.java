@@ -7,11 +7,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
-public class FileData implements MutableStreamableData {
+public class StreamableFileContents implements Streamable {
 
     private final Path mFilePath;
 
-    public FileData(Path filePath) {
+    public StreamableFileContents(Path filePath) {
         mFilePath = filePath;
     }
 

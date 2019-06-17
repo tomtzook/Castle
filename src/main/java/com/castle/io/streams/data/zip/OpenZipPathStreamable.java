@@ -1,7 +1,7 @@
 package com.castle.io.streams.data.zip;
 
 import com.castle.io.streams.TempPathInputStream;
-import com.castle.io.streams.data.StreamableData;
+import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
 import com.castle.zip.ZipEntryExtractor;
 
@@ -9,12 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-public class LazyExtractZipData implements StreamableData {
+public class OpenZipPathStreamable implements ReadOnlyStreamable {
 
     private final ZipEntryExtractor mEntryExtractor;
     private final Path mPath;
 
-    public LazyExtractZipData(ZipEntryExtractor entryExtractor, Path path) {
+    public OpenZipPathStreamable(ZipEntryExtractor entryExtractor, Path path) {
         mEntryExtractor = entryExtractor;
         mPath = path;
     }
