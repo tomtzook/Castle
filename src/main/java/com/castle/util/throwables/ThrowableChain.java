@@ -29,14 +29,18 @@ public class ThrowableChain {
     }
 
     public <E extends Throwable> void throwIfType(Class<E> type) throws E {
-        if (type.isInstance(mFirstThrowable)) {
-            throw type.cast(mFirstThrowable);
-        }
+        Throwables.throwIfType(mFirstThrowable, type);
     }
 
-    public void throwAsRuntime() {
-        if (mFirstThrowable != null) {
-            throw new RuntimeException(mFirstThrowable);
+    public void throwAsRuntime() throws RuntimeException {
+        Throwables.throwAsRuntime(mFirstThrowable);
+    }
+
+    public Optional<RuntimeException> getAsRuntime() {
+        if (mFirstThrowable == null) {
+            return Optional.empty();
         }
+
+        return Optional.of(new RuntimeException(mFirstThrowable));
     }
 }
