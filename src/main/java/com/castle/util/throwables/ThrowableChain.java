@@ -32,15 +32,7 @@ public class ThrowableChain {
         Throwables.throwIfType(mFirstThrowable, type);
     }
 
-    public void throwAsRuntime() throws RuntimeException {
+    public void throwAsRuntime() {
         Throwables.throwAsRuntime(mFirstThrowable);
-    }
-
-    public Optional<RuntimeException> getAsRuntime() {
-        if (mFirstThrowable == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new RuntimeException(mFirstThrowable));
     }
 }
