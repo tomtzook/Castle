@@ -1,4 +1,4 @@
-package com.castle.zip;
+package com.castle.nio.zip;
 
 import java.nio.file.FileSystem;
 import java.util.concurrent.atomic.AtomicInteger;

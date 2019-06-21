@@ -1,6 +1,6 @@
 package com.castle.nio;
 
-import com.castle.io.Closeables;
+import com.castle.util.closeables.Closeables;
 
 import java.io.IOException;
 import java.nio.file.AccessMode;

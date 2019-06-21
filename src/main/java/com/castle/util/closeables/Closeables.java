@@ -1,4 +1,4 @@
-package com.castle.io;
+package com.castle.util.closeables;
 
 import com.castle.util.throwables.ThrowableHandler;
 import com.castle.util.throwables.Throwables;

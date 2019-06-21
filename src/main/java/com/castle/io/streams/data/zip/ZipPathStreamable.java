@@ -3,8 +3,8 @@ package com.castle.io.streams.data.zip;
 import com.castle.io.streams.TempPathInputStream;
 import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
-import com.castle.zip.OpenZip;
-import com.castle.zip.Zip;
+import com.castle.nio.zip.OpenZip;
+import com.castle.nio.zip.Zip;
 
 import java.io.IOException;
 import java.io.InputStream;

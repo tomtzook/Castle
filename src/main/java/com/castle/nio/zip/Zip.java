@@ -1,4 +1,4 @@
-package com.castle.zip;
+package com.castle.nio.zip;
 
 import com.sun.nio.zipfs.ZipFileSystemProvider;
 

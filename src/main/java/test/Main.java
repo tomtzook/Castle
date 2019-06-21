@@ -1,11 +1,11 @@
 package test;
 
-import com.castle.io.Closeables;
+import com.castle.util.closeables.Closeables;
 import com.castle.io.streams.Streams;
 import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
-import com.castle.zip.OpenZip;
-import com.castle.zip.Zip;
+import com.castle.nio.zip.OpenZip;
+import com.castle.nio.zip.Zip;
 
 import java.io.Closeable;
 import java.io.IOException;

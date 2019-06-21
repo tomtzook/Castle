@@ -1,11 +1,10 @@
-package com.castle.io;
+package com.castle.util.closeables;
 
 import com.castle.util.function.ThrowingRunnable;
 import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
 
 import java.util.ArrayDeque;
-import java.util.Optional;
 import java.util.Queue;
 
 public class Closer implements AutoCloseable {

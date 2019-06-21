@@ -1,4 +1,4 @@
-package com.castle.zip;
+package com.castle.nio.zip;
 
 import com.castle.io.streams.data.zip.OpenZipPathStreamable;
 import com.castle.io.streams.data.ReadOnlyStreamable;
