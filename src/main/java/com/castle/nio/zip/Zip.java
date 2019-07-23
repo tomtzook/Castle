@@ -20,6 +20,7 @@ public class Zip {
 
     private final AtomicReference<OpenZip> mOpenZipReference;
     private final AtomicInteger mZipReferencesCounter;
+    private final Object mReferenceMutex;
 
     public Zip(FileSystemProvider zipFileSystemProvider, Path zipPath, Map<String, ?> fileSystemEnv, OpenZipFactory openZipFactory) {
         mZipFileSystemProvider = zipFileSystemProvider;
@@ -29,6 +30,7 @@ public class Zip {
 
         mOpenZipReference = new AtomicReference<>();
         mZipReferencesCounter = new AtomicInteger(0);
+        mReferenceMutex = new Object();
     }
 
     public Zip(FileSystemProvider zipFileSystemProvider, Path zipPath, Map<String, ?> fileSystemEnv) {
@@ -43,20 +45,22 @@ public class Zip {
         this(zipPath, new OpenZipFactory());
     }
 
-    public synchronized OpenZip open() throws IOException {
-        OpenZip openZip = mOpenZipReference.get();
-        if (openZip != null && openZip.isOpen()) {
+    public OpenZip open() throws IOException {
+        synchronized (mReferenceMutex) {
+            OpenZip openZip = mOpenZipReference.get();
+            if (openZip != null && openZip.isOpen()) {
+                mZipReferencesCounter.incrementAndGet();
+                return openZip;
+            }
+
+            mOpenZipReference.set(null);
+
+            FileSystem zipFs = mZipFileSystemProvider.newFileSystem(mZipPath, mFileSystemEnv);
+            openZip = mOpenZipFactory.create(zipFs, mZipReferencesCounter, mReferenceMutex);
+            mOpenZipReference.set(openZip);
+
             mZipReferencesCounter.incrementAndGet();
             return openZip;
         }
-
-        mOpenZipReference.set(null);
-
-        FileSystem zipFs = mZipFileSystemProvider.newFileSystem(mZipPath, mFileSystemEnv);
-        openZip = mOpenZipFactory.create(zipFs, mZipReferencesCounter);
-        mOpenZipReference.set(openZip);
-
-        mZipReferencesCounter.incrementAndGet();
-        return openZip;
     }
 }

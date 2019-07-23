@@ -22,20 +22,22 @@ public class OpenZip implements Closeable {
     private final ZipEntryExtractor mEntryExtractor;
     private final PatternPathFinder mPathFinder;
     private final AtomicInteger mUsageReferences;
+    private final Object mReferencesMutex;
 
-    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, AtomicInteger usageReferences) {
+    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, AtomicInteger usageReferences, Object referencesMutex) {
         mFileSystem = zipFileSystem;
         mEntryExtractor = entryExtractor;
         mPathFinder = pathFinder;
         mUsageReferences = usageReferences;
+        mReferencesMutex = referencesMutex;
     }
 
-    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, AtomicInteger usageReferences) {
-        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), usageReferences);
+    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, AtomicInteger usageReferences, Object referencesMutex) {
+        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), usageReferences, referencesMutex);
     }
 
-    public OpenZip(FileSystem zipFileSystem, AtomicInteger usageReferences) {
-        this(zipFileSystem, new TempPathGenerator("zip", "generated"), usageReferences);
+    public OpenZip(FileSystem zipFileSystem, AtomicInteger usageReferences, Object referencesMutex) {
+        this(zipFileSystem, new TempPathGenerator("zip", "generated"), usageReferences, referencesMutex);
     }
 
     public boolean isOpen() {
@@ -87,9 +89,11 @@ public class OpenZip implements Closeable {
     }
 
     @Override
-    public synchronized void close() throws IOException {
-        if (mUsageReferences.decrementAndGet() <= 0) {
-            mFileSystem.close();
+    public void close() throws IOException {
+        synchronized (mReferencesMutex) {
+            if (mUsageReferences.decrementAndGet() <= 0) {
+                mFileSystem.close();
+            }
         }
     }
 }
