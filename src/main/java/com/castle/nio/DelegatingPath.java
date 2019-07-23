@@ -148,4 +148,9 @@ public class DelegatingPath implements Path {
     public int compareTo(Path other) {
         return mPath.compareTo(other);
     }
+
+    @Override
+    public String toString() {
+        return mPath.toString();
+    }
 }
