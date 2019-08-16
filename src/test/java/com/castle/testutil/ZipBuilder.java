@@ -1,8 +1,7 @@
 package com.castle.testutil;
 
 import com.castle.io.streams.Streams;
-import com.castle.nio.zip.ZipEntryExtractor;
-import com.sun.nio.zipfs.ZipFileSystemProvider;
+import com.castle.nio.Providers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class ZipBuilder {
     }
 
     public ZipBuilder(Path zipPath) {
-        this(new ZipFileSystemProvider(), zipPath);
+        this(Providers.zipProvider(), zipPath);
     }
 
     public ZipBuilder addContent(String path, InputStream content) throws IOException {

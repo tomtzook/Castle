@@ -1,6 +1,6 @@
 package com.castle.nio.zip;
 
-import com.sun.nio.zipfs.ZipFileSystemProvider;
+import com.castle.nio.Providers;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ public class Zip {
     }
 
     public Zip(Path zipPath) {
-        this(new ZipFileSystemProvider(), new HashMap<>(), zipPath);
+        this(Providers.zipProvider(), new HashMap<>(), zipPath);
     }
 
     public OpenZip open() throws IOException {
