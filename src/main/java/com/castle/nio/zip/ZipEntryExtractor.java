@@ -2,6 +2,7 @@ package com.castle.nio.zip;
 
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
+import com.castle.util.closeables.Closeables;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +23,12 @@ public class ZipEntryExtractor {
 
     public TempPath extract(Path entryPath) throws IOException {
         TempPath tempPath = mPathGenerator.generateFile();
-        extractInto(entryPath, tempPath.originalPath());
+        try {
+            extractInto(entryPath, tempPath.originalPath());
+        } catch (IOException e) {
+            Closeables.silentClose(tempPath);
+            throw e;
+        }
 
         return tempPath;
     }
