@@ -6,9 +6,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-public class Java {
+public class JavaSources {
 
-    private Java() {}
+    private JavaSources() {}
 
     /**
      * <p>
