@@ -6,6 +6,7 @@ import com.castle.code.NativeLibraryFinder;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
 import com.castle.util.os.Architecture;
+import com.castle.util.os.System;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,6 +25,18 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
         mTargetArchitecture = targetArchitecture;
     }
 
+    public ArchivedNativeLibraryFinder(Zip zip, Path archiveBasePath) {
+        this(zip, archiveBasePath, System.architecture());
+    }
+
+    public ArchivedNativeLibraryFinder(Zip zip, Architecture architecture) {
+        this(zip, null, architecture);
+    }
+
+    public ArchivedNativeLibraryFinder(Zip zip) {
+        this(zip, null, System.architecture());
+    }
+
     @Override
     public NativeLibrary find(String name) throws FindException {
         try (OpenZip zip = mZip.open()) {
@@ -37,10 +50,16 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
     }
 
     private Pattern buildFindPattern(String name) {
-        return Pattern.compile(String.format("^%s\\/%s\\/.*%s(dll|so|dylib)$",
-                mArchiveBasePath.toString(),
-                mTargetArchitecture.getName(),
-                name));
+        if (mArchiveBasePath == null) {
+            return Pattern.compile(String.format(".*%s\\/.*%s(dll|so|dylib)$",
+                    mTargetArchitecture.getName(),
+                    name));
+        } else {
+            return Pattern.compile(String.format("^%s\\/%s\\/.*%s(dll|so|dylib)$",
+                    mArchiveBasePath.toString(),
+                    mTargetArchitecture.getName(),
+                    name));
+        }
     }
 
     private Path findPath(OpenZip zip, Pattern pattern) throws FindException, IOException {
