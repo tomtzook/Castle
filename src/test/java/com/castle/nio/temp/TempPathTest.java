@@ -1,6 +1,5 @@
 package com.castle.nio.temp;
 
-import com.castle.testutil.io.FakeFileSystemProvider;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -13,7 +12,7 @@ public class TempPathTest {
 
     @Test
     public void close_normal_deletesFileIfExists() throws Exception {
-        FileSystemProvider provider = spy(new FakeFileSystemProvider());
+        FileSystemProvider provider = mock(FileSystemProvider.class);
         Path path = mock(Path.class);
 
         TempPath tempPath = new TempPath(provider, path);
