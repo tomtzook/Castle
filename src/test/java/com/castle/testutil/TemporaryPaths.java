@@ -43,7 +43,7 @@ public class TemporaryPaths {
         };
     }
 
-    public static Matcher<String> isEndOfPathUnderRoot(Path rootPath) {
+    public static Matcher<String> doesAPathEndWithString(Path rootPath) {
         return new TypedBaseMatcher<String>(String.class) {
 
             private final Path mRootPath = rootPath;

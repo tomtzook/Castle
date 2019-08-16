@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static com.castle.testutil.TemporaryPaths.isEndOfPathUnderRoot;
+import static com.castle.testutil.TemporaryPaths.doesAPathEndWithString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
@@ -122,7 +122,7 @@ public class ZipEntryExtractorTest {
             zipEntryExtractor.extract(path);
             fail("exception expected");
         } catch (IOException e) {
-            assertThat(ENDS_WITH, not(isEndOfPathUnderRoot(mTemporaryFolder.getRoot().toPath())));
+            assertThat(ENDS_WITH, not(doesAPathEndWithString(mTemporaryFolder.getRoot().toPath())));
         }
     }
 }
