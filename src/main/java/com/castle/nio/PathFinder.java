@@ -1,5 +1,6 @@
 package com.castle.nio;
 
+import com.castle.nio.exceptions.PathMatchingException;
 import com.castle.util.closeables.Closeables;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class PathFinder {
     public Path findOne(BiPredicate<Path, BasicFileAttributes> matcher, Iterable<Path> roots, int maxDepth, FileVisitOption... options) throws IOException {
         Collection<Path> pathsFound = findAll(matcher, roots, maxDepth, options);
         if (pathsFound.size() != 1) {
-            throw new IOException("Only 1 path wanted. Found: " + pathsFound.size());
+            throw new PathMatchingException("Only 1 path wanted. Found: " + pathsFound.size());
         }
 
         return pathsFound.iterator().next();
