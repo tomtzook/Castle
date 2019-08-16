@@ -2,8 +2,8 @@ package com.castle.nio.zip;
 
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
-import com.castle.testutil.TemporaryPaths;
-import com.castle.testutil.ZipBuilder;
+import com.castle.testutil.io.TemporaryPaths;
+import com.castle.testutil.io.ZipBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static com.castle.testutil.TemporaryPaths.doesAPathEndWithString;
+import static com.castle.testutil.io.TemporaryPaths.doesAPathEndWithString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 

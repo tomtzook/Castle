@@ -1,4 +1,4 @@
-package com.castle.testutil;
+package com.castle.testutil.io;
 
 import com.castle.io.streams.Streams;
 import com.castle.nio.Providers;

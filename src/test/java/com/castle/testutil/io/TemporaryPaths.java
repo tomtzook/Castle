@@ -1,9 +1,10 @@
-package com.castle.testutil;
+package com.castle.testutil.io;
 
 import com.castle.nio.PathFinder;
 import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
 import com.castle.nio.temp.TempPathGenerator;
+import com.castle.testutil.TypedBaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.rules.TemporaryFolder;
