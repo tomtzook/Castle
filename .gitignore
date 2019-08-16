@@ -29,3 +29,6 @@ build/
 # IDEA
 .idea/
 bin/
+
+# Analytics
+codemr/
