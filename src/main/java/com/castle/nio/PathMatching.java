@@ -42,4 +42,8 @@ public class PathMatching {
     public static BiPredicate<Path, BasicFileAttributes> sizeMatcher(PathMatcher pathMatcher, LongPredicate sizePredicate) {
         return (path, basicFileAttributes) -> pathMatcher.matches(path) && sizePredicate.test(basicFileAttributes.size());
     }
+
+    public static Predicate<BasicFileAttributes> allMatcher() {
+        return (basicFileAttributes)->true;
+    }
 }

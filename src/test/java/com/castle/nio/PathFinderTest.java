@@ -24,15 +24,14 @@ public class PathFinderTest {
 
     @Rule
     public TemporaryFolder mTemporaryFolder = new TemporaryFolder();
+    private RandomPathGenerator mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
 
     @Rule
     public TemporaryFolder mTemporaryFolder2 = new TemporaryFolder();
+    private RandomPathGenerator mRandomPathGenerator2 = new RandomPathGenerator(mTemporaryFolder2);
 
     private FileSystem mFileSystem;
     private Path mRoot;
-
-    private RandomPathGenerator mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
-    private RandomPathGenerator mRandomPathGenerator2 = new RandomPathGenerator(mTemporaryFolder2);
 
     @Before
     public void setup() throws Exception {

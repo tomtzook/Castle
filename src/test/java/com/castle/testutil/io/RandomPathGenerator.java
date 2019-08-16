@@ -5,6 +5,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Random;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -12,15 +13,17 @@ import java.util.stream.IntStream;
 public class RandomPathGenerator {
 
     private final TemporaryFolder mTemporaryFolder;
+    private final Random mRandom;
 
     public RandomPathGenerator(TemporaryFolder temporaryFolder) {
         mTemporaryFolder = temporaryFolder;
+        mRandom = new Random();
     }
 
     public Collection<Path> createFiles(String baseName, int count) throws IOException {
         IntFunction<Path> function = i -> {
             try {
-                return mTemporaryFolder.newFile(String.format("%s%d", baseName, i)).toPath();
+                return mTemporaryFolder.newFile(generateName(baseName, i)).toPath();
             } catch (IOException e) {
                 throw new Error(e);
             }
@@ -32,7 +35,7 @@ public class RandomPathGenerator {
     public Collection<Path> createDirectories(String baseName, int count) throws IOException {
         IntFunction<Path> function = i -> {
             try {
-                return mTemporaryFolder.newFolder(String.format("%s%d", baseName, i)).toPath();
+                return mTemporaryFolder.newFolder(generateName(baseName, i)).toPath();
             } catch (IOException e) {
                 throw new Error(e);
             }
@@ -51,5 +54,12 @@ public class RandomPathGenerator {
         }
 
         return paths;
+    }
+
+    private String generateName(String baseName, int index) {
+        return String.format("%d%s%d",
+                mRandom.nextLong(),
+                baseName,
+                index);
     }
 }

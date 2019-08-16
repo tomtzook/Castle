@@ -26,6 +26,11 @@ public class PatternPathFinder extends PathFinder {
         return findOne(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate));
     }
 
+    public Path findOne(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Path root) throws IOException {
+        PathMatcher pathMatcher = getPathMatcher(pattern);
+        return findOne(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), root);
+    }
+
     public Collection<Path> findAll(Pattern pattern) throws IOException {
         PathMatcher pathMatcher = getPathMatcher(pattern);
         return findAll(PathMatching.pathMatcher(pathMatcher));
@@ -36,6 +41,11 @@ public class PatternPathFinder extends PathFinder {
         return findAll(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate));
     }
 
+    public Collection<Path> findAll(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Path root) throws IOException {
+        PathMatcher pathMatcher = getPathMatcher(pattern);
+        return findAll(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), root);
+    }
+
     public Stream<Path> find(Pattern pattern) throws IOException {
         PathMatcher pathMatcher = getPathMatcher(pattern);
         return find(PathMatching.pathMatcher(pathMatcher));
@@ -44,6 +54,11 @@ public class PatternPathFinder extends PathFinder {
     public Stream<Path> find(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate) throws IOException {
         PathMatcher pathMatcher = getPathMatcher(pattern);
         return find(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate));
+    }
+
+    public Stream<Path> find(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Path root) throws IOException {
+        PathMatcher pathMatcher = getPathMatcher(pattern);
+        return find(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), root);
     }
 
     private PathMatcher getPathMatcher(Pattern pattern) {
