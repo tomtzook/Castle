@@ -4,25 +4,25 @@ public enum OperatingSystem {
     Windows {
         @Override
         public boolean doesNameMatch(String osName) {
-            return osName.indexOf("win") > 0;
+            return osName.contains("win");
         }
     },
-    Unix {
+    Linux {
         @Override
         public boolean doesNameMatch(String osName) {
-            return osName.indexOf("nix") > 0;
+            return osName.contains("linux");
         }
     },
     Mac {
         @Override
         public boolean doesNameMatch(String osName) {
-            return osName.indexOf("max") > 0;
+            return osName.contains("max");
         }
     },
     Solaris {
         @Override
         public boolean doesNameMatch(String osName) {
-            return osName.indexOf("sunos") > 0;
+            return osName.contains("sunos");
         }
     };
 

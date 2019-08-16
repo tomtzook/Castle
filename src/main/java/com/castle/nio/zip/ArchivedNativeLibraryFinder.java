@@ -51,11 +51,11 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
 
     private Pattern buildFindPattern(String name) {
         if (mArchiveBasePath == null) {
-            return Pattern.compile(String.format(".*%s\\/.*%s(dll|so|dylib)$",
+            return Pattern.compile(String.format(".*%s\\/.*%s\\.(dll|so|dylib)$",
                     mTargetArchitecture.getName(),
                     name));
         } else {
-            return Pattern.compile(String.format("^%s\\/%s\\/.*%s(dll|so|dylib)$",
+            return Pattern.compile(String.format("^%s\\/%s\\/.*%s\\.(dll|so|dylib)$",
                     mArchiveBasePath.toString(),
                     mTargetArchitecture.getName(),
                     name));
@@ -65,7 +65,8 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
     private Path findPath(OpenZip zip, Pattern pattern) throws FindException, IOException {
         Collection<Path> allFound = zip.pathFinder().findAll(pattern, PathMatching.fileMatcher());
         if (allFound.size() != 1) {
-            throw new FindException("Expected to find 1, by found several paths");
+            throw new FindException(String.format("Expected to find 1, by found %d paths: %s",
+                    allFound.size(), pattern.pattern()));
         }
 
         return allFound.iterator().next();

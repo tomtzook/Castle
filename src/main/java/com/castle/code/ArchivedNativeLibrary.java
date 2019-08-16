@@ -11,18 +11,18 @@ import java.nio.file.Path;
 public class ArchivedNativeLibrary extends TempNativeLibrary {
 
     private final Zip mZip;
-    private final Path mInZipPath;
+    private final String mInZipPath;
 
     public ArchivedNativeLibrary(String name, Architecture architecture, Zip zip, Path inZipPath) {
         super(name, architecture);
         mZip = zip;
-        mInZipPath = inZipPath;
+        mInZipPath = inZipPath.toAbsolutePath().toString();
     }
 
     @Override
     public TempPath getTempPath() throws IOException {
         try (OpenZip zip = mZip.open()) {
-            return zip.extract(mInZipPath);
+            return zip.extract(zip.getPath(mInZipPath));
         }
     }
 }

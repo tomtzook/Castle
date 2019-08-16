@@ -34,10 +34,6 @@ public class ZipEntryExtractor {
     }
 
     public void extractInto(Path entryPath, Path destination) throws IOException {
-        if (!entryPath.getFileSystem().isOpen()) {
-            throw new IOException("Zip filesystem is closed");
-        }
-
         Files.copy(entryPath, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
     }
 }

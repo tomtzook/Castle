@@ -23,12 +23,12 @@ public class System {
             }
         }
 
-        throw new Error("unable to find current platform");
+        throw new Error("unable to find current platform: " + osName);
     }
 
     public static Architecture architecture() {
         return new Architecture(String.format("%s%s",
                 operatingSystem().name().toLowerCase(),
-                bitness().name().toLowerCase()));
+                bitness().displayName().toLowerCase()));
     }
 }
