@@ -19,6 +19,14 @@ dependencies {
 }
 
 
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+        showStackTraces true
+    }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     baseName project.name
     classifier = 'sources'
