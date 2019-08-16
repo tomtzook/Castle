@@ -4,7 +4,9 @@ public class System {
 
     private static final String X86_ARCH = "x86";
 
-    public Bitness getBitness() {
+    private System() {}
+
+    public static Bitness bitness() {
         String property = java.lang.System.getProperty("os.arch");
         if (X86_ARCH.equalsIgnoreCase(property)) {
             return Bitness.x86;
@@ -13,7 +15,7 @@ public class System {
         return Bitness.x64;
     }
 
-    public OperatingSystem getOperatingSystem() {
+    public static OperatingSystem operatingSystem() {
         String osName = java.lang.System.getProperty("os.name").toLowerCase();
         for (OperatingSystem operatingSystem : OperatingSystem.values()) {
             if (operatingSystem.doesNameMatch(osName)) {
@@ -22,5 +24,11 @@ public class System {
         }
 
         throw new Error("unable to find current platform");
+    }
+
+    public static Architecture architecture() {
+        return new Architecture(String.format("%s%s",
+                operatingSystem().name().toLowerCase(),
+                bitness().name().toLowerCase()));
     }
 }

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group GROUP
@@ -15,4 +16,80 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.7.22'
     testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName project.name
+    classifier = 'sources'
+
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    baseName project.name
+    classifier = 'javadoc'
+
+    from javadoc.destinationDir
+}
+
+def isReleaseBuild() {
+    return version.contains("SNAPSHOT") == false
+}
+
+publishing {
+    publications {
+        mavenCastle(MavenPublication) {
+            artifactId = ARTIFACT_ID
+
+            from components.java
+
+            artifact javadocJar
+            artifact sourcesJar
+
+            pom {
+                name = 'Castle'
+                description = "A generic utility library"
+                url = 'https://github.com/tomtzook/Castle'
+
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'tomtzook'
+                        name = 'Tom Tzook'
+                        email = 'tomtzook@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/tomtzook/Castle.git'
+                    developerConnection = 'scm:git:ssh://github.com/tomtzook/Castle.git'
+                    url = 'https://github.com/tomtzook/Castle'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            if (isReleaseBuild()) {
+                name = 'NexusStaging'
+                url = NEXUS_RELEASE_REPOSITORY_URL
+            } else {
+                name = 'NexusSnapshot'
+                url = NEXUS_SNAPSHOT_REPOSITORY_URL
+            }
+
+            credentials {
+                username ''
+                password ''
+            }
+        }
+    }
 }

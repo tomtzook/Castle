@@ -83,6 +83,10 @@ public class TempPathGenerator {
         this(SystemPaths.tempDirectory(), prefix, suffix);
     }
 
+    public TempPathGenerator() {
+        this("temp_", "");
+    }
+
     public TempPath generateFile(FileAttribute<?>... attributes) throws IOException {
         Path path = generatePath();
         createFile(path, attributes);

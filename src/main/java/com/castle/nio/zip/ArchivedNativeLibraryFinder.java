@@ -37,7 +37,7 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
     }
 
     private Pattern buildFindPattern(String name) {
-        return Pattern.compile(String.format("^%s/%s/.*%s(dll|so|dylib)$",
+        return Pattern.compile(String.format("^%s\\/%s\\/.*%s(dll|so|dylib)$",
                 mArchiveBasePath.toString(),
                 mTargetArchitecture.getName(),
                 name));
