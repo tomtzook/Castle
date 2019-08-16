@@ -13,7 +13,7 @@ public class System {
         return Bitness.x64;
     }
 
-    public OperatingSystem getCurrentPlatform() {
+    public OperatingSystem getOperatingSystem() {
         String osName = java.lang.System.getProperty("os.name").toLowerCase();
         for (OperatingSystem operatingSystem : OperatingSystem.values()) {
             if (operatingSystem.doesNameMatch(osName)) {
