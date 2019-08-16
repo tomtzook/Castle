@@ -1,4 +1,5 @@
 # Castle
+![Maven Central](https://img.shields.io/maven-central/v/com.github.tomtzook/castle)
 ![Travis (.org) branch](https://img.shields.io/travis/tomtzook/Castle/master.svg)
 ![GitHub](https://img.shields.io/github/license/tomtzook/Castle.svg)
 
