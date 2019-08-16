@@ -3,63 +3,50 @@ package com.castle.nio.zip;
 import com.sun.nio.zipfs.ZipFileSystemProvider;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Zip {
 
-    private final FileSystemProvider mZipFileSystemProvider;
-    private final Path mZipPath;
-    private final Map<String, ?> mFileSystemEnv;
-    private final OpenZipFactory mOpenZipFactory;
+    private final ZipOpener mZipOpener;
 
     private final AtomicReference<OpenZip> mOpenZipReference;
-    private final AtomicInteger mZipReferencesCounter;
     private final Object mReferenceMutex;
+    private final ZipReferences mZipReferences;
 
-    public Zip(FileSystemProvider zipFileSystemProvider, Path zipPath, Map<String, ?> fileSystemEnv, OpenZipFactory openZipFactory) {
-        mZipFileSystemProvider = zipFileSystemProvider;
-        mZipPath = zipPath;
-        mFileSystemEnv = fileSystemEnv;
-        mOpenZipFactory = openZipFactory;
+    public Zip(ZipOpener zipOpener) {
+        mZipOpener = zipOpener;
 
         mOpenZipReference = new AtomicReference<>();
-        mZipReferencesCounter = new AtomicInteger(0);
         mReferenceMutex = new Object();
+        mZipReferences = new ZipReferences(mReferenceMutex);
     }
 
-    public Zip(FileSystemProvider zipFileSystemProvider, Path zipPath, Map<String, ?> fileSystemEnv) {
-        this(zipFileSystemProvider, zipPath, fileSystemEnv, new OpenZipFactory());
-    }
-
-    public Zip(Path zipPath, OpenZipFactory openZipFactory) {
-        this(new ZipFileSystemProvider(), zipPath, new HashMap<>(), openZipFactory);
+    public Zip(FileSystemProvider zipFileSystemProvider, Map<String, ?> fileSystemEnv, Path zipPath) {
+        this(new PathBasedZipOpener(zipFileSystemProvider, fileSystemEnv, zipPath));
     }
 
     public Zip(Path zipPath) {
-        this(zipPath, new OpenZipFactory());
+        this(new ZipFileSystemProvider(), new HashMap<>(), zipPath);
     }
 
     public OpenZip open() throws IOException {
         synchronized (mReferenceMutex) {
             OpenZip openZip = mOpenZipReference.get();
             if (openZip != null && openZip.isOpen()) {
-                mZipReferencesCounter.incrementAndGet();
+                mZipReferences.incrementReferencesCount();
                 return openZip;
             }
 
             mOpenZipReference.set(null);
 
-            FileSystem zipFs = mZipFileSystemProvider.newFileSystem(mZipPath, mFileSystemEnv);
-            openZip = mOpenZipFactory.create(zipFs, mZipReferencesCounter, mReferenceMutex);
+            openZip = mZipOpener.open(mZipReferences);
             mOpenZipReference.set(openZip);
 
-            mZipReferencesCounter.incrementAndGet();
+            mZipReferences.incrementReferencesCount();
             return openZip;
         }
     }

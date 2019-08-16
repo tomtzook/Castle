@@ -1,7 +1,7 @@
 package com.castle.nio.zip;
 
-import com.castle.io.streams.data.zip.OpenZipPathStreamable;
 import com.castle.io.streams.data.ReadOnlyStreamable;
+import com.castle.io.streams.data.zip.OpenZipPathStreamable;
 import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
 import com.castle.nio.temp.TempPath;
@@ -13,7 +13,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public class OpenZip implements Closeable {
@@ -21,23 +20,21 @@ public class OpenZip implements Closeable {
     private final FileSystem mFileSystem;
     private final ZipEntryExtractor mEntryExtractor;
     private final PatternPathFinder mPathFinder;
-    private final AtomicInteger mUsageReferences;
-    private final Object mReferencesMutex;
+    private final ZipReferences mZipReferences;
 
-    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, AtomicInteger usageReferences, Object referencesMutex) {
+    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, ZipReferences zipReferences) {
         mFileSystem = zipFileSystem;
         mEntryExtractor = entryExtractor;
         mPathFinder = pathFinder;
-        mUsageReferences = usageReferences;
-        mReferencesMutex = referencesMutex;
+        mZipReferences = zipReferences;
     }
 
-    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, AtomicInteger usageReferences, Object referencesMutex) {
-        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), usageReferences, referencesMutex);
+    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, ZipReferences zipReferences) {
+        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), zipReferences);
     }
 
-    public OpenZip(FileSystem zipFileSystem, AtomicInteger usageReferences, Object referencesMutex) {
-        this(zipFileSystem, new TempPathGenerator("zip", "generated"), usageReferences, referencesMutex);
+    public OpenZip(FileSystem zipFileSystem, ZipReferences zipReferences) {
+        this(zipFileSystem, new TempPathGenerator("zip", "generated"), zipReferences);
     }
 
     public boolean isOpen() {
@@ -90,10 +87,6 @@ public class OpenZip implements Closeable {
 
     @Override
     public void close() throws IOException {
-        synchronized (mReferencesMutex) {
-            if (mUsageReferences.decrementAndGet() <= 0) {
-                mFileSystem.close();
-            }
-        }
+        mZipReferences.closeReference(mFileSystem);
     }
 }
