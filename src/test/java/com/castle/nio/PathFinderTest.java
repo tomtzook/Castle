@@ -1,5 +1,6 @@
 package com.castle.nio;
 
+import com.castle.testutil.io.RandomPathGenerator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,9 @@ public class PathFinderTest {
     private FileSystem mFileSystem;
     private Path mRoot;
 
+    private RandomPathGenerator mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
+    private RandomPathGenerator mRandomPathGenerator2 = new RandomPathGenerator(mTemporaryFolder2);
+
     @Before
     public void setup() throws Exception {
         mFileSystem = mTemporaryFolder.getRoot().toPath().getFileSystem();
@@ -41,7 +45,7 @@ public class PathFinderTest {
         final int FILE_COUNT = 10;
         final String BASE_NAME = "base";
 
-        Collection<Path> paths = createFiles(BASE_NAME, FILE_COUNT);
+        Collection<Path> paths = mRandomPathGenerator.createFiles(BASE_NAME, FILE_COUNT);
 
         PathFinder pathFinder = new PathFinder(mFileSystem);
 
@@ -57,8 +61,8 @@ public class PathFinderTest {
         final int FILE_COUNT = 10;
         final String BASE_NAME = "base";
 
-        Collection<Path> paths = createFiles(BASE_NAME, FILE_COUNT);
-        createFiles("notmatch", 30);
+        Collection<Path> paths = mRandomPathGenerator.createFiles(BASE_NAME, FILE_COUNT);
+        mRandomPathGenerator.createFiles("notmatch", 30);
 
         PathFinder pathFinder = new PathFinder(mFileSystem);
 
@@ -74,8 +78,8 @@ public class PathFinderTest {
         final int FILE_COUNT = 10;
         final String BASE_NAME = "base";
 
-        Collection<Path> paths = createFiles(BASE_NAME, FILE_COUNT);
-        createDirectories("d" + BASE_NAME, 10);
+        Collection<Path> paths = mRandomPathGenerator.createFiles(BASE_NAME, FILE_COUNT);
+        mRandomPathGenerator.createDirectories("d" + BASE_NAME, 10);
 
         PathFinder pathFinder = new PathFinder(mFileSystem);
 
@@ -93,8 +97,8 @@ public class PathFinderTest {
         final String BASE_NAME = "base";
 
         Collection<Path> paths = new ArrayList<>();
-        paths.addAll(createFiles(mTemporaryFolder, BASE_NAME, FILE_COUNT));
-        paths.addAll(createFiles(mTemporaryFolder2, BASE_NAME, FILE_COUNT));
+        paths.addAll(mRandomPathGenerator.createFiles(BASE_NAME, FILE_COUNT));
+        paths.addAll(mRandomPathGenerator2.createFiles(BASE_NAME, FILE_COUNT));
 
         PathFinder pathFinder = new PathFinder(mFileSystem);
 
@@ -113,45 +117,5 @@ public class PathFinderTest {
         return String.format("%s/%s",
                 mRoot.toAbsolutePath().toString(),
                 nameRegex);
-    }
-
-    private Collection<Path> createFiles(String baseName, int count) throws IOException {
-        return createFiles(mTemporaryFolder, baseName, count);
-    }
-
-    private Collection<Path> createFiles(TemporaryFolder temporaryFolder, String baseName, int count) throws IOException {
-        IntFunction<Path> function = i -> {
-            try {
-                return temporaryFolder.newFile(String.format("%s%d", baseName, i)).toPath();
-            } catch (IOException e) {
-                return null;
-            }
-        };
-
-        return createPathsWithFunction(count, function);
-    }
-
-    private Collection<Path> createDirectories(String baseName, int count) throws IOException {
-        IntFunction<Path> function = i -> {
-            try {
-                return mTemporaryFolder.newFolder(String.format("%s%d", baseName, i)).toPath();
-            } catch (IOException e) {
-                return null;
-            }
-        };
-
-        return createPathsWithFunction(count, function);
-    }
-
-    private Collection<Path> createPathsWithFunction(int count, IntFunction<Path> pathFunction) throws IOException {
-        Collection<Path> paths = IntStream.range(0, count)
-                .mapToObj(pathFunction)
-                .collect(Collectors.toList());
-
-        if (paths.size() != count) {
-            throw new IOException("Unable to create all paths");
-        }
-
-        return paths;
     }
 }

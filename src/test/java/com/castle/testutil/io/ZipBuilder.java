@@ -1,19 +1,14 @@
 package com.castle.testutil.io;
 
-import com.castle.io.streams.Streams;
 import com.castle.nio.Providers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.FileSystem;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class ZipBuilder {
 
@@ -30,17 +25,7 @@ public class ZipBuilder {
     }
 
     public ZipBuilder addContent(String path, InputStream content) throws IOException {
-        try (OutputStream outputStream = Files.newOutputStream(mZipPath);
-             ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
-            ZipEntry entry = new ZipEntry(path);
-            zipOutputStream.putNextEntry(entry);
-            try {
-                Streams.copy(content, zipOutputStream);
-            } finally {
-                zipOutputStream.closeEntry();
-            }
-        }
-
+        ZipHelper.putEntry(mZipPath, path, content);
         return this;
     }
 
