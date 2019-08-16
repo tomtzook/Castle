@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'signing'
 }
 
 group GROUP
@@ -100,4 +101,8 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign publishing.publications.mavenCastle
 }
