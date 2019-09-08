@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface ZipOpener {
 
-    OpenZip open(ZipReferences zipReferences) throws IOException;
+    OpenZip open(ZipReferenceCounter zipReferenceCounter) throws IOException;
 }

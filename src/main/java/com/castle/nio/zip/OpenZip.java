@@ -6,8 +6,8 @@ import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
+import com.castle.util.closeables.ReferencedCloseable;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -15,26 +15,25 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-public class OpenZip implements Closeable {
+public class OpenZip extends ReferencedCloseable {
 
     private final FileSystem mFileSystem;
     private final ZipEntryExtractor mEntryExtractor;
     private final PatternPathFinder mPathFinder;
-    private final ZipReferences mZipReferences;
 
-    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, ZipReferences zipReferences) {
+    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, ZipReferenceCounter zipReferenceCounter) {
+        super(zipReferenceCounter);
         mFileSystem = zipFileSystem;
         mEntryExtractor = entryExtractor;
         mPathFinder = pathFinder;
-        mZipReferences = zipReferences;
     }
 
-    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, ZipReferences zipReferences) {
-        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), zipReferences);
+    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, ZipReferenceCounter zipReferenceCounter) {
+        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), zipReferenceCounter);
     }
 
-    public OpenZip(FileSystem zipFileSystem, ZipReferences zipReferences) {
-        this(zipFileSystem, new TempPathGenerator("zip", "generated"), zipReferences);
+    public OpenZip(FileSystem zipFileSystem, ZipReferenceCounter zipReferenceCounter) {
+        this(zipFileSystem, new TempPathGenerator("zip", "generated"), zipReferenceCounter);
     }
 
     public boolean isOpen() {
@@ -86,7 +85,7 @@ public class OpenZip implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-        mZipReferences.closeReference(mFileSystem);
+    protected void doClose() throws IOException {
+        mFileSystem.close();
     }
 }

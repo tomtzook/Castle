@@ -19,8 +19,8 @@ public class PathBasedZipOpener implements ZipOpener {
     }
 
     @Override
-    public OpenZip open(ZipReferences zipReferences) throws IOException {
+    public OpenZip open(ZipReferenceCounter zipReferenceCounter) throws IOException {
         FileSystem zipFs = mFileSystemProvider.newFileSystem(mPath, mFileSystemEnv);
-        return new OpenZip(zipFs, zipReferences);
+        return new OpenZip(zipFs, zipReferenceCounter);
     }
 }

@@ -8,21 +8,23 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Zip {
 
     private final ZipOpener mZipOpener;
 
     private final AtomicReference<OpenZip> mOpenZipReference;
-    private final Object mReferenceMutex;
-    private final ZipReferences mZipReferences;
+    private final Lock mReferenceLock;
+    private final ZipReferenceCounter mZipReferenceCounter;
 
     public Zip(ZipOpener zipOpener) {
         mZipOpener = zipOpener;
 
         mOpenZipReference = new AtomicReference<>();
-        mReferenceMutex = new Object();
-        mZipReferences = new ZipReferences(mReferenceMutex);
+        mReferenceLock = new ReentrantLock();
+        mZipReferenceCounter = new ZipReferenceCounter(mReferenceLock);
     }
 
     public static Zip fromPath(FileSystemProvider zipFileSystemProvider, Map<String, ?> fileSystemEnv, Path zipPath) {
@@ -34,20 +36,23 @@ public class Zip {
     }
 
     public OpenZip open() throws IOException {
-        synchronized (mReferenceMutex) {
+        mReferenceLock.lock();
+        try {
             OpenZip openZip = mOpenZipReference.get();
             if (openZip != null && openZip.isOpen()) {
-                mZipReferences.incrementReferencesCount();
+                mZipReferenceCounter.incrementReferencesCount();
                 return openZip;
             }
 
             mOpenZipReference.set(null);
 
-            openZip = mZipOpener.open(mZipReferences);
+            openZip = mZipOpener.open(mZipReferenceCounter);
             mOpenZipReference.set(openZip);
 
-            mZipReferences.incrementReferencesCount();
+            mZipReferenceCounter.incrementReferencesCount();
             return openZip;
+        } finally {
+            mReferenceLock.unlock();
         }
     }
 }
