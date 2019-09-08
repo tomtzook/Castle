@@ -25,12 +25,12 @@ public class Zip {
         mZipReferences = new ZipReferences(mReferenceMutex);
     }
 
-    public Zip(FileSystemProvider zipFileSystemProvider, Map<String, ?> fileSystemEnv, Path zipPath) {
-        this(new PathBasedZipOpener(zipFileSystemProvider, fileSystemEnv, zipPath));
+    public static Zip fromPath(FileSystemProvider zipFileSystemProvider, Map<String, ?> fileSystemEnv, Path zipPath) {
+        return new Zip(new PathBasedZipOpener(zipFileSystemProvider, fileSystemEnv, zipPath));
     }
 
-    public Zip(Path zipPath) {
-        this(Providers.zipProvider(), new HashMap<>(), zipPath);
+    public static Zip fromPath(Path zipPath) {
+        return fromPath(Providers.zipProvider(), new HashMap<>(), zipPath);
     }
 
     public OpenZip open() throws IOException {

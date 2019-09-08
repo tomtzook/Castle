@@ -27,7 +27,7 @@ public class JavaSources {
             Path path = new File(cls.getProtectionDomain().getCodeSource().getLocation()
                     .toURI()).toPath();
 
-            return new Zip(path);
+            return Zip.fromPath(path);
         } catch (URISyntaxException e) {
             throw new Error(e);
         }
