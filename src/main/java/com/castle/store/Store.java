@@ -8,6 +8,6 @@ public interface Store {
     void store(KeyPath key, Object value) throws StoreException;
     void storeTree(KeyPath key, ValueNode root) throws StoreException;
 
-    <T> T retreive(KeyPath key, Class<T> valueType) throws StoreException, KeyNotFoundException;
-    ValueNode retreiveTree(KeyPath key) throws StoreException, KeyNotFoundException;
+    <T> T retrieve(KeyPath key, Class<T> valueType) throws StoreException, KeyNotFoundException;
+    ValueNode retrieveTree(KeyPath key) throws StoreException, KeyNotFoundException;
 }
