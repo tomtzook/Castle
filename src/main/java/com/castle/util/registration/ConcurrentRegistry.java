@@ -23,7 +23,9 @@ public class ConcurrentRegistry<T> implements Registry<T> {
         Collection<T> copy;
         synchronized (mRegistered) {
             copy = new ArrayList<>(mRegistered);
-            mRegistered.clear();
+            if (clearRegistry) {
+                mRegistered.clear();
+            }
         }
 
         return copy;
