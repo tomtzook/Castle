@@ -3,6 +3,7 @@ package com.castle.store;
 import com.castle.store.exceptions.KeyNotFoundException;
 import com.castle.store.exceptions.StoreException;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,15 +16,20 @@ public class InMemoryStore implements Store {
     }
 
     @Override
-    public void store(KeyPath key, Object value) throws StoreException {
+    public void store(KeyPath key, Object value) {
+        if (key.isRoot()) {
+            throw new IllegalArgumentException("Cannot store single object in root");
+        }
+
         storeTree(key, new ValueNode(value));
     }
 
     @Override
-    public void storeTree(KeyPath key, ValueNode root) throws StoreException {
+    public void storeTree(KeyPath key, ValueNode root) {
         Iterator<String> parts = key.iterator();
         if (!parts.hasNext()) {
-            throw new IllegalArgumentException("cannot store in root path");
+            mNodeMap.putAll(root.getChildren());
+            return;
         }
 
         String first = parts.next();
@@ -46,15 +52,19 @@ public class InMemoryStore implements Store {
     }
 
     @Override
-    public <T> T retrieve(KeyPath key, Class<T> valueType) throws StoreException, KeyNotFoundException {
+    public <T> T retrieve(KeyPath key, Class<T> valueType) throws KeyNotFoundException {
+        if (key.isRoot()) {
+            throw new IllegalArgumentException("Cannot retrieve single object from root");
+        }
+
         return retrieveTree(key).valueAsType(valueType);
     }
 
     @Override
-    public ValueNode retrieveTree(KeyPath key) throws StoreException, KeyNotFoundException {
+    public ValueNode retrieveTree(KeyPath key) throws KeyNotFoundException {
         Iterator<String> parts = key.iterator();
         if (!parts.hasNext()) {
-            throw new IllegalArgumentException("cannot retrieve from root path");
+            return new ValueNode(null, new HashMap<>(mNodeMap));
         }
 
         String first = parts.next();

@@ -1,15 +1,19 @@
 package com.castle.store;
 
+import com.castle.reflect.exceptions.TypeMismatchException;
+
+import javax.lang.model.type.NullType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ValueNode {
 
     private final Object mValue;
     private final Map<String, ValueNode> mChildren;
 
-    private ValueNode(Object value, Map<String, ValueNode> children) {
+    ValueNode(Object value, Map<String, ValueNode> children) {
         mValue = value;
         mChildren = children;
     }
@@ -27,7 +31,11 @@ public class ValueNode {
     }
 
     public <T> T valueAsType(Class<T> type) {
-        return type.cast(mValue);
+        try {
+            return type.cast(mValue);
+        } catch (ClassCastException e) {
+            throw new TypeMismatchException(type, hasValue() ? mValue.getClass() : null);
+        }
     }
 
     public boolean hasValue() {
@@ -53,5 +61,18 @@ public class ValueNode {
     @Override
     public String toString() {
         return String.format("%s->%s", String.valueOf(mValue), mChildren);
+    }
+
+    public boolean equals(ValueNode other) {
+        if (!Objects.equals(mValue, other.mValue)) {
+            return false;
+        }
+
+        return mChildren.equals(other.mChildren);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ValueNode && equals((ValueNode) obj);
     }
 }

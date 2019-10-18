@@ -4,9 +4,9 @@ import com.castle.nio.PathFinder;
 import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
 import com.castle.nio.temp.TempPathGenerator;
-import com.castle.testutil.TypedBaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
@@ -30,10 +30,10 @@ public class TemporaryPaths {
     }
 
     public static Matcher<Path> pathNotExists() {
-        return new TypedBaseMatcher<Path>(Path.class) {
+        return new TypeSafeMatcher<Path>(Path.class) {
 
             @Override
-            public boolean doesMatch(Path value) {
+            public boolean matchesSafely(Path value) {
                 return !Files.exists(value);
             }
 
@@ -45,14 +45,14 @@ public class TemporaryPaths {
     }
 
     public static Matcher<String> doesAPathEndWithString(Path rootPath) {
-        return new TypedBaseMatcher<String>(String.class) {
+        return new TypeSafeMatcher<String>(String.class) {
 
             private final Path mRootPath = rootPath;
             private final FileSystem mFileSystem = mRootPath.getFileSystem();
             private final PathFinder mPathFinder = new PathFinder(mFileSystem);
 
             @Override
-            public boolean doesMatch(String value) {
+            public boolean matchesSafely(String value) {
                 PathMatcher pathMatcher = mFileSystem.getPathMatcher(String.format("regex:.*%s$", value));
                 try {
                     return !mPathFinder.findAll(PathMatching.fileMatcher(pathMatcher), mRootPath).isEmpty();

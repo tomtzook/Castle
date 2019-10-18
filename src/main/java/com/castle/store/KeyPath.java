@@ -6,8 +6,8 @@ import java.util.Iterator;
 
 public class KeyPath implements Iterable<String> {
 
+    public static final KeyPath ROOT = new KeyPath("");
     private static final String SEPARATOR = ".";
-    private static final KeyPath ROOT = new KeyPath("");
 
     private final String mPath;
 
