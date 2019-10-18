@@ -60,10 +60,6 @@ public class InMemoryStore implements Store {
         String first = parts.next();
         ValueNode lastRoot = getRootNode(key, first);
 
-        if (!parts.hasNext()) {
-            return lastRoot;
-        }
-
         while (parts.hasNext()) {
             String current = parts.next();
 
