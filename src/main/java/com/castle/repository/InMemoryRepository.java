@@ -11,8 +11,12 @@ public class InMemoryRepository<K, V> implements SafeRepository<K, V> {
 
     private final Map<K, V> mMap;
 
-    public InMemoryRepository(Map<? extends K, ? extends V> map) {
-        mMap = new HashMap<>(map);
+    InMemoryRepository(Map<K, V> map) {
+        mMap = map;
+    }
+
+    public static <K, V> InMemoryRepository<K, V> from(Map<? extends K, ? extends V> map) {
+        return new InMemoryRepository<>(new HashMap<>(map));
     }
 
     @Override

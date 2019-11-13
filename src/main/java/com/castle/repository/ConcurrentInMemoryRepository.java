@@ -13,6 +13,10 @@ public class ConcurrentInMemoryRepository<K, V> implements SafeRepository<K, V> 
 
     private final AtomicMap<K, V> mAtomicMap;
 
+    ConcurrentInMemoryRepository(AtomicMap<K, V> map) {
+        mAtomicMap = map;
+    }
+
     public ConcurrentInMemoryRepository(Map<? extends K, ? extends V> values) {
         mAtomicMap = new AtomicMap<>(new HashMap<>(values));
     }
