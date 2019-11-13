@@ -1,35 +1,33 @@
 package com.castle.repository;
 
 import com.castle.repository.exceptions.KeyNotInRepositoryException;
-import com.castle.util.concurrent.AtomicMap;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ConcurrentInMemoryRepository<K, V> implements SafeRepository<K, V> {
+public class InMemoryRepository<K, V> implements SafeRepository<K, V> {
 
-    private final AtomicMap<K, V> mAtomicMap;
+    private final Map<K, V> mMap;
 
-    public ConcurrentInMemoryRepository(Map<? extends K, ? extends V> values) {
-        mAtomicMap = new AtomicMap<>(new HashMap<>(values));
+    public InMemoryRepository(Map<? extends K, ? extends V> map) {
+        mMap = new HashMap<>(map);
     }
 
     @Override
     public boolean exists(K key) {
-        return mAtomicMap.contains(key);
+        return mMap.containsKey(key);
     }
 
     @Override
     public boolean exists(Collection<? extends K> keys) {
-        return mAtomicMap.contains(keys);
+        return mMap.keySet().containsAll(keys);
     }
 
     @Override
     public V retrieve(K key) throws KeyNotInRepositoryException {
-        V value = mAtomicMap.get(key);
+        V value = mMap.get(key);
         if (value == null) {
             throw new KeyNotInRepositoryException(String.valueOf(key));
         }
@@ -39,17 +37,16 @@ public class ConcurrentInMemoryRepository<K, V> implements SafeRepository<K, V> 
 
     @Override
     public Optional<V> tryRetrieve(K key) {
-        V value = mAtomicMap.get(key);
+        V value = mMap.get(key);
         return Optional.ofNullable(value);
     }
 
     @Override
     public Map<K, V> retrieveAll(Collection<? extends K> keys) {
-        Map<K, V> copy = mAtomicMap.copy();
         Map<K, V> result = new HashMap<>(keys.size());
 
         for (K key : keys) {
-            V value = copy.get(key);
+            V value = mMap.get(key);
             if (value != null) {
                 result.put(key, value);
             }
@@ -60,22 +57,22 @@ public class ConcurrentInMemoryRepository<K, V> implements SafeRepository<K, V> 
 
     @Override
     public Map<K, V> retrieveAll() {
-        return mAtomicMap.copy();
+        return new HashMap<>(mMap);
     }
 
     @Override
     public void store(K key, V value) {
-        store(Collections.singletonMap(key, value));
+        mMap.put(key, value);
     }
 
     @Override
     public void store(Map<? extends K, ? extends V> values) {
-        mAtomicMap.put(values);
+        mMap.putAll(values);
     }
 
     @Override
     public V remove(K key) throws KeyNotInRepositoryException {
-        V value = mAtomicMap.remove(key);
+        V value = mMap.remove(key);
         if (value == null) {
             throw new KeyNotInRepositoryException(String.valueOf(key));
         }
@@ -85,17 +82,26 @@ public class ConcurrentInMemoryRepository<K, V> implements SafeRepository<K, V> 
 
     @Override
     public Optional<V> tryRemove(K key) {
-        V value = mAtomicMap.remove(key);
+        V value = mMap.remove(key);
         return Optional.ofNullable(value);
     }
 
     @Override
     public Map<K, V> removeAll(Collection<? extends K> keys) {
-        return mAtomicMap.removeAll(keys);
+        Map<K, V> removed = new HashMap<>(keys.size());
+
+        for (K key : keys) {
+            V value = mMap.remove(key);
+            if (value != null) {
+                removed.put(key, value);
+            }
+        }
+
+        return removed;
     }
 
     @Override
     public void clear() {
-        mAtomicMap.clear();
+        mMap.clear();
     }
 }

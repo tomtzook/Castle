@@ -75,7 +75,7 @@ public class AtomicMap<K, V> {
     }
 
     public Map<K, V> removeAll(Collection<? extends K> keys) {
-        Map<K, V> removed = new HashMap<>();
+        Map<K, V> removed = new HashMap<>(keys.size());
 
         mLock.writeLock().lock();
         try {
