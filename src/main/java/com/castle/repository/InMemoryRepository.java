@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 public class InMemoryRepository<K, V> implements SafeRepository<K, V> {
 
@@ -62,6 +64,13 @@ public class InMemoryRepository<K, V> implements SafeRepository<K, V> {
     @Override
     public Map<K, V> retrieveAll() {
         return new HashMap<>(mMap);
+    }
+
+    @Override
+    public Map<K, V> retrieveIf(BiPredicate<? super K, ? super V> predicate) {
+        return mMap.entrySet().stream()
+                .filter((entry) -> predicate.test(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

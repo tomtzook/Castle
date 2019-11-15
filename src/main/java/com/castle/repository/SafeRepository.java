@@ -5,6 +5,7 @@ import com.castle.repository.exceptions.KeyNotInRepositoryException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
 public interface SafeRepository<K, V> extends Repository<K, V> {
 
@@ -21,6 +22,9 @@ public interface SafeRepository<K, V> extends Repository<K, V> {
     Map<K, V> retrieveAll(Collection<? extends K> keys);
     @Override
     Map<K, V> retrieveAll();
+
+    @Override
+    Map<K, V> retrieveIf(BiPredicate<? super K, ? super V> predicate);
 
     @Override
     void store(K key, V value);
