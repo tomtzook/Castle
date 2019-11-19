@@ -6,3 +6,48 @@ jdk:
   - openjdk9
   - openjdk10
   - openjdk11
+
+env:
+  global:
+    - secure: kJupS9yisZnFZbGBaqYJ+8IIygKr8aDYnWjs5Z5Ol5IasDK/JvERYl0Y33Lm6Aw+n1tUWp5KVh8rgAk0HCZhBS9HXtO3qKU/51vNIgWPwvR0HNq/jQ2eth2sAkfjkL7p7GwtFIIv4wE2LgnYt5vKRaFRwTBqxZ1BoH/DT6uNlYzNDL7TNOB8I1EWL6viouzLthmeejKCC0tIM2vlcBy+1SLhRqFw7RvuzzRtJYIITNs05WtQce2BQ+oKdgB8kYJKof3hKj0b8trTNwU9ZI4Fmy7SEULtVr5xQHwAYpLDduMOTxGsAdgLpLi/o8pirsP/AIxjKIUO4Zzu3KA2g3+J0Ls+lYby+YXm8SyifUIk45xvuvH7+xcW1q6k8AkJkVb9tIdRRBtG7SICU4etBDsUacDENbROurKRpInCuM5d7LdEzNCNzFqBPxcXSmtt+cZ2AnX61PLrzGtiuFlEaJIFYBEOSsAS+J2UQU9o8fvG75Pl/ATz4k9x6Gy56zAmLkjdwKmPVJoArsT+PIII8so+7sh0DexWbTpaGLCzq0sIpHhiY++sydxXxN3VbttCbRg9IMudshwJEHePHjOD0I8/lbCRy/T6B47ZMLZfho0MAfs+zjHsM2RQ4KY1kseVdiiclv6O4LTrUBAot1U+N/6xvvramQBHfBYSxKdQXvi4/ug=
+    - secure: KErK1ZWzYnBciLlwDrSh1R0671tlk9ZWS2pTbNURP5b59SsiR4DSBzA5aVms9QoE6GKs8bqkxaSTcGHjzjzeGiEAkXb/QkMeGhiPSaeN8T3sSWeXqhnvje+I5dxOrSZ9/k1e72l3AgPgGls0RYr/rzzy5oXGC8ecT9d7xf1h3C0obRZcR6H/XI+jKXNEDTbMCiO1OeaW5bIVK/N+TM9kUSp7nUTJpM7qLk5LGcNq7rEB6BjwjeMYFqMpkLgGMNIXsarc3d4sNqLQeUH2eWSYGNrdnfNuZ3Ll5YAVyVg3vDZgA8b5/d+Gse3U/YdOCUztckRnzCSWRFkRt7ajLqs1fT2m3kBoEBjnLW/CcD+gWfX+Fbrmo1I1VKOH0p1nAwPglbd8GpGtwHDfzdylQaPeuUUae9nVsM4QTZYZLQaUHWHDQecCqE2sSCK+x877CmFUIjO6R8j2xGsm2Xev+1AWUL3BIr653c9ckLnQhGR3L3KyF6iqx4vhjb7uz+5nhOowCL0zw7l4eVU+KDwQfWQYxoSv/o75XKnkjIlzTqgrWQR0KHbY7JhfSsw3CVDvrDfo7H6VVYFELSsOvU/QePLxXBTL0gQ7EcAQ+E4T4qDpMlVFfywPyRWsd2B99ru8FXuhfzc928NmNd/Xhl59DG1NRlLJxOFdpoAR4nQTTr1rFQ8=
+    - secure: ixVKXbRE5bRuFELmmUSAo/XQG4FhPqZiB8t+mnQJUGpdD4ejYFmufL+4f87xYMFQ4kqvg5x7+VJYhDlRNcJwz0Pj3m91G3qmbVRe54b1+UtbVSjIKSCXMN48n2O0tRFzjXAoGy+AUAOVNCwBAOIoLJJDYJawcngu8ZtDEnSiEPROz9RVOpf1XvNv1HnfSgxnEScdsD1oXrGElZpApfn9I5PRumGBdFfM16ehpvTYb54y1da9Z9N3+1J0OOlritzSlMNovGfA5D4tqmtABkYQYSoGAkyVWe3BYU1yG721TNXEBF4tpKOqmlxM46KpjjJFAj9Q8Y6ymHciRQoXSGFM8H0dLKRzBNzlLjyOxA481k0L8Xfi0yN8wzowQ2eitimzgiZXlwrIMXby5fgwY1dj+k1bC8T8AxJqYbl9d7WidJWZ9BVOhzn1oCxVd/FjTKucPibP4tGTyCaRvApKWvKsaDGFl4E1dyh/tDJH1bvOAhhgfX/1+IjHJgTeLSN39J9QtJceZqIiaVaeDbGH1KDZnoTPHe89GbQyyI/W5dczdwdSMfIpzXc5rg5bIdKUGNq7rVzj6dIwztx9DQ/LbvldDgJKzZWbQe5B9c96jNf741411pBuRiBZJIth31k7DiDnWskyVe5pYuUyBeaknXuhD3GGFXk1yKhX4Rihzf21qfA=
+    - secure: EhXQYrBLxrfuBavDJ247ixLL69ctnxN/xYQanYq/QEWjGUmRhuXRhPtOpx7jopnGYqG4VsQ8nItvhsQ/gmmi18bT4vHNIsfQKNOweNFu3duXFA0s/JP4/6YCJklWwSIAi9QJ5xC7tQ3oS5fU76TBAmQOXqNEhMrf1fJBAuGzrluewSOMEUVUb66GeOT2KN8sjgOneVp/hH0FIpEDRBGkdHtT2+tN9MSTiySlpgXNc/5HIJKQJiD8kVyRXACui27QcvJ8v1ziWmbDveCeST26/vDSkbemPGTAt4DZZMao4lAwMw4GWJXRooKbnzxM9dutZzkHmAWyKwPAcRyH53aT5WaZ3RVb+ehCx1Ur0PlrWpqsxcqyTzZYrE7f5glVyV5JjzSUrFOrvVB6ekvAXp7LdQNdz4bGCN3TUya1NoOoegDsiEiDRtMih2o6Keq+4/RjfoNsowwRNw3RHlSp0UDWbfkUHJmyLq4XPoTTIyq5O9+ZgHGgcoF429cuWGnRBSjqFoJ24JnLuER9QC53M0AGLAOFS0MVDM5rta1dz95cCBjcP/rqbgXkiE4W66P1ULBIdrGY9DChjC+I3N7tnyJWEkv7GSJBioEj8JbgzmvSNqH8UpRaIQj5KD3Fzb71mnv2hkEeM+RA+u/sBT+niUilUHGJvUhxNCfyCKEd500eH4Y=
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_d2b0ded475dd_key -iv $encrypted_d2b0ded475dd_iv
+    -in secring.gpg.enc -out secring.gpg -d
+
+install:
+  - ./gradlew clean
+  - ./gradlew assemble
+  - ./gradlew castleAll
+
+script:
+  - ./gradlew check
+
+before_deploy:
+  - git config --local user.name "Travis CI"
+  - git config --local user.name "build@travis-ci.com"
+
+deploy:
+  - provider: script
+    script: ./gradlew publish -PSIGN_PUBLISH=true -Psigning.keyId=${GPG_KEY_ID} -Psigning.password=${GPG_KEY_PASSPHRASE} -Psigning.secretKeyRingFile=secring.gpg
+    skip_cleanup: true
+    on:
+      condition: "$TRAVIS_TAG =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+(-.*)?"
+      branch: master
+      tags: true
+  - provider: releases
+    api_key:
+      secure: FqxfOn6KDPsMSDrZc9pSQIooLR7K4ou2D0MrALZTuUxOBl2GVkL2TEO0kHZrRjMlU1kOpH2xJcngtGES40azcPv+L6nAjdDtDIjk/32me3lKSkmOd7M57u7xSDICv7Jgs5erX6IMngl91BSUKnoMPkwd6SS6jqTVKIpELU10lHs2AgrYzz5Y+7oPoZIbdkT6TVtg8TVGg51dC2WqsMY6vRCW7DsGZ8ZZMv+HfaR0ELlM3WpH5i3+WsLsyadT4tF8mo+5y01ix2lIjMkS1mJgqxbNj6rnbEhlXh+gXrpbhPcCqzHULwutFYs/vuXaikVHwf7vkZ9lxLQQ+kVDzpDYJfHTw1sMo310dOd1cebs0YR5LvCQcw57A0IDxUuIbMuSpNZaHS6mB7U51PL1DdxKKrgzmllHwqMjG/PF7RE3yb/5uFUVCGci22ONgHB7I870tj3zYKxNsKaRA/6mz77kaFfOGjwLgb7PTctrXWYZgXBfCSC+QLt7VFyfWtQ5Tx305WagVuM7Os6wEsSjm4lte7sk2cLh8GtwmNceWfbPeaJmkuWImiJRDk1VwLFA+afVEcXT2swB1LIFPE8gOm5yp7nnf/xeAKpvAi9RWqbjPYjW0x7HsEgmSS/rydDhsEwhcXiVjQE4UVzXAzgfVD6EUlVqjBa74IbjnaGrkvMR6Nk=
+    file:
+      - build/castle-all.jar
+      - README.md
+    skip_cleanup: true
+    draft: true
+    on:
+      condition: "$TRAVIS_TAG =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+(-.*)?"
+      repo: tomtzook/Castle
+      branch: master
+      tags: true

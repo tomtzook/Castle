@@ -4,10 +4,12 @@ plugins {
     id 'signing'
 }
 
+apply from: rootProject.file('extras.gradle')
+
 group GROUP
 version VERSION
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -29,21 +31,29 @@ test {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    baseName project.name
-    classifier = 'sources'
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('sources')
 
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    baseName project.name
-    classifier = 'javadoc'
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('javadoc')
 
     from javadoc.destinationDir
 }
 
-def isReleaseBuild() {
-    return version.contains("SNAPSHOT") == false
+task castleAll(type: Jar, dependsOn: assemble) {
+    dependsOn sourcesJar
+    dependsOn javadocJar
+
+    archiveFileName.set('castle-all.jar')
+    destinationDirectory.set(rootProject.buildDir)
+
+    from sourceSets.main.output
+    from sourceSets.main.allSource
+    from javadoc.destinationDir
 }
 
 publishing {
@@ -96,13 +106,15 @@ publishing {
             }
 
             credentials {
-                username ''
-                password ''
+                username getNexusUsername()
+                password getNexusPassword()
             }
         }
     }
 }
 
-signing {
-    sign publishing.publications.mavenCastle
+if (shouldSign()) {
+    signing {
+        sign publishing.publications.mavenCastle
+    }
 }
