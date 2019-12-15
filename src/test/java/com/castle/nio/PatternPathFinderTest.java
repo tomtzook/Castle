@@ -2,33 +2,32 @@ package com.castle.nio;
 
 import com.castle.testutil.io.RandomPathGenerator;
 import com.castle.util.regex.Patterns;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class PatternPathFinderTest {
 
-    @Rule
-    public TemporaryFolder mTemporaryFolder = new TemporaryFolder();
-    private RandomPathGenerator mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
+    @TempDir
+    public Path mTemporaryFolder;
+    private RandomPathGenerator mRandomPathGenerator;
 
     private FileSystem mFileSystem;
     private Path mRoot;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        mFileSystem = mTemporaryFolder.getRoot().toPath().getFileSystem();
-        mRoot = mTemporaryFolder.getRoot().toPath();
+        mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
+        mFileSystem = mTemporaryFolder.getFileSystem();
+        mRoot = mTemporaryFolder;
     }
 
     @Test

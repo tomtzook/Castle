@@ -1,9 +1,8 @@
 package com.castle.nio.temp;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,20 +11,21 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TempPathGeneratorTest {
 
-    @Rule
-    public TemporaryFolder mTemporaryFolder = new TemporaryFolder();
-
-    private Path mParent;
+    @TempDir
+    Path mParent;
     private FileSystemProvider mFileSystemProvider;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        mParent = mTemporaryFolder.getRoot().toPath();
         mFileSystemProvider = mParent.getFileSystem().provider();
     }
 

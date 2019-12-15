@@ -1,6 +1,6 @@
 package com.castle.nio.temp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;

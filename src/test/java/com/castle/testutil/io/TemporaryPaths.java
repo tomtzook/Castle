@@ -25,8 +25,20 @@ public class TemporaryPaths {
         return pathGenerator(temporaryFolder, "", "");
     }
 
+    public static TempPathGenerator pathGenerator(Path path, String prefix, String suffix) {
+        return new TempPathGenerator(path, "", "");
+    }
+
+    public static TempPathGenerator pathGenerator(Path path) {
+        return pathGenerator(path, "", "");
+    }
+
     public static PatternPathFinder pathFinder(TemporaryFolder temporaryFolder) {
         return new PatternPathFinder(temporaryFolder.getRoot().toPath().getFileSystem());
+    }
+
+    public static PatternPathFinder pathFinder(Path path) {
+        return new PatternPathFinder(path.getFileSystem());
     }
 
     public static Matcher<Path> pathNotExists() {

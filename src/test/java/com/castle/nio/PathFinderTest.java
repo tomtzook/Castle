@@ -1,10 +1,11 @@
 package com.castle.nio;
 
+import com.castle.nio.temp.TempPathGenerator;
 import com.castle.testutil.io.RandomPathGenerator;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import com.castle.testutil.io.TemporaryPaths;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -13,30 +14,35 @@ import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.IntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class PathFinderTest {
 
-    @Rule
-    public TemporaryFolder mTemporaryFolder = new TemporaryFolder();
-    private RandomPathGenerator mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
+    @TempDir
+    public Path mTempDirRoot;
 
-    @Rule
-    public TemporaryFolder mTemporaryFolder2 = new TemporaryFolder();
-    private RandomPathGenerator mRandomPathGenerator2 = new RandomPathGenerator(mTemporaryFolder2);
+    private Path mTemporaryFolder;
+    private RandomPathGenerator mRandomPathGenerator;
+
+    private Path mTemporaryFolder2;
+    private RandomPathGenerator mRandomPathGenerator2;
 
     private FileSystem mFileSystem;
     private Path mRoot;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        mFileSystem = mTemporaryFolder.getRoot().toPath().getFileSystem();
-        mRoot = mTemporaryFolder.getRoot().toPath();
+        TempPathGenerator pathGenerator = TemporaryPaths.pathGenerator(mTempDirRoot);
+        mTemporaryFolder = pathGenerator.generateDirectory().originalPath();
+        mTemporaryFolder2 = pathGenerator.generateDirectory().originalPath();
+
+        mRandomPathGenerator = new RandomPathGenerator(mTemporaryFolder);
+        mRandomPathGenerator2 = new RandomPathGenerator(mTemporaryFolder2);
+
+        mFileSystem = mTemporaryFolder.getFileSystem();
+        mRoot = mTemporaryFolder;
     }
 
     @Test
@@ -107,7 +113,7 @@ public class PathFinderTest {
 
         Collection<Path> foundPaths = pathFinder.findAll(
                 PathMatching.pathMatcher(pathMatcher),
-                Arrays.asList(mTemporaryFolder.getRoot().toPath(), mTemporaryFolder2.getRoot().toPath()));
+                Arrays.asList(mTemporaryFolder, mTemporaryFolder2));
 
         assertThat(foundPaths, containsInAnyOrder(paths.toArray()));
     }
