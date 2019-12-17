@@ -22,7 +22,7 @@ public class Closer implements AutoCloseable {
                 return wasExceptionThrown;
             }
         },
-        ON_SUCESS {
+        ON_SUCCESS {
             @Override
             boolean shouldClose(boolean wasExceptionThrown) {
                 return !wasExceptionThrown;
