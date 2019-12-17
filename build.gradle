@@ -4,60 +4,71 @@ plugins {
     id 'signing'
 }
 
-apply from: rootProject.file('extras.gradle')
+allprojects {
+    apply from: rootProject.file('extras.gradle')
 
-group GROUP
-version VERSION
+    group GROUP
+    version VERSION
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.4.2'
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.2.0'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.23.0'
-    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
-}
-
-test {
-    useJUnitPlatform()
-
-    testLogging {
-        events "failed"
-        exceptionFormat "full"
-        showStackTraces true
+    repositories {
+        mavenCentral()
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveBaseName.set(project.name)
+subprojects {
+    buildDir = rootProject.file("build/${project.name}")
+}
+
+subprojects.each { subproject -> evaluationDependsOn(subproject.path) }
+
+task castleSources(type: Jar, dependsOn: subprojects.classes) {
+    archiveBaseName.set('castle')
+    destinationDirectory.set(rootProject.buildDir)
     archiveClassifier.set('sources')
 
-    from sourceSets.main.allSource
+    from files(subprojects.collect {
+        it.sourceSets.main.allSource
+    })
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveBaseName.set(project.name)
+task castleJavadoc(type: Jar, dependsOn: subprojects.javadoc) {
+    archiveBaseName.set('castle')
+    destinationDirectory.set(rootProject.buildDir)
     archiveClassifier.set('javadoc')
 
-    from javadoc.destinationDir
+    from files(subprojects.collect {
+        it.javadoc.destinationDir
+    })
 }
 
-task castleAll(type: Jar, dependsOn: assemble) {
-    dependsOn sourcesJar
-    dependsOn javadocJar
+task castle(type: Jar, dependsOn: subprojects.assemble) {
+    dependsOn castleSources
+    dependsOn castleJavadoc
+
+    archiveBaseName.set('castle')
+    destinationDirectory.set(rootProject.buildDir)
+
+    from files(subprojects.collect {
+        it.sourceSets.main.output
+    })
+}
+
+task castleAll(type: Jar, dependsOn: castle) {
+    dependsOn castleSources
+    dependsOn castleJavadoc
 
     archiveFileName.set('castle-all.jar')
     destinationDirectory.set(rootProject.buildDir)
 
-    from sourceSets.main.output
-    from sourceSets.main.allSource
-    from javadoc.destinationDir
+    from files(subprojects.collect {
+        it.sourceSets.main.output
+    })
+    from files(subprojects.collect {
+        it.sourceSets.main.allSource
+    })
+    from files(subprojects.collect {
+        it.javadoc.destinationDir
+    })
 }
 
 publishing {
@@ -65,10 +76,9 @@ publishing {
         mavenCastle(MavenPublication) {
             artifactId = ARTIFACT_ID
 
-            from components.java
-
-            artifact javadocJar
-            artifact sourcesJar
+            artifact castle
+            artifact castleJavadoc
+            artifact castleSources
 
             pom {
                 name = 'Castle'
@@ -94,6 +104,32 @@ publishing {
                     connection = 'scm:git:git://github.com/tomtzook/Castle.git'
                     developerConnection = 'scm:git:ssh://github.com/tomtzook/Castle.git'
                     url = 'https://github.com/tomtzook/Castle'
+                }
+
+                withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    def allDependencies = []
+
+                    subprojects.each { project ->
+                        allDependencies.addAll(project.configurations.implementation.allDependencies.withType(ExternalDependency))
+                    }
+
+                    def comparator = [
+                            compare: { first, second ->
+                                if (first.group != second.group)
+                                    return first.group.compareTo(second.group)
+                                else
+                                    return first.name.compareTo(second.name)
+                            }
+                    ] as Comparator
+
+                    allDependencies.collect().unique(comparator).each { dep ->
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dep.group)
+                        dependencyNode.appendNode('artifactId', dep.name)
+                        dependencyNode.appendNode('version', dep.version)
+                        dependencyNode.appendNode('scope', 'compile')
+                    }
                 }
             }
         }
