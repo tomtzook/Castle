@@ -1,5 +1,6 @@
 package com.castle.nio.zip;
 
+import com.castle.annotations.Immutable;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
 import com.castle.util.closeables.Closeables;
@@ -9,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+@Immutable
 public class ZipEntryExtractor {
 
     private final TempPathGenerator mPathGenerator;

@@ -1,5 +1,6 @@
 package com.castle.io.streams.data.zip;
 
+import com.castle.annotations.Immutable;
 import com.castle.io.streams.TempPathInputStream;
 import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+@Immutable
 public class OpenZipPathStreamable implements ReadOnlyStreamable {
 
     private final ZipEntryExtractor mEntryExtractor;

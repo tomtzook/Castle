@@ -1,5 +1,6 @@
 package com.castle.code.loader;
 
+import com.castle.annotations.Immutable;
 import com.castle.code.NativeLibrary;
 import com.castle.code.TempNativeLibrary;
 import com.castle.exceptions.CodeLoadException;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+@Immutable
 public class TempNativeLibraryLoader implements NativeLibraryLoader {
 
     private final TempPathGenerator mPathGenerator;

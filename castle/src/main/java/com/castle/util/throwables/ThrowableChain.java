@@ -1,7 +1,10 @@
 package com.castle.util.throwables;
 
+import com.castle.annotations.NotThreadSafe;
+
 import java.util.Optional;
 
+@NotThreadSafe
 public class ThrowableChain {
 
     private Throwable mFirstThrowable;

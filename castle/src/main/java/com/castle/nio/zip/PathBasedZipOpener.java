@@ -1,11 +1,14 @@
 package com.castle.nio.zip;
 
+import com.castle.annotations.NotThreadSafe;
+
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Map;
 
+@NotThreadSafe
 public class PathBasedZipOpener implements ZipOpener {
 
     private final FileSystemProvider mFileSystemProvider;

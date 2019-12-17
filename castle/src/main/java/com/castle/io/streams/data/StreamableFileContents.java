@@ -1,5 +1,7 @@
 package com.castle.io.streams.data;
 
+import com.castle.annotations.Immutable;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
+@Immutable
 public class StreamableFileContents implements Streamable {
 
     private final Path mFilePath;

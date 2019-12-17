@@ -1,5 +1,6 @@
 package com.castle.nio.zip;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.io.streams.data.zip.OpenZipPathStreamable;
 import com.castle.nio.PathMatching;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+@ThreadSafe
 public class OpenZip extends ReferencedCloseable {
 
     private final FileSystem mFileSystem;

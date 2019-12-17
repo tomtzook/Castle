@@ -1,5 +1,6 @@
 package com.castle.nio.zip;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.nio.Providers;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+@ThreadSafe
 public class Zip {
 
     private final ZipOpener mZipOpener;

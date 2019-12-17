@@ -1,5 +1,7 @@
 package com.castle.nio;
 
+import com.castle.annotations.Stateless;
+
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -7,6 +9,7 @@ import java.util.function.BiPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
+@Stateless
 public class PathMatching {
 
     private PathMatching() {}

@@ -1,11 +1,13 @@
 package com.castle.util.closeables;
 
+import com.castle.annotations.Stateless;
 import com.castle.util.throwables.ThrowableHandler;
 import com.castle.util.throwables.Throwables;
 
 import java.util.Collection;
 import java.util.function.Consumer;
 
+@Stateless
 public class Closeables {
 
     private Closeables() {}

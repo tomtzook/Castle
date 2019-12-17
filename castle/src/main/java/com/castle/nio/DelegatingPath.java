@@ -1,5 +1,7 @@
 package com.castle.nio;
 
+import com.castle.annotations.Immutable;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -11,6 +13,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Iterator;
 
+@Immutable
 public class DelegatingPath implements Path {
 
     private final Path mPath;

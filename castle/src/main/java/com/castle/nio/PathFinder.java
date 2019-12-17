@@ -1,5 +1,6 @@
 package com.castle.nio;
 
+import com.castle.annotations.Immutable;
 import com.castle.nio.exceptions.PathMatchingException;
 import com.castle.util.closeables.Closeables;
 
@@ -18,6 +19,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Immutable
 public class PathFinder {
 
     private static final int MAX_DEPTH = 10;

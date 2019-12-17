@@ -1,10 +1,12 @@
 package com.castle.nio.zip;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.util.closeables.LockBasedReferenceCounter;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 
+@ThreadSafe
 public class ZipReferenceCounter extends LockBasedReferenceCounter {
 
     private final AtomicInteger mReferencesCount;

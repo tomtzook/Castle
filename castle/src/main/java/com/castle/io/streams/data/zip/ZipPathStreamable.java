@@ -1,5 +1,6 @@
 package com.castle.io.streams.data.zip;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.io.streams.TempPathInputStream;
 import com.castle.io.streams.data.ReadOnlyStreamable;
 import com.castle.nio.temp.TempPath;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
+@ThreadSafe
 public class ZipPathStreamable implements ReadOnlyStreamable {
 
     private final Zip mZip;

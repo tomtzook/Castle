@@ -1,5 +1,7 @@
 package com.castle.nio;
 
+import com.castle.annotations.Immutable;
+
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
@@ -10,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+@Immutable
 public class PatternPathFinder extends PathFinder {
 
     public PatternPathFinder(FileSystem fileSystem) {

@@ -1,5 +1,8 @@
 package com.castle.util.os;
 
+import com.castle.annotations.Stateless;
+
+@Stateless
 public class System {
 
     private static final String X86_ARCH = "x86";

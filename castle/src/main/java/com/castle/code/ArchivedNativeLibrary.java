@@ -1,5 +1,6 @@
 package com.castle.code;
 
+import com.castle.annotations.Immutable;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.zip.OpenZip;
 import com.castle.nio.zip.Zip;
@@ -8,6 +9,7 @@ import com.castle.util.os.Architecture;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@Immutable
 public class ArchivedNativeLibrary extends TempNativeLibrary {
 
     private final Zip mZip;

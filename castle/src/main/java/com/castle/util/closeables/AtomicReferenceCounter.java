@@ -1,9 +1,12 @@
 package com.castle.util.closeables;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@ThreadSafe
 public class AtomicReferenceCounter implements ReferenceCounter {
 
     private final AtomicInteger mCounter;

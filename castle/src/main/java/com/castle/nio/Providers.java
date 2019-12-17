@@ -1,8 +1,11 @@
 package com.castle.nio;
 
+import com.castle.annotations.Stateless;
+
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
 
+@Stateless
 public class Providers {
 
     private static final String ZIP_SCHEME = "jar";

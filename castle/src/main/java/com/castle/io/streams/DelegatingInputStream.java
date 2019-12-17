@@ -1,8 +1,11 @@
 package com.castle.io.streams;
 
+import com.castle.annotations.NotThreadSafe;
+
 import java.io.IOException;
 import java.io.InputStream;
 
+@NotThreadSafe
 public class DelegatingInputStream extends InputStream {
 
     private final InputStream mOriginal;

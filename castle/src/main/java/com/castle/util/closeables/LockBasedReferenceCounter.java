@@ -1,10 +1,13 @@
 package com.castle.util.closeables;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 
+@ThreadSafe
 public class LockBasedReferenceCounter extends AtomicReferenceCounter {
 
     private final Lock mLock;

@@ -1,5 +1,6 @@
 package com.castle.util.closeables;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.util.function.ThrowingRunnable;
 import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
@@ -7,6 +8,7 @@ import com.castle.util.throwables.Throwables;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+@NotThreadSafe
 public class Closer implements AutoCloseable {
 
     public enum CloseOption {

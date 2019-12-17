@@ -1,8 +1,11 @@
 package com.castle.util.registration;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
+@ThreadSafe
 public class ConcurrentRegistry<T> implements Registry<T> {
 
     private final Collection<T> mRegistered;

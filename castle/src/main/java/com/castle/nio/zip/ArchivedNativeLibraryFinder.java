@@ -1,5 +1,6 @@
 package com.castle.nio.zip;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.code.ArchivedNativeLibrary;
 import com.castle.code.NativeLibrary;
 import com.castle.code.NativeLibraryFinder;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+@ThreadSafe
 public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
 
     private final Zip mZip;

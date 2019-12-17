@@ -1,5 +1,8 @@
 package com.castle.util.throwables;
 
+import com.castle.annotations.Stateless;
+
+@Stateless
 public class Throwables {
 
     private Throwables() {}

@@ -1,5 +1,6 @@
 package com.castle.nio.temp;
 
+import com.castle.annotations.Immutable;
 import com.castle.nio.SystemPaths;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Random;
 
+@Immutable
 public class TempPathGenerator {
 
     public static class Builder {

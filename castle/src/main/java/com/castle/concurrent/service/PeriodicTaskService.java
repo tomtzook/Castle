@@ -1,10 +1,13 @@
 package com.castle.concurrent.service;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.LongSupplier;
 
+@ThreadSafe
 public class PeriodicTaskService extends TerminalService {
 
     private final ScheduledExecutorService mExecutorService;

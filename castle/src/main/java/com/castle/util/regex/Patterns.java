@@ -1,7 +1,10 @@
 package com.castle.util.regex;
 
+import com.castle.annotations.Stateless;
+
 import java.util.regex.Pattern;
 
+@Stateless
 public class Patterns {
 
     private Patterns() {}

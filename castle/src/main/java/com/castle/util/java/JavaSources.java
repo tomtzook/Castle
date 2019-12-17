@@ -1,11 +1,13 @@
 package com.castle.util.java;
 
+import com.castle.annotations.Stateless;
 import com.castle.nio.zip.Zip;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
+@Stateless
 public class JavaSources {
 
     private JavaSources() {}
