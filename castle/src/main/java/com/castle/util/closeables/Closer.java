@@ -6,6 +6,9 @@ import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.Queue;
 
 @NotThreadSafe
@@ -34,10 +37,10 @@ public class Closer implements AutoCloseable {
         abstract boolean shouldClose(boolean wasExceptionThrown);
     }
 
-    private final Queue<AutoCloseable> mCloseables;
+    private final Deque<AutoCloseable> mCloseables;
     private boolean mIsClosed;
 
-    public Closer(Queue<AutoCloseable> closeables) {
+    public Closer(Deque<AutoCloseable> closeables) {
         mCloseables = closeables;
         mIsClosed = false;
     }
@@ -51,7 +54,16 @@ public class Closer implements AutoCloseable {
     }
 
     public <T extends AutoCloseable> Closer add(T closeable) {
-        mCloseables.add(closeable);
+        mCloseables.addFirst(closeable);
+        return this;
+    }
+
+    public <T extends AutoCloseable> Closer addAll(T... closeables) {
+        return addAll(Arrays.asList(closeables));
+    }
+
+    public <T extends AutoCloseable> Closer addAll(Collection<T> closeables) {
+        closeables.forEach(this::add);
         return this;
     }
 
