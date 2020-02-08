@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class ProvidersTest {
 

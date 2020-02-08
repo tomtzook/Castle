@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PatternPathFinderTest {
 

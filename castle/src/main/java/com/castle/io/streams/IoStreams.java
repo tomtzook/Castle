@@ -3,6 +3,7 @@ package com.castle.io.streams;
 import com.castle.util.throwables.ThrowableHandler;
 import com.castle.util.throwables.Throwables;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,5 +36,16 @@ public class IoStreams {
 
     public static BiConsumer<InputStream, OutputStream> silentCopier() {
         return copier(Throwables.silentHandler());
+    }
+
+    public static byte[] readAll(InputStream source) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try {
+            copy(source, buffer);
+        } finally {
+            buffer.close();
+        }
+
+        return buffer.toByteArray();
     }
 }

@@ -16,10 +16,10 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 import static com.castle.testutil.io.TemporaryPaths.doesAPathEndWithString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ZipEntryExtractorTest {
 
@@ -37,17 +37,17 @@ public class ZipEntryExtractorTest {
         final String PATH = "data";
         final byte[] DATA = "somedata".getBytes();
 
-        FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
+        try(FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
                 .addContent(PATH, DATA)
-                .build();
+                .build()) {
+            Path path = zipFs.getPath(PATH);
+            Path extractPath = mTempGenerator.generateFile().originalPath();
 
-        Path path = zipFs.getPath(PATH);
-        Path extractPath = mTempGenerator.generateFile().originalPath();
+            ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
+            zipEntryExtractor.extractInto(path, extractPath);
 
-        ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
-        zipEntryExtractor.extractInto(path, extractPath);
-
-        assertArrayEquals(DATA, Files.readAllBytes(extractPath));
+            assertArrayEquals(DATA, Files.readAllBytes(extractPath));
+        }
     }
 
     @Test
@@ -56,17 +56,17 @@ public class ZipEntryExtractorTest {
         final byte[] DATA = "somedata".getBytes();
 
         Assertions.assertThrows(IOException.class, ()-> {
-            FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
+            try(FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
                     .addContent(PATH, DATA)
-                    .build();
+                    .build()) {
+                Path path = zipFs.getPath(PATH);
+                Path extractPath = mTempGenerator.generateFile();
 
-            Path path = zipFs.getPath(PATH);
-            Path extractPath = mTempGenerator.generateFile();
+                Files.delete(path);
 
-            Files.delete(path);
-
-            ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
-            zipEntryExtractor.extractInto(path, extractPath);
+                ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
+                zipEntryExtractor.extractInto(path, extractPath);
+            }
         });
     }
 
@@ -75,15 +75,15 @@ public class ZipEntryExtractorTest {
         final String PATH = "data";
         final byte[] DATA = "somedata".getBytes();
 
-        FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
+        try(FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
                 .addContent(PATH, DATA)
-                .build();
+                .build()) {
+            Path path = zipFs.getPath(PATH);
 
-        Path path = zipFs.getPath(PATH);
-
-        ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
-        try (TempPath extractPath = zipEntryExtractor.extract(path)) {
-            assertArrayEquals(DATA, Files.readAllBytes(extractPath.originalPath()));
+            ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
+            try (TempPath extractPath = zipEntryExtractor.extract(path)) {
+                assertArrayEquals(DATA, Files.readAllBytes(extractPath.originalPath()));
+            }
         }
     }
 
@@ -93,16 +93,16 @@ public class ZipEntryExtractorTest {
         final byte[] DATA = "somedata".getBytes();
 
         Assertions.assertThrows(IOException.class, ()-> {
-            FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
+            try(FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
                     .addContent(PATH, DATA)
-                    .build();
+                    .build()) {
+                Path path = zipFs.getPath(PATH);
 
-            Path path = zipFs.getPath(PATH);
+                Files.delete(path);
 
-            Files.delete(path);
-
-            ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
-            zipEntryExtractor.extract(path);
+                ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
+                zipEntryExtractor.extract(path);
+            }
         });
     }
 
@@ -112,20 +112,20 @@ public class ZipEntryExtractorTest {
         final byte[] DATA = "somedata".getBytes();
         final String ENDS_WITH = UUID.randomUUID().toString();
 
-        FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
+        try(FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
                 .addContent(PATH, DATA)
-                .build();
+                .build()) {
+            Path path = zipFs.getPath(PATH);
 
-        Path path = zipFs.getPath(PATH);
+            Files.delete(path);
 
-        Files.delete(path);
-
-        ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
-        try {
-            zipEntryExtractor.extract(path);
-            fail("exception expected");
-        } catch (IOException e) {
-            assertThat(ENDS_WITH, not(doesAPathEndWithString(mTemporaryFolder)));
+            ZipEntryExtractor zipEntryExtractor = new ZipEntryExtractor(mTempGenerator);
+            try {
+                zipEntryExtractor.extract(path);
+                fail("exception expected");
+            } catch (IOException e) {
+                assertThat(ENDS_WITH, not(doesAPathEndWithString(mTemporaryFolder)));
+            }
         }
     }
 }
