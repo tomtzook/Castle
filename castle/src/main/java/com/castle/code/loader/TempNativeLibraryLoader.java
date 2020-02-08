@@ -7,6 +7,8 @@ import com.castle.exceptions.CodeLoadException;
 import com.castle.io.streams.IoStreams;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
+import com.castle.util.os.Architecture;
+import com.castle.util.os.System;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,13 +19,25 @@ import java.nio.file.Files;
 public class TempNativeLibraryLoader implements NativeLibraryLoader {
 
     private final TempPathGenerator mPathGenerator;
+    private final Architecture mCurrentArchitecture;
 
-    public TempNativeLibraryLoader(TempPathGenerator pathGenerator) {
+    public TempNativeLibraryLoader(TempPathGenerator pathGenerator, Architecture currentArchitecture) {
         mPathGenerator = pathGenerator;
+        mCurrentArchitecture = currentArchitecture;
+    }
+
+    public TempNativeLibraryLoader() {
+        this(new TempPathGenerator(), System.architecture());
     }
 
     @Override
     public void load(NativeLibrary nativeLibrary) throws CodeLoadException {
+        if (!mCurrentArchitecture.equals(nativeLibrary.getTargetArchitecture())) {
+            throw new IllegalArgumentException(String.format("library (%s) doesn't support current platform (%s)",
+                    nativeLibrary.getTargetArchitecture(),
+                    mCurrentArchitecture));
+        }
+
         if (nativeLibrary instanceof TempNativeLibrary) {
             loadFromTemp((TempNativeLibrary) nativeLibrary);
         } else {
@@ -33,7 +47,7 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
 
     private void loadFromTemp(TempNativeLibrary nativeLibrary) throws CodeLoadException {
         try (TempPath tempPath = nativeLibrary.makeTempFile()) {
-            System.load(tempPath.toString());
+            java.lang.System.load(tempPath.toString());
         } catch (IOException e) {
             throw new CodeLoadException(e);
         }
@@ -46,7 +60,7 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
                 IoStreams.copy(codeStream, tempOutputStream);
             }
 
-            System.load(tempPath.toAbsolutePath().toString());
+            java.lang.System.load(tempPath.toAbsolutePath().toString());
         } catch (IOException e) {
             throw new CodeLoadException(e);
         }
