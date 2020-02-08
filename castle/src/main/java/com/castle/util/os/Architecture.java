@@ -2,21 +2,30 @@ package com.castle.util.os;
 
 import com.castle.annotations.Immutable;
 
+import java.util.Objects;
+
 @Immutable
 public class Architecture {
 
-    private final String mName;
+    private final OperatingSystem mOperatingSystem;
+    private final String mArchName;
 
-    public Architecture(String name) {
-        mName = name;
+    public Architecture(OperatingSystem operatingSystem, String archName) {
+        mOperatingSystem = operatingSystem;
+        mArchName = archName;
     }
 
-    public String getName() {
-        return mName;
+    public OperatingSystem getOperatingSystem() {
+        return mOperatingSystem;
+    }
+
+    public String getArchName() {
+        return mArchName;
     }
 
     public boolean equals(Architecture other) {
-        return mName.equals(other.mName);
+        return mOperatingSystem == other.mOperatingSystem &&
+                mArchName.equals(other.mArchName);
     }
 
     @Override
@@ -26,6 +35,6 @@ public class Architecture {
 
     @Override
     public int hashCode() {
-        return mName.hashCode();
+        return Objects.hash(mOperatingSystem, mArchName);
     }
 }

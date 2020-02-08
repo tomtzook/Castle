@@ -30,6 +30,6 @@ public class System {
     }
 
     public static Architecture architecture() {
-        return new Architecture(java.lang.System.getProperty("os.arch"));
+        return new Architecture(operatingSystem(), java.lang.System.getProperty("os.arch"));
     }
 }
