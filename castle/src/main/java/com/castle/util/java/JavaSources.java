@@ -24,7 +24,7 @@ public class JavaSources {
      * @throws Error if unable to find the <em>JAR</em>. Might occur if the
      *      class is not contained in a <em>JAR</em>.
      */
-    public static Zip currentJar(Class<?> cls) {
+    public static Zip containingJar(Class<?> cls) {
         try {
             Path path = new File(cls.getProtectionDomain().getCodeSource().getLocation()
                     .toURI()).toPath();
