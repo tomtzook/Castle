@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class TempPathTest {
 

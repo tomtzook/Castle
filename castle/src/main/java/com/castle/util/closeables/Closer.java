@@ -9,7 +9,6 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.Queue;
 
 @NotThreadSafe
 public class Closer implements AutoCloseable {

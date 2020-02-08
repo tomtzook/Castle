@@ -17,7 +17,9 @@ import java.util.UUID;
 
 import static com.castle.testutil.io.TemporaryPaths.doesAPathEndWithString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class ZipEntryExtractorTest {
 
