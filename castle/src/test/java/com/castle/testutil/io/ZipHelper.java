@@ -31,4 +31,10 @@ public class ZipHelper {
     public static void putEntry(Path zipPath, String inZipPath, byte[] content) throws IOException {
         putEntry(zipPath, inZipPath, new ByteArrayInputStream(content));
     }
+
+    public static void createZipFile(Path path) throws IOException {
+        try (OutputStream outputStream = Files.newOutputStream(path);
+                ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+        }
+    }
 }

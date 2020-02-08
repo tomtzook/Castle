@@ -15,12 +15,14 @@ public class ZipBuilder {
     private final FileSystemProvider mFileSystemProvider;
     private final Path mZipPath;
 
-    public ZipBuilder(FileSystemProvider fileSystemProvider, Path zipPath) {
+    public ZipBuilder(FileSystemProvider fileSystemProvider, Path zipPath) throws IOException {
         mFileSystemProvider = fileSystemProvider;
         mZipPath = zipPath;
+
+        ZipHelper.createZipFile(zipPath);
     }
 
-    public ZipBuilder(Path zipPath) {
+    public ZipBuilder(Path zipPath) throws IOException {
         this(Providers.zipProvider(), zipPath);
     }
 
