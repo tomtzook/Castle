@@ -57,7 +57,8 @@ public class Closer implements AutoCloseable {
         return this;
     }
 
-    public <T extends AutoCloseable> Closer addAll(T... closeables) {
+    @SafeVarargs
+    public final <T extends AutoCloseable> Closer addAll(T... closeables) {
         return addAll(Arrays.asList(closeables));
     }
 
