@@ -25,14 +25,14 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
     @Override
     public void load(NativeLibrary nativeLibrary) throws CodeLoadException {
         if (nativeLibrary instanceof TempNativeLibrary) {
-            loadFromTemp(nativeLibrary);
+            loadFromTemp((TempNativeLibrary) nativeLibrary);
         } else {
             generateTempAndLoad(nativeLibrary);
         }
     }
 
-    private void loadFromTemp(NativeLibrary nativeLibrary) throws CodeLoadException {
-        try (TempPath tempPath = ((TempNativeLibrary) nativeLibrary).getTempPath()) {
+    private void loadFromTemp(TempNativeLibrary nativeLibrary) throws CodeLoadException {
+        try (TempPath tempPath = nativeLibrary.makeTempFile()) {
             System.load(tempPath.toString());
         } catch (IOException e) {
             throw new CodeLoadException(e);
@@ -40,10 +40,13 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
     }
 
     private void generateTempAndLoad(NativeLibrary nativeLibrary) throws CodeLoadException {
-        try (TempPath tempPath = mPathGenerator.generateFile();
-             OutputStream tempOutputStream = Files.newOutputStream(tempPath);
-             InputStream codeStream = nativeLibrary.openRead()) {
-            Streams.copy(codeStream, tempOutputStream);
+        try (TempPath tempPath = mPathGenerator.generateFile()) {
+            try (OutputStream tempOutputStream = Files.newOutputStream(tempPath);
+                 InputStream codeStream = nativeLibrary.openRead()) {
+                Streams.copy(codeStream, tempOutputStream);
+            }
+
+            System.load(tempPath.toAbsolutePath().toString());
         } catch (IOException e) {
             throw new CodeLoadException(e);
         }

@@ -22,7 +22,7 @@ public class ArchivedNativeLibrary extends TempNativeLibrary {
     }
 
     @Override
-    public TempPath getTempPath() throws IOException {
+    public TempPath makeTempFile() throws IOException {
         try (OpenZip zip = mZip.open()) {
             return zip.extract(zip.getPath(mInZipPath));
         }

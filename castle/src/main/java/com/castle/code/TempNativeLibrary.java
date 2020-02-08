@@ -15,8 +15,8 @@ public abstract class TempNativeLibrary extends NativeLibraryBase {
 
     @Override
     public InputStream openRead() throws IOException {
-        return new TempPathInputStream(getTempPath());
+        return new TempPathInputStream(makeTempFile());
     }
 
-    public abstract TempPath getTempPath() throws IOException;
+    public abstract TempPath makeTempFile() throws IOException;
 }
