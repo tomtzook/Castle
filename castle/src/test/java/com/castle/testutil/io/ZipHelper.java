@@ -1,6 +1,6 @@
 package com.castle.testutil.io;
 
-import com.castle.io.streams.Streams;
+import com.castle.io.streams.IoStreams;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class ZipHelper {
             ZipEntry entry = new ZipEntry(inZipPath);
             zipOutputStream.putNextEntry(entry);
             try {
-                Streams.copy(content, zipOutputStream);
+                IoStreams.copy(content, zipOutputStream);
             } finally {
                 zipOutputStream.closeEntry();
             }

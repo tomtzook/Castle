@@ -4,7 +4,7 @@ import com.castle.annotations.Immutable;
 import com.castle.code.NativeLibrary;
 import com.castle.code.TempNativeLibrary;
 import com.castle.exceptions.CodeLoadException;
-import com.castle.io.streams.Streams;
+import com.castle.io.streams.IoStreams;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
 
@@ -43,7 +43,7 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
         try (TempPath tempPath = mPathGenerator.generateFile()) {
             try (OutputStream tempOutputStream = Files.newOutputStream(tempPath);
                  InputStream codeStream = nativeLibrary.openRead()) {
-                Streams.copy(codeStream, tempOutputStream);
+                IoStreams.copy(codeStream, tempOutputStream);
             }
 
             System.load(tempPath.toAbsolutePath().toString());

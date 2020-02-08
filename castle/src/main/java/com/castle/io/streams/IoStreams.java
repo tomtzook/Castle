@@ -8,11 +8,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.BiConsumer;
 
-public class Streams {
+public class IoStreams {
 
     private static final int BUFFER_SIZE = 1024;
 
-    private Streams() {}
+    private IoStreams() {}
 
     public static void copy(InputStream source, OutputStream destination) throws IOException {
         byte[] buffer = new byte[BUFFER_SIZE];
