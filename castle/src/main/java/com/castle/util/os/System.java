@@ -30,8 +30,6 @@ public class System {
     }
 
     public static Architecture architecture() {
-        return new Architecture(String.format("%s%s",
-                operatingSystem().name().toLowerCase(),
-                bitness().displayName().toLowerCase()));
+        return new Architecture(java.lang.System.getProperty("os.arch"));
     }
 }
