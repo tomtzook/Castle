@@ -1,34 +1,36 @@
 package com.castle.concurrent.service;
 
 import com.castle.annotations.ThreadSafe;
+import com.castle.time.Time;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 @ThreadSafe
-public class PeriodicTaskService extends TerminalService {
+public class PeriodicTaskService extends TerminalServiceBase {
 
     private final ScheduledExecutorService mExecutorService;
     private final Runnable mTask;
-    private final LongSupplier mPeriodMsSupplier;
+    private final Supplier<Time> mPeriodSupplier;
 
     private Future<?> mTaskFuture;
 
-    public PeriodicTaskService(ScheduledExecutorService executorService, Runnable task, LongSupplier periodMsSupplier) {
+    public PeriodicTaskService(ScheduledExecutorService executorService, Runnable task, Supplier<Time> periodSupplier) {
         mExecutorService = executorService;
         mTask = task;
-        mPeriodMsSupplier = periodMsSupplier;
+        mPeriodSupplier = periodSupplier;
 
         mTaskFuture = null;
     }
 
     @Override
     protected void startRunning() {
-        long period = mPeriodMsSupplier.getAsLong();
+        Time period = mPeriodSupplier.get();
         mTaskFuture = mExecutorService.scheduleAtFixedRate(mTask,
-                period, period, TimeUnit.MILLISECONDS);
+                period.value(), period.value(), period.unit());
 
     }
 
@@ -38,10 +40,5 @@ public class PeriodicTaskService extends TerminalService {
             mTaskFuture.cancel(true);
             mTaskFuture = null;
         }
-    }
-
-    @Override
-    public boolean isRunning() {
-        return mTaskFuture != null && !mTaskFuture.isDone();
     }
 }

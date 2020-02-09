@@ -1,23 +1,37 @@
 package com.castle.concurrent.service;
 
+import com.castle.annotations.ThreadSafe;
+
+@ThreadSafe
 public abstract class ServiceBase implements Service {
+
+    private final ServiceControl mServiceControl;
+
+    protected ServiceBase(ServiceControl serviceControl) {
+        mServiceControl = serviceControl;
+    }
+
+    protected ServiceBase() {
+        this(new ServiceControl());
+    }
 
     @Override
     public synchronized void start() {
-        if (isRunning()) {
-            throw new IllegalStateException("already running");
-        }
-
+        mServiceControl.ensureCanStart();
         startRunning();
+        mServiceControl.markStarted();
     }
 
     @Override
     public synchronized void stop() {
-        if (!isRunning()) {
-            throw new IllegalStateException("not running");
-        }
-
+        mServiceControl.ensureCanStop();
         stopRunning();
+        mServiceControl.markStopped();
+    }
+
+    @Override
+    public final boolean isRunning() {
+        return mServiceControl.isRunning();
     }
 
     protected abstract void startRunning();
