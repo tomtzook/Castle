@@ -2,6 +2,8 @@ package com.castle.util.throwables;
 
 import com.castle.annotations.Stateless;
 
+import java.util.function.Function;
+
 @Stateless
 public class Throwables {
 
@@ -27,5 +29,11 @@ public class Throwables {
         if (throwable != null) {
             throw new RuntimeException(throwable);
         }
+    }
+
+    public static <E extends Throwable> void throwAsType(Throwable throwable, Class<E> type, Function<Throwable, E> converter) throws E {
+        throwIfType(throwable, type);
+
+        throw converter.apply(throwable);
     }
 }

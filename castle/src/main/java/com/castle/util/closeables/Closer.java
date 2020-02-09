@@ -52,13 +52,12 @@ public class Closer implements AutoCloseable {
         return new Closer();
     }
 
-    public <T extends AutoCloseable> Closer add(T closeable) {
+    public Closer add(AutoCloseable closeable) {
         mCloseables.addFirst(closeable);
         return this;
     }
 
-    @SafeVarargs
-    public final <T extends AutoCloseable> Closer addAll(T... closeables) {
+    public Closer addAll(AutoCloseable... closeables) {
         return addAll(Arrays.asList(closeables));
     }
 
