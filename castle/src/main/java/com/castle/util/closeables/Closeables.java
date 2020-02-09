@@ -12,7 +12,7 @@ public class Closeables {
 
     private Closeables() {}
 
-    public static <T extends AutoCloseable> void close(T closeable, ThrowableHandler handler) {
+    public static void close(AutoCloseable closeable, ThrowableHandler handler) {
         try {
             closeable.close();
         } catch (Throwable t) {
@@ -20,7 +20,7 @@ public class Closeables {
         }
     }
 
-    public static <T extends AutoCloseable> void silentClose(T closeable) {
+    public static void silentClose(AutoCloseable closeable) {
         close(closeable, Throwables.silentHandler());
     }
 
@@ -32,11 +32,11 @@ public class Closeables {
         close(closeables, Throwables.silentHandler());
     }
 
-    public static <T extends AutoCloseable> Consumer<T> closer(ThrowableHandler handler) {
+    public static Consumer<AutoCloseable> closer(ThrowableHandler handler) {
         return (closeable) -> close(closeable, handler);
     }
 
-    public static <T extends AutoCloseable> Consumer<T> silentCloser() {
+    public static Consumer<AutoCloseable> silentCloser() {
         return closer(Throwables.silentHandler());
     }
 }
