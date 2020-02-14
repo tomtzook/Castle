@@ -10,8 +10,12 @@ public class ThrowableChain {
 
     private Throwable mFirstThrowable;
 
+    ThrowableChain(Throwable top) {
+        mFirstThrowable = top;
+    }
+
     public ThrowableChain() {
-        mFirstThrowable = null;
+        this(null);
     }
 
     public void chain(Throwable throwable) {
