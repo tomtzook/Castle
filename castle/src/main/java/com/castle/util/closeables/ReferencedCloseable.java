@@ -1,9 +1,12 @@
 package com.castle.util.closeables;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 
+@ThreadSafe
 public abstract class ReferencedCloseable implements Closeable {
 
     private final ReferenceCounter mReferenceCounter;

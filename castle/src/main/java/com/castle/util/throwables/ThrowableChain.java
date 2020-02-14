@@ -3,6 +3,7 @@ package com.castle.util.throwables;
 import com.castle.annotations.NotThreadSafe;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 @NotThreadSafe
 public class ThrowableChain {
@@ -37,5 +38,9 @@ public class ThrowableChain {
 
     public void throwAsRuntime() {
         Throwables.throwAsRuntime(mFirstThrowable);
+    }
+
+    public <E extends Throwable> void throwAsType(Class<E> type, Function<Throwable, E> converter) throws E {
+        Throwables.throwAsType(mFirstThrowable, type, converter);
     }
 }
