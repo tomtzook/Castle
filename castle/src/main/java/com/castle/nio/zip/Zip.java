@@ -2,6 +2,8 @@ package com.castle.nio.zip;
 
 import com.castle.annotations.ThreadSafe;
 import com.castle.nio.Providers;
+import com.castle.util.closeables.AtomicReferenceCounter;
+import com.castle.util.closeables.ReferenceCounter;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,14 +21,14 @@ public class Zip {
 
     private final AtomicReference<OpenZip> mOpenZipReference;
     private final Lock mReferenceLock;
-    private final ZipReferenceCounter mZipReferenceCounter;
+    private final ReferenceCounter mZipReferenceCounter;
 
     public Zip(ZipOpener zipOpener) {
         mZipOpener = zipOpener;
 
         mOpenZipReference = new AtomicReference<>();
         mReferenceLock = new ReentrantLock();
-        mZipReferenceCounter = new ZipReferenceCounter(mReferenceLock);
+        mZipReferenceCounter = new AtomicReferenceCounter();
     }
 
     public static Zip fromPath(FileSystemProvider zipFileSystemProvider, Map<String, ?> fileSystemEnv, Path zipPath) {
@@ -42,16 +44,16 @@ public class Zip {
         try {
             OpenZip openZip = mOpenZipReference.get();
             if (openZip != null && openZip.isOpen()) {
-                mZipReferenceCounter.incrementReferencesCount();
+                mZipReferenceCounter.increment();
                 return openZip;
             }
 
             mOpenZipReference.set(null);
 
-            openZip = mZipOpener.open(mZipReferenceCounter);
+            openZip = mZipOpener.open(mZipReferenceCounter, mReferenceLock);
             mOpenZipReference.set(openZip);
 
-            mZipReferenceCounter.incrementReferencesCount();
+            mZipReferenceCounter.increment();
             return openZip;
         } finally {
             mReferenceLock.unlock();

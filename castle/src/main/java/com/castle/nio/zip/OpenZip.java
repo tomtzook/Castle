@@ -7,6 +7,7 @@ import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
+import com.castle.util.closeables.ReferenceCounter;
 import com.castle.util.closeables.ReferencedCloseable;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.concurrent.locks.Lock;
 import java.util.regex.Pattern;
 
 @ThreadSafe
@@ -23,19 +25,19 @@ public class OpenZip extends ReferencedCloseable {
     private final ZipEntryExtractor mEntryExtractor;
     private final PatternPathFinder mPathFinder;
 
-    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, ZipReferenceCounter zipReferenceCounter) {
-        super(zipReferenceCounter);
+    public OpenZip(FileSystem zipFileSystem, ZipEntryExtractor entryExtractor, PatternPathFinder pathFinder, ReferenceCounter referenceCounter, Lock closeLock) {
+        super(referenceCounter, closeLock);
         mFileSystem = zipFileSystem;
         mEntryExtractor = entryExtractor;
         mPathFinder = pathFinder;
     }
 
-    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, ZipReferenceCounter zipReferenceCounter) {
-        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), zipReferenceCounter);
+    public OpenZip(FileSystem zipFileSystem, TempPathGenerator pathGenerator, ReferenceCounter referenceCounter, Lock closeLock) {
+        this(zipFileSystem, new ZipEntryExtractor(pathGenerator), new PatternPathFinder(zipFileSystem), referenceCounter, closeLock);
     }
 
-    public OpenZip(FileSystem zipFileSystem, ZipReferenceCounter zipReferenceCounter) {
-        this(zipFileSystem, new TempPathGenerator("zip", "generated"), zipReferenceCounter);
+    public OpenZip(FileSystem zipFileSystem, ReferenceCounter referenceCounter, Lock closeLock) {
+        this(zipFileSystem, new TempPathGenerator("zip", "generated"), referenceCounter, closeLock);
     }
 
     public boolean isOpen() {

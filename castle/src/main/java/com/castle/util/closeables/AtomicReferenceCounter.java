@@ -2,7 +2,6 @@ package com.castle.util.closeables;
 
 import com.castle.annotations.ThreadSafe;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,10 +14,22 @@ public class AtomicReferenceCounter implements ReferenceCounter {
         mCounter = counter;
     }
 
+    public AtomicReferenceCounter() {
+        this(new AtomicInteger(0));
+    }
+
     @Override
-    public void decrement(Closeable closeable) throws IOException {
-        if (mCounter.decrementAndGet() == 0) {
-            closeable.close();
+    public void increment() {
+        mCounter.incrementAndGet();
+    }
+
+    @Override
+    public boolean decrement() {
+        int count = mCounter.decrementAndGet();
+        if (count < 0) {
+            throw new IllegalStateException("no more references");
         }
+
+        return count == 0;
     }
 }
