@@ -1,9 +1,11 @@
 package com.castle.util.throwables;
 
 import com.castle.annotations.NotThreadSafe;
+import com.castle.exceptions.FindException;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @NotThreadSafe
 public class ThrowableChain {
@@ -46,5 +48,17 @@ public class ThrowableChain {
 
     public <E extends Throwable> void throwAsType(Class<E> type, Function<Throwable, E> converter) throws E {
         Throwables.throwAsType(mFirstThrowable, type, converter);
+    }
+
+    public RuntimeException toRuntime(Supplier<? extends RuntimeException> creator) {
+        if (mFirstThrowable != null) {
+            if (mFirstThrowable instanceof RuntimeException) {
+                return (RuntimeException) mFirstThrowable;
+            }
+
+            return new RuntimeException(mFirstThrowable);
+        }
+
+        return creator.get();
     }
 }

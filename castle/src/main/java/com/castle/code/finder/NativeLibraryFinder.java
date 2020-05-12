@@ -1,5 +1,6 @@
-package com.castle.code;
+package com.castle.code.finder;
 
+import com.castle.code.NativeLibrary;
 import com.castle.exceptions.FindException;
 
 public interface NativeLibraryFinder {

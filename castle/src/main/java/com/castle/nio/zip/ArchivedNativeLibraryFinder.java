@@ -1,9 +1,9 @@
 package com.castle.nio.zip;
 
 import com.castle.annotations.ThreadSafe;
-import com.castle.code.ArchivedNativeLibrary;
+import com.castle.code.finder.ArchivedNativeLibrary;
 import com.castle.code.NativeLibrary;
-import com.castle.code.NativeLibraryFinder;
+import com.castle.code.finder.NativeLibraryFinder;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
 import com.castle.util.os.Architecture;
