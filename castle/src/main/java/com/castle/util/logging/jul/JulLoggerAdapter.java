@@ -7,6 +7,7 @@ import org.slf4j.helpers.MarkerIgnoringBase;
 import org.slf4j.helpers.MessageFormatter;
 import org.slf4j.spi.LocationAwareLogger;
 
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -250,7 +251,7 @@ public class JulLoggerAdapter extends MarkerIgnoringBase implements LocationAwar
 
     private LogRecord createLogRecord(String callerFQCN, Level level, String msg, Throwable t) {
         LogRecord record = new LogRecord(level, msg);
-        record.setMillis(mClock.currentTime().valueAsMillis());
+        record.setMillis(mClock.currentTime().toUnit(TimeUnit.MILLISECONDS).value());
         record.setLoggerName(getName());
         record.setThrown(t);
 

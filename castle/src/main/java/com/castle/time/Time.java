@@ -63,8 +63,12 @@ public class Time implements Comparable<Time> {
         return new Time(valueInWantedUnits, newTimeUnit);
     }
 
-    public long valueAsMillis() {
-        return toUnit(TimeUnit.MILLISECONDS).value();
+    public double valueAsMillis() {
+        return toUnit(TimeUnit.NANOSECONDS).value() * 1e-6;
+    }
+
+    public double valueAsSeconds() {
+        return toUnit(TimeUnit.NANOSECONDS).value() * 1e-9;
     }
 
     public boolean isValid() {

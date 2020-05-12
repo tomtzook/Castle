@@ -2,6 +2,7 @@ package com.castle.util.logging.jul;
 
 import com.castle.time.Time;
 
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 
 public class LogFlushingTask implements Runnable {
@@ -20,7 +21,9 @@ public class LogFlushingTask implements Runnable {
             try {
                 mHandler.flush();
 
-                Thread.sleep(DEFAULT_FLUSHING_PERIOD.valueAsMillis());
+                Thread.sleep(DEFAULT_FLUSHING_PERIOD
+                        .toUnit(TimeUnit.MILLISECONDS)
+                        .value());
             } catch (InterruptedException e) {
                 break;
             }
