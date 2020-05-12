@@ -1,5 +1,6 @@
 package com.castle.code;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.code.finder.MultiNativeLibraryFinder;
 import com.castle.code.finder.NativeLibraryFinder;
 import com.castle.code.loader.NativeLibraryLoader;
@@ -47,6 +48,7 @@ public class Natives {
         return new TempNativeLibraryLoader();
     }
 
+    @NotThreadSafe
     public static class Loader {
 
         private final NativeLibraryLoader mLoader;
