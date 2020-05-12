@@ -6,7 +6,19 @@ public class SystemNanoClock implements Clock {
 
     private final long mStartTimeNanos;
 
+    /**
+     * @deprecated Use {@link Clocks#systemNanosClock()} instead.
+     */
+    @Deprecated
     public SystemNanoClock() {
+        this(false);
+    }
+
+    /**
+     * So that internal creations of this won't report deprecation
+     * @param deprecationOverride ignored
+     */
+    SystemNanoClock(boolean deprecationOverride) {
         mStartTimeNanos = System.nanoTime();
     }
 

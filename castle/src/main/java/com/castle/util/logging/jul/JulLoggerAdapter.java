@@ -1,5 +1,6 @@
 package com.castle.util.logging.jul;
 
+import com.castle.time.Clock;
 import org.slf4j.Marker;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MarkerIgnoringBase;
@@ -8,6 +9,7 @@ import org.slf4j.spi.LocationAwareLogger;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 @SuppressWarnings("ClassWithTooManyMethods")
 public class JulLoggerAdapter extends MarkerIgnoringBase implements LocationAwareLogger {
@@ -16,9 +18,11 @@ public class JulLoggerAdapter extends MarkerIgnoringBase implements LocationAwar
     private static final String SELF = JulLoggerAdapter.class.getName();
 
     private final java.util.logging.Logger mLogger;
+    private final Clock mClock;
 
-    public JulLoggerAdapter(java.util.logging.Logger logger) {
+    public JulLoggerAdapter(Logger logger, Clock clock) {
         mLogger = logger;
+        mClock = clock;
     }
 
     @Override
@@ -246,6 +250,7 @@ public class JulLoggerAdapter extends MarkerIgnoringBase implements LocationAwar
 
     private LogRecord createLogRecord(String callerFQCN, Level level, String msg, Throwable t) {
         LogRecord record = new LogRecord(level, msg);
+        record.setMillis(mClock.currentTime().valueAsMillis());
         record.setLoggerName(getName());
         record.setThrown(t);
 

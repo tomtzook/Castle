@@ -1,4 +1,7 @@
 package com.castle.util.logging;
+
+import com.castle.time.Clock;
+import com.castle.time.Clocks;
 import com.castle.util.logging.jul.DelegatingHandler;
 import com.castle.util.logging.jul.FlusherThreadFactory;
 import com.castle.util.logging.jul.JsonFormatter;
@@ -31,6 +34,8 @@ public class LoggerBuilder {
 
     private final String mName;
 
+    private Clock mClock;
+
     private boolean mEnableFileLogging;
     private String mFilePattern;
     private Path mLogsParent;
@@ -52,6 +57,8 @@ public class LoggerBuilder {
 
         mName = name;
 
+        mClock = Clocks.systemMillisClock();
+
         mEnableFileLogging = false;
         mFilePattern = String.format("%s.log", name);
         mLogsParent = null;
@@ -65,6 +72,11 @@ public class LoggerBuilder {
         mEnableConsoleLogging = false;
 
         mLogLevel = LogLevel.INFO;
+    }
+
+    public LoggerBuilder setClock(Clock clock) {
+        mClock = clock;
+        return this;
     }
 
     public LoggerBuilder enableConsoleLogging(boolean enable) {
@@ -188,7 +200,7 @@ public class LoggerBuilder {
     }
 
     public Logger build() {
-        return new JulLoggerAdapter(buildJul());
+        return new JulLoggerAdapter(buildJul(), mClock);
     }
 
     private void startLogFlusher(Handler handler) {
