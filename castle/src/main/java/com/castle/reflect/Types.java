@@ -8,9 +8,20 @@ public class Types {
 
     private Types() {}
 
+    private static final Map<Class<?>, Class<?>> sPrimitivesToWrappers;
     private static final Map<Class<?>, Function<Number, ?>> sNumberConverters;
 
     static {
+        sPrimitivesToWrappers = new HashMap<>();
+        sPrimitivesToWrappers.put(boolean.class, Boolean.class);
+        sPrimitivesToWrappers.put(char.class, Character.class);
+        sPrimitivesToWrappers.put(byte.class, Byte.class);
+        sPrimitivesToWrappers.put(short.class, Short.class);
+        sPrimitivesToWrappers.put(int.class, Integer.class);
+        sPrimitivesToWrappers.put(long.class, Long.class);
+        sPrimitivesToWrappers.put(float.class, Float.class);
+        sPrimitivesToWrappers.put(double.class, Double.class);
+
         sNumberConverters = new HashMap<>();
         sNumberConverters.put(Byte.class, Number::byteValue);
         sNumberConverters.put(Short.class, Number::shortValue);
@@ -18,6 +29,17 @@ public class Types {
         sNumberConverters.put(Long.class, Number::longValue);
         sNumberConverters.put(Float.class, Number::floatValue);
         sNumberConverters.put(Double.class, Number::doubleValue);
+    }
+
+    public static Class<?> toWrapperClass(Class<?> primitiveType) {
+        if (!primitiveType.isPrimitive()) {
+            throw new IllegalArgumentException("Not primitive " + primitiveType.getSimpleName());
+        }
+        if (!sPrimitivesToWrappers.containsKey(primitiveType)) {
+            throw new AssertionError("No wrapper for primitive");
+        }
+
+        return sPrimitivesToWrappers.get(primitiveType);
     }
 
     public static <T> T smartCast(Object value, Class<T> type) {
