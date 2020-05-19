@@ -1,49 +1,73 @@
 plugins {
-    id 'java'
     id 'maven-publish'
     id 'signing'
 }
 
-group GROUP
-version VERSION
+allprojects {
+    apply from: rootProject.file('extras.gradle')
 
-sourceCompatibility = 1.8
+    group GROUP
+    version VERSION
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
-    testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
-}
-
-
-test {
-    testLogging {
-        events "failed"
-        exceptionFormat "full"
-        showStackTraces true
+    repositories {
+        mavenCentral()
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    baseName project.name
-    classifier = 'sources'
-
-    from sourceSets.main.allSource
+subprojects {
+    buildDir = rootProject.file("build/${project.name}")
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    baseName project.name
-    classifier = 'javadoc'
+subprojects.each { subproject -> evaluationDependsOn(subproject.path) }
 
-    from javadoc.destinationDir
+task castleSources(type: Jar, dependsOn: subprojects.classes) {
+    archiveBaseName.set('castle')
+    destinationDirectory.set(rootProject.buildDir)
+    archiveClassifier.set('sources')
+
+    from files(subprojects.collect {
+        it.sourceSets.main.allSource
+    })
 }
 
-def isReleaseBuild() {
-    return version.contains("SNAPSHOT") == false
+task castleJavadoc(type: Jar, dependsOn: subprojects.javadoc) {
+    archiveBaseName.set('castle')
+    destinationDirectory.set(rootProject.buildDir)
+    archiveClassifier.set('javadoc')
+
+    from files(subprojects.collect {
+        it.javadoc.destinationDir
+    })
+}
+
+task castle(type: Jar, dependsOn: subprojects.assemble) {
+    dependsOn castleSources
+    dependsOn castleJavadoc
+
+    archiveBaseName.set('castle')
+    destinationDirectory.set(rootProject.buildDir)
+
+    from files(subprojects.collect {
+        it.sourceSets.main.output
+    })
+}
+
+task castleAll(type: Jar, dependsOn: castle) {
+    dependsOn castleSources
+    dependsOn castleJavadoc
+
+    archiveFileName.set('castle-all.jar')
+    destinationDirectory.set(rootProject.buildDir)
+
+    from files(subprojects.collect {
+        it.sourceSets.main.output
+    })
+    from files(subprojects.collect {
+        it.sourceSets.main.allSource
+    })
+    from files(subprojects.collect {
+        it.javadoc.destinationDir
+    })
 }
 
 publishing {
@@ -51,10 +75,9 @@ publishing {
         mavenCastle(MavenPublication) {
             artifactId = ARTIFACT_ID
 
-            from components.java
-
-            artifact javadocJar
-            artifact sourcesJar
+            artifact castle
+            artifact castleJavadoc
+            artifact castleSources
 
             pom {
                 name = 'Castle'
@@ -81,6 +104,32 @@ publishing {
                     developerConnection = 'scm:git:ssh://github.com/tomtzook/Castle.git'
                     url = 'https://github.com/tomtzook/Castle'
                 }
+
+                withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    def allDependencies = []
+
+                    subprojects.each { project ->
+                        allDependencies.addAll(project.configurations.implementation.allDependencies.withType(ExternalDependency))
+                    }
+
+                    def comparator = [
+                            compare: { first, second ->
+                                if (first.group != second.group)
+                                    return first.group.compareTo(second.group)
+                                else
+                                    return first.name.compareTo(second.name)
+                            }
+                    ] as Comparator
+
+                    allDependencies.collect().unique(comparator).each { dep ->
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dep.group)
+                        dependencyNode.appendNode('artifactId', dep.name)
+                        dependencyNode.appendNode('version', dep.version)
+                        dependencyNode.appendNode('scope', 'compile')
+                    }
+                }
             }
         }
     }
@@ -96,13 +145,15 @@ publishing {
             }
 
             credentials {
-                username ''
-                password ''
+                username getNexusUsername()
+                password getNexusPassword()
             }
         }
     }
 }
 
-signing {
-    sign publishing.publications.mavenCastle
+if (shouldSign()) {
+    signing {
+        sign publishing.publications.mavenCastle
+    }
 }
