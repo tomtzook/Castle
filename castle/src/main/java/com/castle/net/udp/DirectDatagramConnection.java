@@ -8,12 +8,12 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 
-public class DatagramConnection implements PacketConnection {
+public class DirectDatagramConnection implements PacketConnection {
 
     private final DatagramSocket mDatagramSocket;
     private final InetSocketAddress mDestination;
 
-    public DatagramConnection(DatagramSocket datagramSocket, InetSocketAddress destination) {
+    public DirectDatagramConnection(DatagramSocket datagramSocket, InetSocketAddress destination) {
         mDatagramSocket = datagramSocket;
         mDestination = destination;
     }
