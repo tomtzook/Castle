@@ -1,7 +1,7 @@
 package com.castle.net.tcp;
 
-import com.castle.net.Connection;
 import com.castle.net.Connector;
+import com.castle.net.StreamConnection;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import com.castle.util.function.ThrowingSupplier;
@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
-public class TcpClientConnector implements Connector {
+public class TcpClientConnector implements Connector<StreamConnection> {
 
     private final ThrowingSupplier<? extends Socket, ? extends IOException> mSocketCreator;
     private final SocketAddress mEndPoint;
@@ -31,13 +31,13 @@ public class TcpClientConnector implements Connector {
     }
 
     @Override
-    public Connection connect(long timeoutMs) throws IOException, TimeoutException {
+    public StreamConnection connect(long timeoutMs) throws IOException, TimeoutException {
         Closer closer = Closer.empty();
         try {
             Socket socket = mSocketCreator.get();
             closer.add(socket);
 
-            return closer.<Connection, IOException>run(()-> {
+            return closer.<StreamConnection, IOException>run(()-> {
                 socket.connect(mEndPoint, (int) timeoutMs);
                 return new TcpSocketConnection(socket);
             }, IOException.class, Closer.CloseOption.ON_ERROR);

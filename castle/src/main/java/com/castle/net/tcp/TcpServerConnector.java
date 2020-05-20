@@ -1,7 +1,7 @@
 package com.castle.net.tcp;
 
-import com.castle.net.Connection;
 import com.castle.net.Connector;
+import com.castle.net.StreamConnection;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import com.castle.util.function.ThrowingFunction;
@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TcpServerConnector implements Connector {
+public class TcpServerConnector implements Connector<StreamConnection> {
 
     private final ThrowingSupplier<? extends ServerSocket, ? extends IOException> mSocketCreator;
     private final ThrowingFunction<ServerSocket, ? extends Socket, IOException> mConnectionAcceptor;
@@ -28,11 +28,8 @@ public class TcpServerConnector implements Connector {
     }
 
     public TcpServerConnector(int serverPort, int readTimeoutMs) {
-        this(()-> {
-            ServerSocket serverSocket = new ServerSocket(serverPort);
-            serverSocket.setSoTimeout(readTimeoutMs);
-            return serverSocket;
-        }, (serverSocket)-> {
+        this(()-> new ServerSocket(serverPort),
+                (serverSocket)-> {
             Socket socket = serverSocket.accept();
             return Closer.with(socket).run(()-> {
                 socket.setSoTimeout(readTimeoutMs);
@@ -42,8 +39,9 @@ public class TcpServerConnector implements Connector {
     }
 
     @Override
-    public Connection connect(long timeoutMs) throws IOException, TimeoutException {
+    public StreamConnection connect(long timeoutMs) throws IOException, TimeoutException {
         ServerSocket serverSocket = getServerSocket();
+        serverSocket.setSoTimeout((int) timeoutMs);
         try {
             Socket socket = mConnectionAcceptor.apply(serverSocket);
             return new TcpSocketConnection(socket);

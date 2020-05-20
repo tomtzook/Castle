@@ -1,13 +1,13 @@
 package com.castle.net.tcp;
 
-import com.castle.net.Connection;
+import com.castle.net.StreamConnection;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class TcpSocketConnection implements Connection {
+public class TcpSocketConnection implements StreamConnection {
 
     private final Socket mSocket;
 

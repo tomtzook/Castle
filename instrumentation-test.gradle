@@ -1,0 +1,25 @@
+sourceSets {
+    instrumentationTest {
+        compileClasspath += sourceSets.main.output + configurations.testCompileClasspath
+        runtimeClasspath += output + compileClasspath + configurations.testRuntimeClasspath
+    }
+}
+
+task instrumentationTest(type: Test) {
+    useJUnitPlatform()
+
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+        showStackTraces true
+    }
+
+    description = 'Runs the instrumentation tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.instrumentationTest.output.classesDirs
+    classpath = sourceSets.instrumentationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+}
+
+check.dependsOn instrumentationTest

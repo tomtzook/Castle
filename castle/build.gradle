@@ -28,6 +28,8 @@ test {
     }
 }
 
+apply from: rootProject.file('instrumentation-test.gradle')
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     archiveBaseName.set(project.name)
     archiveClassifier.set('sources')
