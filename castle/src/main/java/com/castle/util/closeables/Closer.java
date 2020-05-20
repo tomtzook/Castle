@@ -52,6 +52,10 @@ public class Closer implements AutoCloseable {
         return new Closer();
     }
 
+    public static Closer with(AutoCloseable... closeables) {
+        return new Closer(new ArrayDeque<>(Arrays.asList(closeables)));
+    }
+
     public Closer add(AutoCloseable closeable) {
         mCloseables.addFirst(closeable);
         return this;
