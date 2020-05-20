@@ -5,15 +5,14 @@ import com.castle.net.PacketConnection;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.util.Arrays;
+import java.net.SocketAddress;
 
 public class DirectDatagramConnection implements PacketConnection {
 
     private final DatagramSocket mDatagramSocket;
-    private final InetSocketAddress mDestination;
+    private final SocketAddress mDestination;
 
-    public DirectDatagramConnection(DatagramSocket datagramSocket, InetSocketAddress destination) {
+    public DirectDatagramConnection(DatagramSocket datagramSocket, SocketAddress destination) {
         mDatagramSocket = datagramSocket;
         mDestination = destination;
     }
@@ -31,12 +30,7 @@ public class DirectDatagramConnection implements PacketConnection {
     @Override
     public int readInto(byte[] buffer) throws IOException {
         DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
-
-        do {
-            mDatagramSocket.receive(datagramPacket);
-        } while (!Arrays.equals(datagramPacket.getAddress().getAddress(),
-                mDestination.getAddress().getAddress()) ||
-                datagramPacket.getPort() != mDestination.getPort());
+        mDatagramSocket.receive(datagramPacket);
 
         return datagramPacket.getLength();
     }
