@@ -1,5 +1,6 @@
 package com.castle.store;
 
+import com.castle.store.exceptions.KeyNotFoundException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,9 +16,11 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StoreTest {
 
@@ -60,6 +63,48 @@ class StoreTest {
         assertThat(optional.get(), equalTo(oldValue));
     }
 
+    @ParameterizedTest(name = "{index} => impl {0}: store({1}, {2}) == Optional.of({3})")
+    @MethodSource("argumentsKeyValueType")
+    public void retrieve_keyHasValue_returnsValue(ImplFactory impl, Object key, Object value, Class<?> type) throws Exception {
+        Map<Object, Object> map = new HashMap<>();
+        map.put(key, value);
+
+        Implementation implementation = impl.create(map);
+        Store store = implementation.getImplementation();
+
+        Object returnValue = store.retrieve(key, type);
+        assertThat(returnValue, equalTo(value));
+        assertTrue(type.isInstance(returnValue));
+    }
+
+    @ParameterizedTest(name = "{index} => impl {0}: store({1}, {2}) == Optional.of({3})")
+    @MethodSource("argumentsKeyValueType")
+    public void retrieve_keyNotExists_throwsKeyNotFoundException(ImplFactory impl, Object key, Object value, Class<?> type) throws Exception {
+        Map<Object, Object> map = new HashMap<>();
+
+        Implementation implementation = impl.create(map);
+        Store store = implementation.getImplementation();
+
+        assertThrows(KeyNotFoundException.class, ()->{
+            store.retrieve(key, type);
+        });
+    }
+
+    @ParameterizedTest(name = "{index} => impl {0}: store({1}, {2}) == Optional.of({3})")
+    @MethodSource("argumentsKeyOldNewValueType")
+    public void putAndRetrieve_keyChanged_returnsUpdatedValue(ImplFactory impl, Object key, Object oldValue, Object newValue, Class<?> type) throws Exception {
+        Map<Object, Object> map = new HashMap<>();
+        map.put(key, oldValue);
+
+        Implementation implementation = impl.create(map);
+        Store store = implementation.getImplementation();
+        store.store(key, newValue);
+
+        Object returnValue = store.retrieve(key, type);
+        assertThat(returnValue, equalTo(newValue));
+        assertTrue(type.isInstance(returnValue));
+        assertThat(returnValue, not(equalTo(oldValue)));
+    }
 
     private static Stream<Arguments> argumentsKeyValue() {
         Collection<Arguments> arguments = new ArrayList<>();
@@ -74,6 +119,24 @@ class StoreTest {
         Collection<Arguments> arguments = new ArrayList<>();
         for (ImplFactory implFactory : implementations()) {
             arguments.add(Arguments.of(implFactory, "key", "value", "oldValue"));
+        }
+
+        return arguments.stream();
+    }
+
+    private static Stream<Arguments> argumentsKeyValueType() {
+        Collection<Arguments> arguments = new ArrayList<>();
+        for (ImplFactory implFactory : implementations()) {
+            arguments.add(Arguments.of(implFactory, "key", "value", String.class));
+        }
+
+        return arguments.stream();
+    }
+
+    private static Stream<Arguments> argumentsKeyOldNewValueType() {
+        Collection<Arguments> arguments = new ArrayList<>();
+        for (ImplFactory implFactory : implementations()) {
+            arguments.add(Arguments.of(implFactory, "key", "old", "new", String.class));
         }
 
         return arguments.stream();
