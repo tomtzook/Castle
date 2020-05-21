@@ -1,5 +1,8 @@
 package com.castle.util.dependencies;
 
+import com.castle.annotations.Immutable;
+import com.castle.annotations.ThreadSafe;
+
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -10,6 +13,7 @@ public interface DependencySupplier extends Supplier<Object> {
     @Override
     Object get();
 
+    @Immutable
     class Static implements DependencySupplier {
 
         private final Object mReference;
@@ -29,6 +33,7 @@ public interface DependencySupplier extends Supplier<Object> {
         }
     }
 
+    @ThreadSafe
     abstract class Lazy implements DependencySupplier {
 
         private Object mReference;

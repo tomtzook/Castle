@@ -1,5 +1,8 @@
 package com.castle.time;
 
+import com.castle.annotations.ThreadSafe;
+
+@ThreadSafe
 public class Clocks {
 
     private static volatile Clock sSystemMillisClock;

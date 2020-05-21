@@ -1,10 +1,13 @@
 package com.castle.util.logging.jul;
 
+import com.castle.annotations.NotThreadSafe;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
+@NotThreadSafe
 public class JulLoggerBuilder {
 
     private final String mName;

@@ -1,9 +1,11 @@
 package com.castle.util.logging;
 
+import com.castle.annotations.Stateless;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
 @SuppressWarnings("ClassWithTooManyMethods")
+@Stateless
 public class StubLogger implements Logger {
 
     @Override

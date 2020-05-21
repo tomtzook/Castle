@@ -1,5 +1,6 @@
 package com.castle.util.logging.jul;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.time.Clock;
 import org.slf4j.Marker;
 import org.slf4j.helpers.FormattingTuple;
@@ -13,6 +14,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 @SuppressWarnings("ClassWithTooManyMethods")
+@ThreadSafe
 public class JulLoggerAdapter extends MarkerIgnoringBase implements LocationAwareLogger {
 
     private static final String SUPER = MarkerIgnoringBase.class.getName();

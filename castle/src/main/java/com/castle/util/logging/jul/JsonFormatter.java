@@ -1,5 +1,6 @@
 package com.castle.util.logging.jul;
 
+import com.castle.annotations.Stateless;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -8,6 +9,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+@Stateless
 public class JsonFormatter extends Formatter {
 
     private final boolean mShouldFormatMessage;

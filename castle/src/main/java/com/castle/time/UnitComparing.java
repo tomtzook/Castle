@@ -1,7 +1,10 @@
 package com.castle.time;
 
+import com.castle.annotations.Stateless;
+
 import java.util.concurrent.TimeUnit;
 
+@Stateless
 public class UnitComparing {
 
     private UnitComparing() {}

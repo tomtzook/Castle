@@ -1,9 +1,12 @@
 package com.castle.reflect;
 
+import com.castle.annotations.Immutable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Immutable
 public class Types {
 
     private Types() {}

@@ -1,5 +1,6 @@
 package com.castle.concurrent;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.concurrent.service.PeriodicTaskService;
 import com.castle.time.Time;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@ThreadSafe
 public class FutureWatcherService extends PeriodicTaskService implements FutureWatcher {
 
     private final ConcurrentMap<Future<?>, Consumer<Future<?>>> mMap;

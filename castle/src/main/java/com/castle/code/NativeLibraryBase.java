@@ -1,7 +1,9 @@
 package com.castle.code;
 
+import com.castle.annotations.Immutable;
 import com.castle.util.os.Architecture;
 
+@Immutable
 public abstract class NativeLibraryBase implements NativeLibrary {
 
     private final String mName;

@@ -1,6 +1,7 @@
 package com.castle.code;
 
 import com.castle.annotations.NotThreadSafe;
+import com.castle.annotations.Stateless;
 import com.castle.code.finder.MultiNativeLibraryFinder;
 import com.castle.code.finder.NativeLibraryFinder;
 import com.castle.code.loader.NativeLibraryLoader;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Stateless
 public class Natives {
     
     private Natives() {}

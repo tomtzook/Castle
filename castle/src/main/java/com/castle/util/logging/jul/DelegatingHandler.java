@@ -1,10 +1,13 @@
 package com.castle.util.logging.jul;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+@ThreadSafe
 public class DelegatingHandler extends Handler {
 
     private final Queue<LogRecord> mLogRecords;

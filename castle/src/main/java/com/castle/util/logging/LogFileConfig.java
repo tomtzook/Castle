@@ -1,5 +1,8 @@
 package com.castle.util.logging;
 
+import com.castle.annotations.Immutable;
+
+@Immutable
 public class LogFileConfig {
 
     private final int mSizeLimitBytes;

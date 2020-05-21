@@ -1,11 +1,13 @@
 package com.castle.util.logging;
 
+import com.castle.annotations.Stateless;
 import com.castle.util.logging.jul.JsonFormatter;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
+@Stateless
 public final class Logging {
 
     private Logging() {}

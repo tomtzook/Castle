@@ -1,6 +1,7 @@
 package com.castle.util.dependencies;
 
 import com.castle.annotations.Immutable;
+import com.castle.annotations.NotThreadSafe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.Optional;
 @Immutable
 public class DependencyContainer {
 
+    @NotThreadSafe
     public static class Builder {
 
         private final Collection<DependencySupplier> mSuppliers;

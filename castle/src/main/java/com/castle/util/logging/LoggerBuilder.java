@@ -1,5 +1,6 @@
 package com.castle.util.logging;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.time.Clock;
 import com.castle.time.Clocks;
 import com.castle.util.logging.jul.DelegatingHandler;
@@ -26,6 +27,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
 @SuppressWarnings("ClassWithTooManyFields")
+@NotThreadSafe
 public class LoggerBuilder {
 
     private static final int DEFAULT_FILE_SIZE_BYTES = 1048576; // 1 MB

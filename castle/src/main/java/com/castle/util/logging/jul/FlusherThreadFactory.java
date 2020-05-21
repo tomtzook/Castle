@@ -1,7 +1,10 @@
 package com.castle.util.logging.jul;
 
+import com.castle.annotations.ThreadSafe;
+
 import java.util.concurrent.ThreadFactory;
 
+@ThreadSafe
 public class FlusherThreadFactory implements ThreadFactory {
 
     private static final int LOG_FLUSHER_STACK_SIZE_KB = 128;

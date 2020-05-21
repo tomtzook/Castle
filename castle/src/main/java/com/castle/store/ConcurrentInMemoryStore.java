@@ -1,5 +1,6 @@
 package com.castle.store;
 
+import com.castle.annotations.ThreadSafe;
 import com.castle.store.exceptions.KeyNotFoundException;
 import com.castle.store.exceptions.StoreException;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+@ThreadSafe
 public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
 
     private final ConcurrentMap<K, V> mMap;

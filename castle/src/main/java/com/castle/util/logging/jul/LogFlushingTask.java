@@ -1,10 +1,12 @@
 package com.castle.util.logging.jul;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.time.Time;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 
+@NotThreadSafe
 public class LogFlushingTask implements Runnable {
 
     private static final Time DEFAULT_FLUSHING_PERIOD = Time.milliseconds(100);
