@@ -1,5 +1,6 @@
 package com.castle.net.udp;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.net.PacketConnection;
 import com.castle.time.exceptions.TimeoutException;
 
@@ -9,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
+@NotThreadSafe
 public class DirectDatagramConnection implements PacketConnection {
 
     private final DatagramSocket mDatagramSocket;

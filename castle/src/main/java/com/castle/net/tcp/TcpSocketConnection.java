@@ -1,5 +1,6 @@
 package com.castle.net.tcp;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.net.StreamConnection;
 
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+@NotThreadSafe
 public class TcpSocketConnection implements StreamConnection {
 
     private final Socket mSocket;

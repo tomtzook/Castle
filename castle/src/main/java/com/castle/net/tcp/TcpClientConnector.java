@@ -1,5 +1,6 @@
 package com.castle.net.tcp;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.net.Connector;
 import com.castle.net.StreamConnection;
 import com.castle.time.exceptions.TimeoutException;
@@ -11,6 +12,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
+@NotThreadSafe
 public class TcpClientConnector implements Connector<StreamConnection> {
 
     private final ThrowingSupplier<? extends Socket, ? extends IOException> mSocketCreator;
