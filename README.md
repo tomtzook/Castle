@@ -29,7 +29,7 @@ that state is immutable, and cannot be changed.
 - `@ThreadSafe`: indicates that the class takes measures to ensure
 thread-safety and thus can be used in multi-threaded environments without
 the need for additional user actions. How this is achieved depends on
-the class, and does not matter.
+the class, and generally should not matter.
 
 `@Stateless`, `@Immutable` and `@ThreadSafe` are all safe for use
 across multiple threads, for different reasons. However, when using
