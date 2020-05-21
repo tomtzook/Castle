@@ -1,6 +1,7 @@
 package com.castle.net.udp;
 
 import com.castle.net.PacketConnection;
+import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import org.junit.internal.Throwables;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.function.ThrowingConsumer;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutionException;
@@ -68,7 +68,7 @@ public class DirectDatagramInstrumentationTest {
             try {
                 connection.readInto(data);
                 fail("Expected failure");
-            } catch (SocketTimeoutException e) {
+            } catch (TimeoutException e) {
             }
         };
         ThrowingConsumer<PacketConnection> side2Task = (connection) -> {
@@ -84,7 +84,7 @@ public class DirectDatagramInstrumentationTest {
     }
 
     @Test
-    public void read_oneSideNotSending_throwsSocketTimeoutException() throws Throwable {
+    public void read_oneSideNotSending_throwsTimeoutException() throws Throwable {
         byte[] DATA = {0x1, 0x3};
 
         ThrowingConsumer<PacketConnection> side1Task = (connection) -> {
@@ -95,13 +95,13 @@ public class DirectDatagramInstrumentationTest {
 
         };
 
-        assertThrows(SocketTimeoutException.class, ()->
+        assertThrows(TimeoutException.class, ()->
                 connectAndRun(side1Task, side2Task, null,
                         DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT));
     }
 
     @Test
-    public void read_otherSideNotSending_throwsSocketTimeoutException() throws Throwable {
+    public void read_otherSideNotSending_throwsTimeoutException() throws Throwable {
         byte[] DATA = {0x1, 0x3};
 
         ThrowingConsumer<PacketConnection> side1Task = (connection) -> {
@@ -112,7 +112,7 @@ public class DirectDatagramInstrumentationTest {
             connection.readInto(data);
         };
 
-        assertThrows(SocketTimeoutException.class, ()->
+        assertThrows(TimeoutException.class, ()->
                 connectAndRun(side1Task, side2Task, null,
                         DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT));
     }

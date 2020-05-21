@@ -1,11 +1,13 @@
 package com.castle.net.udp;
 
 import com.castle.net.PacketConnection;
+import com.castle.time.exceptions.TimeoutException;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 
 public class DirectDatagramConnection implements PacketConnection {
 
@@ -28,15 +30,19 @@ public class DirectDatagramConnection implements PacketConnection {
     }
 
     @Override
-    public int readInto(byte[] buffer) throws IOException {
-        DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
-        mDatagramSocket.receive(datagramPacket);
+    public int readInto(byte[] buffer) throws IOException, TimeoutException {
+        try {
+            DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
+            mDatagramSocket.receive(datagramPacket);
 
-        return datagramPacket.getLength();
+            return datagramPacket.getLength();
+        } catch (SocketTimeoutException e) {
+            throw new TimeoutException(e);
+        }
     }
 
     @Override
-    public byte[] read(int amount) throws IOException {
+    public byte[] read(int amount) throws IOException, TimeoutException {
         byte[] buffer = new byte[amount];
         readInto(buffer);
         return buffer;
