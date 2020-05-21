@@ -1,9 +1,6 @@
 package com.castle.net.udp;
 
 import com.castle.net.PacketConnection;
-import com.castle.net.StreamConnection;
-import com.castle.net.tcp.TcpClientConnector;
-import com.castle.net.tcp.TcpServerConnector;
 import com.castle.util.closeables.Closer;
 import org.junit.internal.Throwables;
 import org.junit.jupiter.api.AfterEach;
@@ -11,11 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutionException;
@@ -24,6 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DirectDatagramInstrumentationTest {
 
@@ -58,11 +56,70 @@ public class DirectDatagramInstrumentationTest {
             connection.write(DATA);
         };
 
-        connectAndRun(side1Task, side2Task, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT);
+        connectAndRun(side1Task, side2Task, null, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT);
+    }
+
+    @Test
+    public void connecting_thirdSide_ignoreThirdSide() throws Throwable {
+        byte[] DATA = {0x2, 0x5, 0x1, 0x3};
+
+        ThrowingConsumer<PacketConnection> side1Task = (connection) -> {
+            byte[] data = new byte[DATA.length];
+            try {
+                connection.readInto(data);
+                fail("Expected failure");
+            } catch (SocketTimeoutException e) {
+            }
+        };
+        ThrowingConsumer<PacketConnection> side2Task = (connection) -> {
+
+        };
+        ThrowingConsumer<SocketAddress> side2Address = (address) -> {
+            DatagramSocket socket = new DatagramSocket();
+            mCloser.add(socket);
+            socket.send(new DatagramPacket(DATA, 0, DATA.length, address));
+        };
+
+        connectAndRun(side1Task, side2Task, side2Address, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT);
+    }
+
+    @Test
+    public void read_oneSideNotSending_throwsSocketTimeoutException() throws Throwable {
+        byte[] DATA = {0x1, 0x3};
+
+        ThrowingConsumer<PacketConnection> side1Task = (connection) -> {
+            byte[] data = new byte[DATA.length];
+            connection.readInto(data);
+        };
+        ThrowingConsumer<PacketConnection> side2Task = (connection) -> {
+
+        };
+
+        assertThrows(SocketTimeoutException.class, ()->
+                connectAndRun(side1Task, side2Task, null,
+                        DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT));
+    }
+
+    @Test
+    public void read_otherSideNotSending_throwsSocketTimeoutException() throws Throwable {
+        byte[] DATA = {0x1, 0x3};
+
+        ThrowingConsumer<PacketConnection> side1Task = (connection) -> {
+
+        };
+        ThrowingConsumer<PacketConnection> side2Task = (connection) -> {
+            byte[] data = new byte[DATA.length];
+            connection.readInto(data);
+        };
+
+        assertThrows(SocketTimeoutException.class, ()->
+                connectAndRun(side1Task, side2Task, null,
+                        DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT));
     }
 
     private void connectAndRun(ThrowingConsumer<? super PacketConnection> side1Task,
                                ThrowingConsumer<? super PacketConnection> side2Task,
+                               ThrowingConsumer<? super SocketAddress> side2AddressTask,
                                int connectionTimeout, int readTimeout) throws Throwable {
         DatagramSocket side1Socket = new DatagramSocket(0);
         mCloser.add(side1Socket);
@@ -84,10 +141,10 @@ public class DirectDatagramInstrumentationTest {
             connectionLatch.await();
             try (PacketConnection connection = side2Connector.connect(connectionTimeout)) {
                 side2Task.accept(connection);
-            } catch (Throwable throwable) {
-                throw new Exception(throwable);
-            } finally {
                 endTasksBarrier.await();
+            } catch (Throwable throwable) {
+                endTasksBarrier.await();
+                throw new Exception(throwable);
             }
 
             return null;
@@ -96,15 +153,20 @@ public class DirectDatagramInstrumentationTest {
         connectionLatch.countDown();
         try (PacketConnection connection = side1Connector.connect(connectionTimeout)) {
             side1Task.accept(connection);
-        } finally {
+            if (side2AddressTask != null) {
+                side2AddressTask.accept(side2Socket.getLocalSocketAddress());
+            }
             endTasksBarrier.await();
+        } catch (Throwable t) {
+            endTasksBarrier.await();
+            throw t;
         }
 
         // to throw an exception if necessary
         try {
             side2Future.get();
         } catch (ExecutionException e) {
-            throw Throwables.rethrowAsException(e.getCause());
+            throw Throwables.rethrowAsException(e.getCause().getCause());
         }
     }
 }
