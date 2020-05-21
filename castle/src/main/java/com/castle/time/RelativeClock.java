@@ -1,5 +1,8 @@
 package com.castle.time;
 
+import com.castle.annotations.Immutable;
+
+@Immutable
 public class RelativeClock implements Clock {
 
     private final Clock mOriginalClock;

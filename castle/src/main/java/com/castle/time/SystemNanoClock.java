@@ -1,7 +1,10 @@
 package com.castle.time;
 
+import com.castle.annotations.Immutable;
+
 import java.util.concurrent.TimeUnit;
 
+@Immutable
 public class SystemNanoClock implements Clock {
 
     private final long mStartTimeNanos;

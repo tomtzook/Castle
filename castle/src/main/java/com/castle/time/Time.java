@@ -1,10 +1,12 @@
 package com.castle.time;
 
+import com.castle.annotations.Immutable;
 import com.castle.util.CompareResult;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+@Immutable
 public class Time implements Comparable<Time> {
 
     public static final long INVALID_VALUE = -1L;

@@ -1,5 +1,8 @@
 package com.castle.time;
 
+import com.castle.annotations.Immutable;
+
+@Immutable
 public class StaticClock implements Clock {
 
     private final Time mTime;

@@ -1,11 +1,14 @@
 package com.castle.util.dependencies;
 
+import com.castle.annotations.Immutable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 
+@Immutable
 public class DependencyContainer {
 
     public static class Builder {
