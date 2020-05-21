@@ -20,7 +20,8 @@ There are several annotations:
 - `@NotThreadSafe`: indicates that the class cannot be safely used in
 a multi-threaded environment (across several threads), without proper
 user locking. The reason for lack of thread-safety is not specified, and
-changes across classes.
+changes across classes. This however does not mean the class is not actually thread-safe,
+only that there is no guarantee made that all of its methods are.
 - `@Stateless`: indicates that the class has no actual state, and each
 method use is completely independent.
 - `@Immutable`: indicates that the class posses a state, however
