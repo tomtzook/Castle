@@ -62,11 +62,12 @@ public class InMemoryStore<K, V> implements Store<K, V> {
     }
 
     @Override
-    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException, KeyNotFoundException {
+    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException {
         Map<K, T> result = new HashMap<>();
         for (K key : keys) {
             V defaultValue = mDefaultValues.get(key);
             V value = mMap.getOrDefault(key, defaultValue);
+
             if (value != null) {
                 result.put(key, type.cast(value));
             }
@@ -82,10 +83,6 @@ public class InMemoryStore<K, V> implements Store<K, V> {
 
     @Override
     public boolean delete(Collection<? extends K> keys) throws StoreException {
-        for (K key : keys) {
-            mMap.remove(key);
-        }
-
-        return true;
+        return mMap.keySet().removeAll(keys);
     }
 }

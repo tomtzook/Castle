@@ -50,7 +50,14 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
     public Optional<V> store(K key, V value) throws StoreException {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(value, "value");
-        return Optional.ofNullable(mMap.put(key, value));
+
+        V defaultValue = mDefaultValues.get(key);
+        V oldValue = mMap.put(key, value);
+        if (oldValue == null) {
+            oldValue = defaultValue;
+        }
+
+        return Optional.ofNullable(oldValue);
     }
 
     @Override
@@ -75,7 +82,7 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
     }
 
     @Override
-    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException, KeyNotFoundException {
+    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException {
         Objects.requireNonNull(keys, "keys");
         Objects.requireNonNull(type, "type");
 
@@ -85,7 +92,10 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
         Map<K, T> result = new HashMap<>();
         for (K key : keys) {
             V value = mapSnapshot.get(key);
-            result.put(key, type.cast(value));
+
+            if (value != null) {
+                result.put(key, type.cast(value));
+            }
         }
 
         return result;
