@@ -33,7 +33,7 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
     }
 
     @Override
-    public boolean exists(Collection<K> keys) throws StoreException {
+    public boolean exists(Collection<? extends K> keys) throws StoreException {
         Map<K, V> mapSnapshot = new HashMap<>(mDefaultValues);
         mapSnapshot.putAll(mMap);
 
@@ -54,7 +54,7 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
     }
 
     @Override
-    public void store(Map<K, V> values) throws StoreException {
+    public void store(Map<? extends K, ? extends V> values) throws StoreException {
         Objects.requireNonNull(values, "values");
         mMap.putAll(values);
     }
@@ -75,7 +75,7 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
     }
 
     @Override
-    public <T extends V> Map<K, T> retrieve(Collection<K> keys, Class<T> type) throws StoreException, KeyNotFoundException {
+    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException, KeyNotFoundException {
         Objects.requireNonNull(keys, "keys");
         Objects.requireNonNull(type, "type");
 
@@ -97,7 +97,7 @@ public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
     }
 
     @Override
-    public boolean delete(Collection<K> keys) throws StoreException {
+    public boolean delete(Collection<? extends K> keys) throws StoreException {
         return mMap.keySet().removeAll(keys);
     }
 }
