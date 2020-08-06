@@ -17,7 +17,7 @@ public abstract class TerminalServiceBase extends ServiceBase implements Termina
     }
     
     @Override
-    public synchronized void terminate() {
+    public synchronized void close() {
         if (isRunning()) {
             stop();
         }
@@ -26,7 +26,7 @@ public abstract class TerminalServiceBase extends ServiceBase implements Termina
     }
 
     @Override
-    public final boolean isTerminated() {
+    public final boolean isClosed() {
         return mServiceControl.isTerminated();
     }
 }

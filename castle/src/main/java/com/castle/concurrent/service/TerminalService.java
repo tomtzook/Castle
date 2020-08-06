@@ -1,8 +1,8 @@
 package com.castle.concurrent.service;
 
-public interface TerminalService extends Service {
+public interface TerminalService extends Service, AutoCloseable {
 
-    void terminate();
-
-    boolean isTerminated();
+    @Override
+    void close();
+    boolean isClosed();
 }

@@ -62,6 +62,6 @@ class SingleUseServiceTest {
 
         singleUseService.stop();
 
-        assertTrue(singleUseService.isTerminated());
+        assertTrue(singleUseService.isClosed());
     }
 }

@@ -8,6 +8,6 @@ public abstract class SingleUseService extends TerminalServiceBase {
     @Override
     public synchronized void stop() {
         super.stop();
-        super.terminate();
+        super.close();
     }
 }
