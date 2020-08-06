@@ -1,6 +1,7 @@
 package com.castle.concurrent.service;
 
 import com.castle.annotations.ThreadSafe;
+import com.castle.exceptions.ServiceException;
 
 @ThreadSafe
 public abstract class ServiceBase implements Service {
@@ -16,7 +17,7 @@ public abstract class ServiceBase implements Service {
     }
 
     @Override
-    public synchronized void start() {
+    public synchronized void start() throws ServiceException {
         mServiceControl.ensureCanStart();
         startRunning();
         mServiceControl.markStarted();
@@ -34,6 +35,6 @@ public abstract class ServiceBase implements Service {
         return mServiceControl.isRunning();
     }
 
-    protected abstract void startRunning();
+    protected abstract void startRunning() throws ServiceException;
     protected abstract void stopRunning();
 }
