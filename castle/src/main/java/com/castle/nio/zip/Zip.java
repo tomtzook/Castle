@@ -4,6 +4,9 @@ import com.castle.annotations.ThreadSafe;
 import com.castle.nio.Providers;
 import com.castle.util.closeables.AtomicReferenceCounter;
 import com.castle.util.closeables.ReferenceCounter;
+import com.castle.util.function.ThrowingConsumer;
+import com.castle.util.function.ThrowingFunction;
+import com.castle.util.function.ThrowingRunnable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,6 +60,18 @@ public class Zip {
             return openZip;
         } finally {
             mReferenceLock.unlock();
+        }
+    }
+
+    public void openAndDo(ThrowingConsumer<OpenZip, IOException> operation) throws IOException {
+        try (OpenZip openZip = open()) {
+            operation.accept(openZip);
+        }
+    }
+
+    public <T> T openAndDo(ThrowingFunction<OpenZip, T, IOException> operation) throws IOException {
+        try (OpenZip openZip = open()) {
+            return operation.apply(openZip);
         }
     }
 }
