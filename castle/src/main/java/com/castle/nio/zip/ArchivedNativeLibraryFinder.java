@@ -1,8 +1,8 @@
 package com.castle.nio.zip;
 
 import com.castle.annotations.ThreadSafe;
-import com.castle.code.finder.ArchivedNativeLibrary;
 import com.castle.code.NativeLibrary;
+import com.castle.code.finder.ArchivedNativeLibrary;
 import com.castle.code.finder.NativeLibraryFinder;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
@@ -58,8 +58,10 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
                     mTargetArchitecture.getArchName(),
                     name));
         } else {
-            return Pattern.compile(String.format("^%s\\/.*%s\\.(dll|so|dylib)$",
+            return Pattern.compile(String.format("^%s\\/%s\\/%s\\/.*%s\\.(dll|so|dylib)$",
                     mArchiveBasePath.toString(),
+                    mTargetArchitecture.getOperatingSystem().name().toLowerCase(),
+                    mTargetArchitecture.getArchName(),
                     name));
         }
     }
