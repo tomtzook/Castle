@@ -58,10 +58,8 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
                     mTargetArchitecture.getArchName(),
                     name));
         } else {
-            return Pattern.compile(String.format("^%s\\/%s\\/%s\\/.*%s\\.(dll|so|dylib)$",
+            return Pattern.compile(String.format("^%s\\/.*%s\\.(dll|so|dylib)$",
                     mArchiveBasePath.toString(),
-                    mTargetArchitecture.getOperatingSystem().name().toLowerCase(),
-                    mTargetArchitecture.getArchName(),
                     name));
         }
     }
