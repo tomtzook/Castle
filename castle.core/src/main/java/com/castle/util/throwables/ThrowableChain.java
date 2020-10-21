@@ -38,15 +38,23 @@ public class ThrowableChain {
     }
 
     public <E extends Throwable> void throwIfType(Class<E> type) throws E {
-        Throwables.throwIfType(mFirstThrowable, type);
+        if (type.isInstance(mFirstThrowable)) {
+            throw type.cast(mFirstThrowable);
+        }
     }
 
     public void throwAsRuntime() {
-        Throwables.throwAsRuntime(mFirstThrowable);
+        if (mFirstThrowable != null) {
+            throwIfType(RuntimeException.class);
+            throw new RuntimeException(mFirstThrowable);
+        }
     }
 
     public <E extends Throwable> void throwAsType(Class<E> type, Function<Throwable, E> converter) throws E {
-        Throwables.throwAsType(mFirstThrowable, type, converter);
+        if (mFirstThrowable != null) {
+            throwIfType(type);
+            throw converter.apply(mFirstThrowable);
+        }
     }
 
     public RuntimeException toRuntime(Supplier<? extends RuntimeException> creator) {
