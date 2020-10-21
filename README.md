@@ -1,7 +1,7 @@
 # Castle
-![Maven Central](https://img.shields.io/maven-central/v/com.github.tomtzook/castle)
-![Travis (.org) branch](https://img.shields.io/travis/tomtzook/Castle/master.svg)
-![GitHub](https://img.shields.io/github/license/tomtzook/Castle.svg)
+![Maven Central](https://img.shields.com/maven-central/v/com.github.tomtzook/castle)
+![Travis (.org) branch](https://img.shields.com/travis/tomtzook/Castle/master.svg)
+![GitHub](https://img.shields.com/github/license/tomtzook/Castle.svg)
 
 Got a utility you need? Don't be an idjit!
 
