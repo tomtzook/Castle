@@ -16,13 +16,13 @@ public class SequentialActionExecutor extends TaskService implements ActionExecu
     private final BlockingQueue<CompletableActionContext> mQueue;
 
     SequentialActionExecutor(ExecutorService executorService, BlockingQueue<CompletableActionContext> queue,
-                             Function<BlockingQueue<? extends ActionContext>, Runnable> taskFactory) {
+                             Function<BlockingQueue<CompletableActionContext>, Runnable> taskFactory) {
         super(executorService, taskFactory.apply(queue));
         mQueue = queue;
     }
 
     public SequentialActionExecutor(ExecutorService executorService,
-                                    Function<BlockingQueue<? extends ActionContext>, Runnable> taskFactory) {
+                                    Function<BlockingQueue<CompletableActionContext>, Runnable> taskFactory) {
         this(executorService, new LinkedBlockingQueue<>(), taskFactory);
     }
 
@@ -39,10 +39,10 @@ public class SequentialActionExecutor extends TaskService implements ActionExecu
 
     private static class Task implements Runnable {
 
-        private final BlockingQueue<? extends ActionContext> mTaskQueue;
-        private ActionContext mCurrentTask;
+        private final BlockingQueue<CompletableActionContext> mTaskQueue;
+        private CompletableActionContext mCurrentTask;
 
-        private Task(BlockingQueue<? extends ActionContext> taskQueue) {
+        private Task(BlockingQueue<CompletableActionContext> taskQueue) {
             mTaskQueue = taskQueue;
             mCurrentTask = null;
         }

@@ -1,41 +1,59 @@
 package com.castle.concurrent.executor;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
-public class CompletableActionContext implements ActionContext {
+public class CompletableActionContext {
 
     private final Action mAction;
-    private final CompletableFuture<?> mFuture;
-    private boolean mIsInitialized;
-    private boolean mIsDone;
+    private final Future<?> mFuture;
+    private final ActionControl mActionControl;
 
-    public CompletableActionContext(Action action, CompletableFuture<?> future) {
+    private boolean mIsInitialized;
+
+    private CompletableActionContext(Action action, Future<?> future, ActionControl actionControl) {
         mAction = action;
         mFuture = future;
+        mActionControl = actionControl;
 
         mIsInitialized = false;
-        mIsDone = false;
     }
 
-    @Override
+    public CompletableActionContext(Action action, CompletableFuture<?> completableFuture) {
+        this(action, completableFuture, new CompletableActionControl(completableFuture));
+    }
+
     public boolean isDone() {
-        return mIsDone;
+        return mFuture.isDone() || mFuture.isCancelled();
     }
 
-    @Override
     public void run() {
-        if (mIsDone) {
+        if (isDone()) {
             return;
         }
 
-        if (!mIsInitialized) {
-            mAction.initialize();
-            mIsInitialized = true;
-        }
+        try {
+            if (!mIsInitialized) {
+                mAction.initialize(mActionControl);
+                mIsInitialized = true;
 
-        mIsDone = mAction.execute();
-        if (mIsDone) {
-            mFuture.complete(null);
+                if (isDone()) {
+                    mAction.done();
+                    return;
+                }
+            }
+
+            mAction.execute(mActionControl);
+            if (isDone()) {
+                mAction.done();
+            }
+        } catch (Throwable t) {
+            mActionControl.fail(t);
+            mAction.done();
         }
+    }
+
+    public void cancel() {
+        mFuture.cancel(true);
     }
 }
