@@ -3,22 +3,22 @@ package com.castle.util.function;
 import com.castle.util.function.exceptions.FunctionException;
 import com.castle.util.throwables.ThrowableHandler;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 @FunctionalInterface
-public interface ThrowingFunction<T, R, E extends Exception> {
+public interface ThrowingPredicate<T, E extends Exception> {
 
     @FunctionalInterface
-    interface Generic<T, R> extends ThrowingFunction<T, R, FunctionException> {
+    interface Generic<T> extends ThrowingPredicate<T, FunctionException> {
 
     }
 
-    R apply(T t) throws E;
+    boolean test(T t) throws E;
 
-    default Function<T, R> asSilent(ThrowableHandler handler, R defaultResult) {
+    default Predicate<T> asSilent(ThrowableHandler handler, boolean defaultResult) {
         return (t)-> {
             try {
-                return apply(t);
+                return test(t);
             } catch (Exception e) {
                 handler.handle(e);
                 return defaultResult;

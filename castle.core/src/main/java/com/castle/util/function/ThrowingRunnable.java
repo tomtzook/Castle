@@ -1,14 +1,25 @@
 package com.castle.util.function;
 
 import com.castle.util.function.exceptions.FunctionException;
+import com.castle.util.throwables.ThrowableHandler;
 
 @FunctionalInterface
-public interface ThrowingRunnable<R, E extends Exception> {
+public interface ThrowingRunnable<E extends Exception> {
 
     @FunctionalInterface
-    interface Generic<R> extends ThrowingRunnable<R, FunctionException> {
+    interface Generic<R> extends ThrowingRunnable<FunctionException> {
 
     }
 
-    R run() throws E;
+    void run() throws E;
+
+    default Runnable asSilent(ThrowableHandler handler) {
+        return ()-> {
+            try {
+                run();
+            } catch (Exception e) {
+                handler.handle(e);
+            }
+        };
+    }
 }

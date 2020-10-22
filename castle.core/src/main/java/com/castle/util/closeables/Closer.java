@@ -1,7 +1,7 @@
 package com.castle.util.closeables;
 
 import com.castle.annotations.NotThreadSafe;
-import com.castle.util.function.ThrowingRunnable;
+import com.castle.util.function.ThrowingSupplier;
 import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
 
@@ -70,14 +70,14 @@ public class Closer implements AutoCloseable {
         return this;
     }
 
-    public <R, E extends Exception> R run(ThrowingRunnable<R, E> consumer, Class<E> exceptionType, CloseOption closeOption) throws E {
+    public <R, E extends Exception> R run(ThrowingSupplier<R, E> consumer, Class<E> exceptionType, CloseOption closeOption) throws E {
         checkIsClosed();
 
         boolean wasExceptionThrown = false;
         ThrowableChain throwableChain = Throwables.newChain();
 
         try {
-            return consumer.run();
+            return consumer.get();
         } catch (Throwable t) {
             wasExceptionThrown = true;
             throwableChain.chain(t);
