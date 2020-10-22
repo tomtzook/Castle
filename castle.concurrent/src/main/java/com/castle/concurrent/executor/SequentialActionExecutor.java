@@ -10,24 +10,24 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-public class SingleThreadActionExecutor extends TaskService implements ActionExecutor {
+public class SequentialActionExecutor extends TaskService implements ActionExecutor {
 
 
     private final BlockingQueue<CompletableActionContext> mQueue;
 
-    SingleThreadActionExecutor(ExecutorService executorService, BlockingQueue<CompletableActionContext> queue,
-                               Function<BlockingQueue<? extends ActionContext>, Runnable> taskFactory) {
+    SequentialActionExecutor(ExecutorService executorService, BlockingQueue<CompletableActionContext> queue,
+                             Function<BlockingQueue<? extends ActionContext>, Runnable> taskFactory) {
         super(executorService, taskFactory.apply(queue));
         mQueue = queue;
     }
 
-    public SingleThreadActionExecutor(ExecutorService executorService,
-                                      Function<BlockingQueue<? extends ActionContext>, Runnable> taskFactory) {
+    public SequentialActionExecutor(ExecutorService executorService,
+                                    Function<BlockingQueue<? extends ActionContext>, Runnable> taskFactory) {
         this(executorService, new LinkedBlockingQueue<>(), taskFactory);
     }
 
-    public SingleThreadActionExecutor(ExecutorService executorService) {
-        this(executorService, new LinkedBlockingQueue<>(), SingleThreadActionExecutor.Task::new);
+    public SequentialActionExecutor(ExecutorService executorService) {
+        this(executorService, new LinkedBlockingQueue<>(), SequentialActionExecutor.Task::new);
     }
 
     @Override

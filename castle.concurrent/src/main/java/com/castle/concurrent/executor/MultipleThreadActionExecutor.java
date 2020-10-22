@@ -31,8 +31,6 @@ public class MultipleThreadActionExecutor extends TerminalServiceBase implements
 
     @Override
     protected void stopRunning() {
-        for (Future<?> future : mFutures.getRegistered(true)) {
-            future.cancel(true);
-        }
+        mFutures.forEach((future)-> future.cancel(true), true);
     }
 }

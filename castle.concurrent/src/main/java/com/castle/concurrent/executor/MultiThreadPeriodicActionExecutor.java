@@ -38,8 +38,6 @@ public class MultiThreadPeriodicActionExecutor extends TerminalServiceBase imple
 
     @Override
     protected void stopRunning() {
-        for (Future<?> future : mFutures.getRegistered(true)) {
-            future.cancel(true);
-        }
+        mFutures.forEach((future)-> future.cancel(true), true);
     }
 }
