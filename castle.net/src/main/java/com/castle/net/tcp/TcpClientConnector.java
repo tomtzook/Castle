@@ -3,6 +3,7 @@ package com.castle.net.tcp;
 import com.castle.annotations.NotThreadSafe;
 import com.castle.net.Connector;
 import com.castle.net.StreamConnection;
+import com.castle.time.Time;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import com.castle.util.function.ThrowingSupplier;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeUnit;
 
 @NotThreadSafe
 public class TcpClientConnector implements Connector<StreamConnection> {
@@ -33,14 +35,14 @@ public class TcpClientConnector implements Connector<StreamConnection> {
     }
 
     @Override
-    public StreamConnection connect(long timeoutMs) throws IOException, TimeoutException {
+    public StreamConnection connect(Time timeout) throws IOException, TimeoutException {
         Closer closer = Closer.empty();
         try {
             Socket socket = mSocketCreator.get();
             closer.add(socket);
 
             return closer.<StreamConnection, IOException>run(() -> {
-                socket.connect(mEndPoint, (int) timeoutMs);
+                socket.connect(mEndPoint, (int) timeout.toUnit(TimeUnit.MILLISECONDS).value());
                 return new TcpSocketConnection(socket);
             }, IOException.class, Closer.CloseOption.ON_ERROR);
         } catch (SocketTimeoutException e) {

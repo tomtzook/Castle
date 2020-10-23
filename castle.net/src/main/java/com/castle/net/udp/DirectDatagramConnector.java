@@ -3,6 +3,7 @@ package com.castle.net.udp;
 import com.castle.annotations.NotThreadSafe;
 import com.castle.net.Connector;
 import com.castle.net.PacketConnection;
+import com.castle.time.Time;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import com.castle.util.function.ThrowingSupplier;
@@ -36,7 +37,7 @@ public class DirectDatagramConnector implements Connector<PacketConnection> {
     }
 
     @Override
-    public PacketConnection connect(long timeoutMs) throws IOException, TimeoutException {
+    public PacketConnection connect(Time timeout) throws IOException, TimeoutException {
         DatagramSocket socket = mSocketCreator.get();
         try {
             return Closer.with(socket).<PacketConnection, IOException>run(() -> {

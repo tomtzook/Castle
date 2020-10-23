@@ -3,6 +3,7 @@ package com.castle.net.tcp;
 import com.castle.annotations.NotThreadSafe;
 import com.castle.net.Connector;
 import com.castle.net.StreamConnection;
+import com.castle.time.Time;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import com.castle.util.function.ThrowingFunction;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @NotThreadSafe
@@ -41,9 +43,9 @@ public class TcpServerConnector implements Connector<StreamConnection> {
     }
 
     @Override
-    public StreamConnection connect(long timeoutMs) throws IOException, TimeoutException {
+    public StreamConnection connect(Time timeout) throws IOException, TimeoutException {
         ServerSocket serverSocket = getServerSocket();
-        serverSocket.setSoTimeout((int) timeoutMs);
+        serverSocket.setSoTimeout((int) timeout.toUnit(TimeUnit.MILLISECONDS).value());
         try {
             Socket socket = mConnectionAcceptor.apply(serverSocket);
             return new TcpSocketConnection(socket);
