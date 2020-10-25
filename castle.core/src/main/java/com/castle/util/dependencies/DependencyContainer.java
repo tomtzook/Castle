@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Immutable
 public class DependencyContainer {
@@ -16,9 +17,16 @@ public class DependencyContainer {
     public static class Builder {
 
         private final Collection<DependencySupplier> mSuppliers;
+        private final Collection<Function<DependencyContainer, ? extends DependencySupplier>> mIntializers;
 
         public Builder() {
             mSuppliers = new HashSet<>();
+            mIntializers = new ArrayList<>();
+        }
+
+        public Builder add(Function<DependencyContainer, ? extends DependencySupplier> initializer) {
+            mIntializers.add(initializer);
+            return this;
         }
 
         public Builder add(DependencySupplier supplier) {
@@ -36,7 +44,13 @@ public class DependencyContainer {
         }
 
         public DependencyContainer build() {
-            return new DependencyContainer(mSuppliers);
+            DependencyContainer container = new DependencyContainer(mSuppliers);
+            for (Function<DependencyContainer, ? extends DependencySupplier> function : mIntializers) {
+                DependencySupplier supplier = function.apply(container);
+                mSuppliers.add(supplier);
+            }
+
+            return container;
         }
     }
 
