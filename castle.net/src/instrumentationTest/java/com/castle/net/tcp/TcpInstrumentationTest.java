@@ -3,6 +3,7 @@ package com.castle.net.tcp;
 import com.castle.net.Connection;
 import com.castle.net.Connector;
 import com.castle.net.StreamConnection;
+import com.castle.time.Time;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import org.junit.internal.Throwables;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class TcpInstrumentationTest {
 
     private static final int DEFAULT_READ_TIMEOUT = 1000;
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 1000;
+    private static final Time DEFAULT_CONNECTION_TIMEOUT = Time.milliseconds(1000);
 
     private Closer mCloser;
     private ExecutorService mExecutorService;
@@ -137,7 +138,7 @@ public class TcpInstrumentationTest {
 
     @Test
     public void connect_serverHasNoClient_throwsTimeoutException() throws Exception {
-        final int CONNECTION_TIMEOUT = 200;
+        final Time CONNECTION_TIMEOUT = Time.milliseconds(200);
         ServerSocket serverSocket = new ServerSocket(0);
         mCloser.add(serverSocket);
 
@@ -155,7 +156,7 @@ public class TcpInstrumentationTest {
 
     @Test
     public void connect_clientHasNoListeningServer_throwsConnectionFailedException() throws Exception {
-        final int CONNECTION_TIMEOUT = 200;
+        final Time CONNECTION_TIMEOUT = Time.milliseconds(200);
         ServerSocket serverSocket = new ServerSocket(0);
         mCloser.add(serverSocket);
 
@@ -169,18 +170,12 @@ public class TcpInstrumentationTest {
 
     private void connectAndRun(ThrowingConsumer<? super StreamConnection> serverTask,
                                ThrowingConsumer<? super StreamConnection> clientTask,
-                               int connectionTimeout, int readTimeout) throws Throwable {
+                               Time connectionTimeout, int readTimeout) throws Throwable {
         ServerSocket serverSocket = new ServerSocket(0);
         mCloser.add(serverSocket);
         serverSocket.setSoTimeout(readTimeout);
 
-        TcpServerConnector serverConnector = new TcpServerConnector(() -> serverSocket, (server) -> {
-            Socket socket = server.accept();
-            return Closer.with(socket).run(() -> {
-                socket.setSoTimeout(readTimeout);
-                return socket;
-            }, IOException.class, Closer.CloseOption.ON_ERROR);
-        });
+        TcpServerConnector serverConnector = new TcpServerConnector(serverSocket, readTimeout);
         mCloser.add(serverConnector);
         TcpClientConnector clientConnector = new TcpClientConnector(
                 new InetSocketAddress(serverSocket.getLocalPort()), readTimeout);
@@ -217,7 +212,7 @@ public class TcpInstrumentationTest {
         }
     }
 
-    private void tryConnectExpectFailure(Connector<? extends Connection> connector, int timeout) throws Exception {
+    private void tryConnectExpectFailure(Connector<? extends Connection> connector, Time timeout) throws Exception {
         try (Connection connection = connector.connect(timeout)) {
             fail("should not have connected");
         }

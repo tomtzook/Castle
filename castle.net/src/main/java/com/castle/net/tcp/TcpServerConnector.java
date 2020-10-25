@@ -31,6 +31,17 @@ public class TcpServerConnector implements Connector<StreamConnection> {
         mServerSocketReference = new AtomicReference<>();
     }
 
+    public TcpServerConnector(ServerSocket serverSocket, int readTimeoutMs) {
+        this(() -> serverSocket,
+                (serverSocket2) -> {
+                    Socket socket = serverSocket2.accept();
+                    return Closer.with(socket).run(() -> {
+                        socket.setSoTimeout(readTimeoutMs);
+                        return socket;
+                    }, IOException.class, Closer.CloseOption.ON_ERROR);
+                });
+    }
+
     public TcpServerConnector(int serverPort, int readTimeoutMs) {
         this(() -> new ServerSocket(serverPort),
                 (serverSocket) -> {

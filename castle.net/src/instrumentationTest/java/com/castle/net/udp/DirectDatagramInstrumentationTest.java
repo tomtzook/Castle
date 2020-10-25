@@ -1,6 +1,7 @@
 package com.castle.net.udp;
 
 import com.castle.net.PacketConnection;
+import com.castle.time.Time;
 import com.castle.time.exceptions.TimeoutException;
 import com.castle.util.closeables.Closer;
 import org.junit.internal.Throwables;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DirectDatagramInstrumentationTest {
 
     private static final int DEFAULT_READ_TIMEOUT = 1000;
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 1000;
+    private static final Time DEFAULT_CONNECTION_TIMEOUT = Time.milliseconds(1000);
 
     private Closer mCloser;
     private ExecutorService mExecutorService;
@@ -120,7 +121,7 @@ public class DirectDatagramInstrumentationTest {
     private void connectAndRun(ThrowingConsumer<? super PacketConnection> side1Task,
                                ThrowingConsumer<? super PacketConnection> side2Task,
                                ThrowingConsumer<? super SocketAddress> side2AddressTask,
-                               int connectionTimeout, int readTimeout) throws Throwable {
+                               Time connectionTimeout, int readTimeout) throws Throwable {
         DatagramSocket side1Socket = new DatagramSocket(0);
         mCloser.add(side1Socket);
         side1Socket.setSoTimeout(readTimeout);
