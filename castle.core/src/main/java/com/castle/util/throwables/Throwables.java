@@ -37,4 +37,12 @@ public class Throwables {
 
         throw converter.apply(throwable);
     }
+
+    public static <E extends Throwable> E getAsType(Throwable throwable, Class<E> type, Function<Throwable, E> converter) {
+        if (type.isInstance(throwable)) {
+            return type.cast(throwable);
+        }
+
+        return converter.apply(throwable);
+    }
 }

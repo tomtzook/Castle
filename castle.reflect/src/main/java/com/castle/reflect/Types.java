@@ -13,7 +13,7 @@ public class Types {
     }
 
     private static final Map<Class<?>, Class<?>> sPrimitivesToWrappers;
-    private static final Map<Class<?>, Function<Number, ?>> sNumberConverters;
+    private static final TypeAdapter<Number> sNumberAdapter;
 
     static {
         sPrimitivesToWrappers = new HashMap<>();
@@ -26,13 +26,7 @@ public class Types {
         sPrimitivesToWrappers.put(float.class, Float.class);
         sPrimitivesToWrappers.put(double.class, Double.class);
 
-        sNumberConverters = new HashMap<>();
-        sNumberConverters.put(Byte.class, Number::byteValue);
-        sNumberConverters.put(Short.class, Number::shortValue);
-        sNumberConverters.put(Integer.class, Number::intValue);
-        sNumberConverters.put(Long.class, Number::longValue);
-        sNumberConverters.put(Float.class, Number::floatValue);
-        sNumberConverters.put(Double.class, Number::doubleValue);
+        sNumberAdapter = new NumberAdapter();
     }
 
     public static Class<?> toWrapperClass(Class<?> primitiveType) {
@@ -46,18 +40,7 @@ public class Types {
         return sPrimitivesToWrappers.get(primitiveType);
     }
 
-    public static <T> T smartCast(Object value, Class<T> type) {
-        if (type.isAssignableFrom(value.getClass())) {
-            return type.cast(value);
-        }
-
-        if (value instanceof Number && type.getSuperclass().equals(Number.class)) {
-            Function<Number, ?> converter = sNumberConverters.get(type);
-            if (converter != null) {
-                return type.cast(converter.apply((Number) value));
-            }
-        }
-
-        throw new AssertionError("Can't cast " + value.getClass() + "to " + type);
+    public static TypeAdapter<Number> numberAdapter() {
+        return sNumberAdapter;
     }
 }
