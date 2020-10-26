@@ -1,6 +1,6 @@
 package com.castle.store.exceptions;
 
-public class KeyNotFoundException extends Exception {
+public class KeyNotFoundException extends RuntimeException {
 
     public KeyNotFoundException(String message, Throwable cause) {
         super(message, cause);

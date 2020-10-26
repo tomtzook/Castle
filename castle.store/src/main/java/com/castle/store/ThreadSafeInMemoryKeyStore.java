@@ -13,17 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @ThreadSafe
-public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class ThreadSafeInMemoryKeyStore<K, V> implements KeyStore<K, V> {
 
     private final ConcurrentMap<K, V> mMap;
     private final Map<K, V> mDefaultValues;
 
-    ConcurrentInMemoryKeyValueStore(ConcurrentMap<K, V> map, Map<K, V> defaultValues) {
+    ThreadSafeInMemoryKeyStore(ConcurrentMap<K, V> map, Map<K, V> defaultValues) {
         mMap = map;
         mDefaultValues = defaultValues;
     }
 
-    public ConcurrentInMemoryKeyValueStore(Map<K, V> defaultValues) {
+    public ThreadSafeInMemoryKeyStore(Map<K, V> defaultValues) {
         this(new ConcurrentHashMap<>(), defaultValues);
     }
 
@@ -33,7 +33,7 @@ public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V
     }
 
     @Override
-    public boolean exists(Collection<? extends K> keys) throws StoreException {
+    public boolean existsAll(Collection<? extends K> keys) {
         Map<K, V> mapSnapshot = new HashMap<>(mDefaultValues);
         mapSnapshot.putAll(mMap);
 
@@ -47,7 +47,7 @@ public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V
     }
 
     @Override
-    public Optional<V> store(K key, V value) throws StoreException {
+    public Optional<V> store(K key, V value) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(value, "value");
 
@@ -61,15 +61,14 @@ public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V
     }
 
     @Override
-    public void store(Map<? extends K, ? extends V> values) throws StoreException {
+    public void storeAll(Map<? extends K, ? extends V> values) {
         Objects.requireNonNull(values, "values");
         mMap.putAll(values);
     }
 
     @Override
-    public <T extends V> T retrieve(K key, Class<T> type) throws StoreException, KeyNotFoundException {
+    public V retrieve(K key) {
         Objects.requireNonNull(key, "key");
-        Objects.requireNonNull(type, "type");
 
         V defaultValue = mDefaultValues.get(key);
 
@@ -78,11 +77,54 @@ public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V
             throw new KeyNotFoundException(String.valueOf(key));
         }
 
+        return value;
+    }
+
+    @Override
+    public Optional<V> tryRetrieve(K key) {
+        Objects.requireNonNull(key, "key");
+
+        V defaultValue = mDefaultValues.get(key);
+
+        V value = mMap.getOrDefault(key, defaultValue);
+        return Optional.ofNullable(value);
+    }
+
+    @Override
+    public <T extends V> T retrieve(K key, Class<T> type) {
+        Objects.requireNonNull(type, "type");
+
+        V value = retrieve(key);
         return type.cast(value);
     }
 
     @Override
-    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException {
+    public <T extends V> Optional<T> tryRetrieve(K key, Class<T> type) {
+        Optional<V> optional = tryRetrieve(key);
+        return optional.map(type::cast);
+    }
+
+    @Override
+    public Map<K, V> retrieve(Collection<? extends K> keys) {
+        Objects.requireNonNull(keys, "keys");
+
+        Map<K, V> mapSnapshot = new HashMap<>(mDefaultValues);
+        mapSnapshot.putAll(mMap);
+
+        Map<K, V> result = new HashMap<>();
+        for (K key : keys) {
+            V value = mapSnapshot.get(key);
+
+            if (value != null) {
+                result.put(key, value);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) {
         Objects.requireNonNull(keys, "keys");
         Objects.requireNonNull(type, "type");
 
@@ -102,12 +144,12 @@ public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V
     }
 
     @Override
-    public boolean delete(K key) throws StoreException {
+    public boolean delete(K key) {
         return mMap.remove(key) != null;
     }
 
     @Override
-    public boolean delete(Collection<? extends K> keys) throws StoreException {
+    public boolean deleteAll(Collection<? extends K> keys) {
         return mMap.keySet().removeAll(keys);
     }
 }

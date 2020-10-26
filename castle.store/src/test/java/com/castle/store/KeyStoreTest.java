@@ -22,15 +22,15 @@ import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class KeyValueStoreTest {
+class KeyStoreTest {
 
     @ParameterizedTest(name = "{index} => impl {0}: store({1}, {2})")
     @MethodSource("argumentsKeyValue")
     public void store_newValue_valueInMap(ImplFactory impl, Object key, Object value) throws Exception {
         Implementation implementation = impl.create();
-        KeyValueStore keyValueStore = implementation.getImplementation();
+        KeyStore keyStore = implementation.getImplementation();
 
-        keyValueStore.store(key, value);
+        keyStore.store(key, value);
 
         Map<Object, Object> values = implementation.getCurrentStoredValues();
         assertThat(values, hasEntry(key, value));
@@ -41,9 +41,9 @@ class KeyValueStoreTest {
     @MethodSource("argumentsKeyValue")
     public void store_newValue_returnsEmptyOptional(ImplFactory impl, Object key, Object value) throws Exception {
         Implementation implementation = impl.create();
-        KeyValueStore keyValueStore = implementation.getImplementation();
+        KeyStore keyStore = implementation.getImplementation();
 
-        Optional<Object> optional = keyValueStore.store(key, value);
+        Optional<Object> optional = keyStore.store(key, value);
         assertThat(optional.isPresent(), equalTo(false));
         assertThrows(NoSuchElementException.class, optional::get);
     }
@@ -56,9 +56,9 @@ class KeyValueStoreTest {
         map.put(key, oldValue);
 
         Implementation implementation = impl.create(map);
-        KeyValueStore keyValueStore = implementation.getImplementation();
+        KeyStore keyStore = implementation.getImplementation();
 
-        Optional<Object> optional = keyValueStore.store(key, newValue);
+        Optional<Object> optional = keyStore.store(key, newValue);
         assertThat(optional.isPresent(), equalTo(true));
         assertThat(optional.get(), equalTo(oldValue));
     }
@@ -70,9 +70,9 @@ class KeyValueStoreTest {
         map.put(key, value);
 
         Implementation implementation = impl.create(map);
-        KeyValueStore keyValueStore = implementation.getImplementation();
+        KeyStore keyStore = implementation.getImplementation();
 
-        Object returnValue = keyValueStore.retrieve(key, type);
+        Object returnValue = keyStore.retrieve(key, type);
         assertThat(returnValue, equalTo(value));
         assertTrue(type.isInstance(returnValue));
     }
@@ -83,10 +83,10 @@ class KeyValueStoreTest {
         Map<Object, Object> map = new HashMap<>();
 
         Implementation implementation = impl.create(map);
-        KeyValueStore keyValueStore = implementation.getImplementation();
+        KeyStore keyStore = implementation.getImplementation();
 
         assertThrows(KeyNotFoundException.class, () -> {
-            keyValueStore.retrieve(key, type);
+            keyStore.retrieve(key, type);
         });
     }
 
@@ -97,10 +97,10 @@ class KeyValueStoreTest {
         map.put(key, oldValue);
 
         Implementation implementation = impl.create(map);
-        KeyValueStore keyValueStore = implementation.getImplementation();
-        keyValueStore.store(key, newValue);
+        KeyStore keyStore = implementation.getImplementation();
+        keyStore.store(key, newValue);
 
-        Object returnValue = keyValueStore.retrieve(key, type);
+        Object returnValue = keyStore.retrieve(key, type);
         assertThat(returnValue, equalTo(newValue));
         assertTrue(type.isInstance(returnValue));
         assertThat(returnValue, not(equalTo(oldValue)));
@@ -150,7 +150,7 @@ class KeyValueStoreTest {
 
     interface Implementation {
 
-        KeyValueStore getImplementation();
+        KeyStore getImplementation();
 
         Map<Object, Object> getCurrentStoredValues();
     }

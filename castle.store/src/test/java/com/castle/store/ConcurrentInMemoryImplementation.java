@@ -5,36 +5,36 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-class ConcurrentInMemoryImplementation implements KeyValueStoreTest.Implementation {
+class ConcurrentInMemoryImplementation implements KeyStoreTest.Implementation {
 
-    static class Factory implements KeyValueStoreTest.ImplFactory {
+    static class Factory implements KeyStoreTest.ImplFactory {
 
         @Override
-        public KeyValueStoreTest.Implementation create() {
+        public KeyStoreTest.Implementation create() {
             ConcurrentMap<Object, Object> values = new ConcurrentHashMap<>();
-            KeyValueStore keyValueStore = new ConcurrentInMemoryKeyValueStore(values, new HashMap());
-            return new ConcurrentInMemoryImplementation(keyValueStore, values);
+            KeyStore keyStore = new ThreadSafeInMemoryKeyStore(values, new HashMap());
+            return new ConcurrentInMemoryImplementation(keyStore, values);
         }
 
         @Override
-        public KeyValueStoreTest.Implementation create(Map<?, ?> values) {
+        public KeyStoreTest.Implementation create(Map<?, ?> values) {
             ConcurrentMap<Object, Object> map = new ConcurrentHashMap<>(values);
-            KeyValueStore keyValueStore = new ConcurrentInMemoryKeyValueStore(map, new HashMap());
-            return new ConcurrentInMemoryImplementation(keyValueStore, map);
+            KeyStore keyStore = new ThreadSafeInMemoryKeyStore(map, new HashMap());
+            return new ConcurrentInMemoryImplementation(keyStore, map);
         }
     }
 
-    private final KeyValueStore mKeyValueStore;
+    private final KeyStore mKeyStore;
     private final Map<Object, Object> mInnerStore;
 
-    public ConcurrentInMemoryImplementation(KeyValueStore keyValueStore, Map<Object, Object> innerStore) {
-        mKeyValueStore = keyValueStore;
+    public ConcurrentInMemoryImplementation(KeyStore keyStore, Map<Object, Object> innerStore) {
+        mKeyStore = keyStore;
         mInnerStore = innerStore;
     }
 
     @Override
-    public KeyValueStore getImplementation() {
-        return mKeyValueStore;
+    public KeyStore getImplementation() {
+        return mKeyStore;
     }
 
     @Override

@@ -123,7 +123,7 @@ public class ThreadSafeInMemoryStore<T> implements Store<T> {
     }
 
     @Override
-    public boolean exists(Collection<? extends T> values) {
+    public boolean existsAll(Collection<? extends T> values) {
         mLock.readLock().lock();
         try {
             return mElements.containsAll(values);

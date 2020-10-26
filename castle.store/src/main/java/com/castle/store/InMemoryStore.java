@@ -79,7 +79,7 @@ public class InMemoryStore<T> implements Store<T> {
     }
 
     @Override
-    public boolean exists(Collection<? extends T> values) {
+    public boolean existsAll(Collection<? extends T> values) {
         return mElements.containsAll(values);
     }
 
