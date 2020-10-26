@@ -5,36 +5,36 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-class ConcurrentInMemoryImplementation implements StoreTest.Implementation {
+class ConcurrentInMemoryImplementation implements KeyValueStoreTest.Implementation {
 
-    static class Factory implements StoreTest.ImplFactory {
+    static class Factory implements KeyValueStoreTest.ImplFactory {
 
         @Override
-        public StoreTest.Implementation create() {
+        public KeyValueStoreTest.Implementation create() {
             ConcurrentMap<Object, Object> values = new ConcurrentHashMap<>();
-            Store store = new ConcurrentInMemoryStore(values, new HashMap());
-            return new ConcurrentInMemoryImplementation(store, values);
+            KeyValueStore keyValueStore = new ConcurrentInMemoryKeyValueStore(values, new HashMap());
+            return new ConcurrentInMemoryImplementation(keyValueStore, values);
         }
 
         @Override
-        public StoreTest.Implementation create(Map<?, ?> values) {
+        public KeyValueStoreTest.Implementation create(Map<?, ?> values) {
             ConcurrentMap<Object, Object> map = new ConcurrentHashMap<>(values);
-            Store store = new ConcurrentInMemoryStore(map, new HashMap());
-            return new ConcurrentInMemoryImplementation(store, map);
+            KeyValueStore keyValueStore = new ConcurrentInMemoryKeyValueStore(map, new HashMap());
+            return new ConcurrentInMemoryImplementation(keyValueStore, map);
         }
     }
 
-    private final Store mStore;
+    private final KeyValueStore mKeyValueStore;
     private final Map<Object, Object> mInnerStore;
 
-    public ConcurrentInMemoryImplementation(Store store, Map<Object, Object> innerStore) {
-        mStore = store;
+    public ConcurrentInMemoryImplementation(KeyValueStore keyValueStore, Map<Object, Object> innerStore) {
+        mKeyValueStore = keyValueStore;
         mInnerStore = innerStore;
     }
 
     @Override
-    public Store getImplementation() {
-        return mStore;
+    public KeyValueStore getImplementation() {
+        return mKeyValueStore;
     }
 
     @Override

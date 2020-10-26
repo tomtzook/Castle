@@ -1,88 +1,123 @@
 package com.castle.store;
 
 import com.castle.annotations.NotThreadSafe;
-import com.castle.store.exceptions.KeyNotFoundException;
-import com.castle.store.exceptions.StoreException;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @NotThreadSafe
-public class InMemoryStore<K, V> implements Store<K, V> {
+public class InMemoryStore<T> implements Store<T> {
 
-    private final Map<K, V> mMap;
-    private final Map<K, V> mDefaultValues;
+    private final Collection<T> mRegistered;
+    private final Set<Characteristic> mCharacteristics;
 
-    InMemoryStore(Map<K, V> map, Map<K, V> defaultValues) {
-        mMap = map;
-        mDefaultValues = defaultValues;
-    }
-
-    public InMemoryStore(Map<K, V> defaultValues) {
-        this(new HashMap<>(), defaultValues);
+    InMemoryStore(Collection<T> registered, Set<Characteristic> characteristics) {
+        mRegistered = registered;
+        mCharacteristics = Collections.unmodifiableSet(characteristics);
     }
 
     @Override
-    public boolean exists(K key) throws StoreException {
-        return mDefaultValues.containsKey(key) || mMap.containsKey(key);
+    public Set<Characteristic> characteristics() {
+        return mCharacteristics;
     }
 
     @Override
-    public boolean exists(Collection<? extends K> keys) throws StoreException {
-        return mDefaultValues.keySet().containsAll(keys) || mMap.keySet().containsAll(keys);
+    public boolean add(T t) {
+        return mRegistered.add(t);
     }
 
     @Override
-    public Optional<V> store(K key, V value) throws StoreException {
-        V oldValue = mMap.put(key, value);
-        if (oldValue == null) {
-            oldValue = mDefaultValues.get(key);
-        }
-
-        return Optional.ofNullable(oldValue);
+    public boolean addAll(Collection<? extends T> collection) {
+        return mRegistered.addAll(collection);
     }
 
     @Override
-    public void store(Map<? extends K, ? extends V> values) throws StoreException {
-        mMap.putAll(values);
+    public boolean remove(T t) {
+        return mRegistered.remove(t);
     }
 
     @Override
-    public <T extends V> T retrieve(K key, Class<T> type) throws StoreException, KeyNotFoundException {
-        V defaultValue = mDefaultValues.get(key);
-
-        V value = mMap.getOrDefault(key, defaultValue);
-        if (value == null) {
-            throw new KeyNotFoundException(String.valueOf(key));
-        }
-
-        return type.cast(value);
+    public boolean removeAll(Collection<T> collection) {
+        return mRegistered.removeAll(collection);
     }
 
     @Override
-    public <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type) throws StoreException {
-        Map<K, T> result = new HashMap<>();
-        for (K key : keys) {
-            V defaultValue = mDefaultValues.get(key);
-            V value = mMap.getOrDefault(key, defaultValue);
+    public boolean removeIf(Predicate<T> filter) {
+        return mRegistered.removeIf(filter);
+    }
 
-            if (value != null) {
-                result.put(key, type.cast(value));
+    @Override
+    public void clear() {
+        mRegistered.clear();
+    }
+
+    @Override
+    public boolean exists(T value) {
+        return mRegistered.contains(value);
+    }
+
+    @Override
+    public boolean exists(Collection<? extends T> values) {
+        return mRegistered.containsAll(values);
+    }
+
+    @Override
+    public Collection<T> getAll() {
+        return Collections.unmodifiableCollection(mRegistered);
+    }
+
+    @Override
+    public Collection<T> getAll(Predicate<? super T> filter) {
+        Collection<T> all = new ArrayList<>();
+        for(T element : mRegistered) {
+            if (filter.test(element)) {
+                all.add(element);
             }
         }
 
-        return result;
+        return all;
     }
 
     @Override
-    public boolean delete(K key) throws StoreException {
-        return mMap.remove(key) != null;
+    public Optional<T> getFirst(Predicate<? super T> filter) {
+        for(T element : mRegistered) {
+            if (filter.test(element)) {
+                return Optional.of(element);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override
-    public boolean delete(Collection<? extends K> keys) throws StoreException {
-        return mMap.keySet().removeAll(keys);
+    public void forEach(Consumer<? super T> consumer) {
+        for (T t : mRegistered) {
+            consumer.accept(t);
+        }
+    }
+
+    @Override
+    public Collection<T> getAll(boolean clear) {
+        if (clear) {
+            Collection<T> copy = new ArrayList<>(mRegistered);
+            mRegistered.clear();
+            return copy;
+        }
+
+        return getAll();
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> consumer, boolean clear) {
+        forEach(consumer);
+
+        if (clear) {
+            mRegistered.clear();
+        }
     }
 }

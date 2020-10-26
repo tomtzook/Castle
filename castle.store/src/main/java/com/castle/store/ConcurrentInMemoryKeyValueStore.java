@@ -13,17 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @ThreadSafe
-public class ConcurrentInMemoryStore<K, V> implements Store<K, V> {
+public class ConcurrentInMemoryKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     private final ConcurrentMap<K, V> mMap;
     private final Map<K, V> mDefaultValues;
 
-    ConcurrentInMemoryStore(ConcurrentMap<K, V> map, Map<K, V> defaultValues) {
+    ConcurrentInMemoryKeyValueStore(ConcurrentMap<K, V> map, Map<K, V> defaultValues) {
         mMap = map;
         mDefaultValues = defaultValues;
     }
 
-    public ConcurrentInMemoryStore(Map<K, V> defaultValues) {
+    public ConcurrentInMemoryKeyValueStore(Map<K, V> defaultValues) {
         this(new ConcurrentHashMap<>(), defaultValues);
     }
 
