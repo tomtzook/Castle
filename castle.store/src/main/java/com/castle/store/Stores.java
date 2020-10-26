@@ -2,10 +2,16 @@ package com.castle.store;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public final class Stores {
 
@@ -31,6 +37,26 @@ public final class Stores {
         return newStore(Collections.emptySet());
     }
 
+    public static <K, V> KeyStore<K, V> newKeyStore(Set<Characteristic> characteristics) {
+        if (characteristics.contains(Characteristic.THREAD_SAFE)) {
+            ConcurrentMap<K, V> map = concurrentMapByCharacteristics(characteristics);
+            return new ThreadSafeInMemoryKeyStore<>(map);
+        } else {
+            Map<K, V> map = mapByCharacteristics(characteristics);
+            return new InMemoryKeyStore<>(map);
+        }
+    }
+
+    public static <K, V> KeyStore<K, V> newKeyStore(Characteristic... characteristics) {
+        Set<Characteristic> characteristicSet = new HashSet<>();
+        Collections.addAll(characteristicSet, characteristics);
+        return newKeyStore(characteristicSet);
+    }
+
+    public static <K, V> KeyStore<K, V> newKeyStore() {
+        return newKeyStore(Characteristic.NO_DUPLICATIONS);
+    }
+
     private static <T> Collection<T> collectionByCharacteristics(Set<Characteristic> characteristics) {
         Collection<T> collection;
         if (characteristics.contains(Characteristic.NO_DUPLICATIONS) && characteristics.contains(Characteristic.ORDERED)) {
@@ -42,5 +68,32 @@ public final class Stores {
         }
 
         return collection;
+    }
+
+    private static <K, V> Map<K, V> mapByCharacteristics(Set<Characteristic> characteristics) {
+        Map<K, V> map;
+        if (characteristics.contains(Characteristic.NO_DUPLICATIONS) && characteristics.contains(Characteristic.ORDERED)) {
+            map = new LinkedHashMap<>();
+        } else if (characteristics.contains(Characteristic.NO_DUPLICATIONS)) {
+            map = new HashMap<>();
+        } else {
+            throw new IllegalArgumentException("Key store does not support duplication");
+        }
+
+        return map;
+    }
+
+    private static <K, V> ConcurrentMap<K, V> concurrentMapByCharacteristics(Set<Characteristic> characteristics) {
+        ConcurrentMap<K, V> map;
+        if (characteristics.contains(Characteristic.NO_DUPLICATIONS) && characteristics.contains(Characteristic.ORDERED)) {
+            //noinspection SortedCollectionWithNonComparableKeys
+            map = new ConcurrentSkipListMap<>();
+        } else if (characteristics.contains(Characteristic.NO_DUPLICATIONS)) {
+            map = new ConcurrentHashMap<>();
+        } else {
+            throw new IllegalArgumentException("Key store does not support duplication");
+        }
+
+        return map;
     }
 }
