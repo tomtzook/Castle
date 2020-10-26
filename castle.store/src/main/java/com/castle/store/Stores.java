@@ -1,10 +1,10 @@
 package com.castle.store;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public final class Stores {
@@ -38,7 +38,7 @@ public final class Stores {
         } else if (characteristics.contains(Characteristic.NO_DUPLICATIONS)) {
             collection = new HashSet<>();
         } else {
-            collection = new ArrayList<>();
+            collection = new LinkedList<>();
         }
 
         return collection;

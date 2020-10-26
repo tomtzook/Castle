@@ -10,11 +10,13 @@ public interface WritableStore<T> {
 
     Set<Characteristic> characteristics();
 
-    boolean add(T element) throws StoreException;
-    boolean addAll(Collection<? extends T> collection) throws StoreException;
+    boolean insert(T element) throws StoreException;
+    boolean insertAll(Collection<? extends T> collection) throws StoreException;
 
-    boolean remove(T element) throws StoreException;
-    boolean removeAll(Collection<T> collection) throws StoreException;
-    boolean removeIf(Predicate<T> filter) throws StoreException;
+    boolean delete(T element) throws StoreException;
+    boolean deleteFirst(Predicate<T> filter) throws StoreException;
+    boolean deleteAll(Predicate<T> filter) throws StoreException;
+    boolean deleteAll(Collection<T> collection) throws StoreException;
+
     void clear() throws StoreException;
 }

@@ -15,9 +15,9 @@ public interface ReadableStore<T> {
     boolean exists(T value) throws StoreException;
     boolean exists(Collection<? extends T> values) throws StoreException;
 
-    Collection<T> getAll() throws StoreException;
-    Collection<T> getAll(Predicate<? super T> filter) throws StoreException;
-    Optional<T> getFirst(Predicate<? super T> filter) throws StoreException;
+    Optional<T> selectFirst(Predicate<? super T> filter) throws StoreException;
+    Collection<T> selectAll(Predicate<? super T> filter) throws StoreException;
+    Collection<T> selectAll() throws StoreException;
 
     void forEach(Consumer<? super T> consumer) throws StoreException;
 }
