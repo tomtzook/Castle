@@ -2,7 +2,6 @@ package com.castle.store;
 
 import com.castle.annotations.ThreadSafe;
 import com.castle.store.exceptions.KeyNotFoundException;
-import com.castle.store.exceptions.StoreException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,26 +17,23 @@ import java.util.function.BiPredicate;
 public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
 
     private final ConcurrentMap<K, V> mMap;
-    private final Map<K, V> mDefaultValues;
 
-    ThreadSafeInMemoryKeyStore(ConcurrentMap<K, V> map, Map<K, V> defaultValues) {
+    ThreadSafeInMemoryKeyStore(ConcurrentMap<K, V> map) {
         mMap = map;
-        mDefaultValues = defaultValues;
     }
 
-    public ThreadSafeInMemoryKeyStore(Map<K, V> defaultValues) {
-        this(new ConcurrentHashMap<>(), defaultValues);
+    public ThreadSafeInMemoryKeyStore() {
+        this(new ConcurrentHashMap<>());
     }
 
     @Override
     public boolean exists(K key) {
-        return mDefaultValues.containsKey(key) || mMap.containsKey(key);
+        return mMap.containsKey(key);
     }
 
     @Override
     public boolean existsAll(Collection<? extends K> keys) {
-        Map<K, V> mapSnapshot = new HashMap<>(mDefaultValues);
-        mapSnapshot.putAll(mMap);
+        Map<K, V> mapSnapshot = new HashMap<>(mMap);
 
         for (K key : keys) {
             if (!mapSnapshot.containsKey(key)) {
@@ -53,12 +49,7 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(value, "value");
 
-        V defaultValue = mDefaultValues.get(key);
         V oldValue = mMap.put(key, value);
-        if (oldValue == null) {
-            oldValue = defaultValue;
-        }
-
         return Optional.ofNullable(oldValue);
     }
 
@@ -72,9 +63,7 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
     public V retrieve(K key) {
         Objects.requireNonNull(key, "key");
 
-        V defaultValue = mDefaultValues.get(key);
-
-        V value = mMap.getOrDefault(key, defaultValue);
+        V value = mMap.get(key);
         if (value == null) {
             throw new KeyNotFoundException(String.valueOf(key));
         }
@@ -86,9 +75,7 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
     public Optional<V> tryRetrieve(K key) {
         Objects.requireNonNull(key, "key");
 
-        V defaultValue = mDefaultValues.get(key);
-
-        V value = mMap.getOrDefault(key, defaultValue);
+        V value = mMap.get(key);
         return Optional.ofNullable(value);
     }
 
@@ -110,8 +97,7 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
     public Map<K, V> retrieve(Collection<? extends K> keys) {
         Objects.requireNonNull(keys, "keys");
 
-        Map<K, V> mapSnapshot = new HashMap<>(mDefaultValues);
-        mapSnapshot.putAll(mMap);
+        Map<K, V> mapSnapshot = new HashMap<>(mMap);
 
         Map<K, V> result = new HashMap<>();
         for (K key : keys) {
@@ -130,8 +116,7 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
         Objects.requireNonNull(keys, "keys");
         Objects.requireNonNull(type, "type");
 
-        Map<K, V> mapSnapshot = new HashMap<>(mDefaultValues);
-        mapSnapshot.putAll(mMap);
+        Map<K, V> mapSnapshot = new HashMap<>(mMap);
 
         Map<K, T> result = new HashMap<>();
         for (K key : keys) {
