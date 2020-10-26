@@ -3,6 +3,8 @@ package com.castle.store;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 public interface SafeReadableKeyStore<K, V> extends ReadableKeyStore<K, V> {
 
@@ -24,4 +26,14 @@ public interface SafeReadableKeyStore<K, V> extends ReadableKeyStore<K, V> {
     Map<K, V> retrieve(Collection<? extends K> keys);
     @Override
     <T extends V> Map<K, T> retrieve(Collection<? extends K> keys, Class<T> type);
+
+    @Override
+    Optional<V> retrieveFirst(BiPredicate<? super K, ? super V> filter);
+    @Override
+    Map<K, V> retrieveAll(BiPredicate<? super K, ? super V> filter);
+    @Override
+    Map<K, V> retrieveAll();
+
+    @Override
+    void forEach(BiConsumer<? super K, ? super V> consumer);
 }

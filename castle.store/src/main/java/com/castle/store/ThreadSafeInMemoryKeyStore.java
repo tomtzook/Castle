@@ -11,6 +11,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 @ThreadSafe
 public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
@@ -141,6 +143,39 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
         }
 
         return result;
+    }
+
+    @Override
+    public Optional<V> retrieveFirst(BiPredicate<? super K, ? super V> filter) {
+        for (Map.Entry<K, V> entry : mMap.entrySet()) {
+            if (filter.test(entry.getKey(), entry.getValue())) {
+                return Optional.of(entry.getValue());
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Map<K, V> retrieveAll(BiPredicate<? super K, ? super V> filter) {
+        Map<K, V> result = new HashMap<>();
+        for (Map.Entry<K, V> entry : mMap.entrySet()) {
+            if (filter.test(entry.getKey(), entry.getValue())) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<K, V> retrieveAll() {
+        return new HashMap<>(mMap);
+    }
+
+    @Override
+    public void forEach(BiConsumer<? super K, ? super V> consumer) {
+        mMap.forEach(consumer);
     }
 
     @Override
