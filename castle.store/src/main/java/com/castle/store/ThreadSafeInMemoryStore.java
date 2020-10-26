@@ -1,7 +1,6 @@
 package com.castle.store;
 
 import com.castle.annotations.ThreadSafe;
-import com.castle.store.exceptions.StoreException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @ThreadSafe
-public class ThreadSafeInMemoryStore<T> implements Store<T> {
+public class ThreadSafeInMemoryStore<T> implements SafeStore<T> {
 
     private final Collection<T> mElements;
     private final Set<Characteristic> mCharacteristics;
@@ -184,7 +183,7 @@ public class ThreadSafeInMemoryStore<T> implements Store<T> {
     }
 
     @Override
-    public Collection<T> getAll(boolean clear) {
+    public Collection<T> selectAll(boolean clear) {
         if (!clear) {
             return selectAll();
         }
@@ -201,7 +200,7 @@ public class ThreadSafeInMemoryStore<T> implements Store<T> {
 
     @Override
     public void forEach(Consumer<? super T> consumer, boolean clear) {
-        Collection<T> copy = getAll(clear);
+        Collection<T> copy = selectAll(clear);
         for (T t : copy) {
             consumer.accept(t);
         }

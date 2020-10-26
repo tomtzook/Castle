@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @ThreadSafe
-public class ThreadSafeInMemoryKeyStore<K, V> implements KeyStore<K, V> {
+public class ThreadSafeInMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
 
     private final ConcurrentMap<K, V> mMap;
     private final Map<K, V> mDefaultValues;
@@ -28,7 +28,7 @@ public class ThreadSafeInMemoryKeyStore<K, V> implements KeyStore<K, V> {
     }
 
     @Override
-    public boolean exists(K key) throws StoreException {
+    public boolean exists(K key) {
         return mDefaultValues.containsKey(key) || mMap.containsKey(key);
     }
 

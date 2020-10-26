@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @NotThreadSafe
-public class InMemoryStore<T> implements Store<T> {
+public class InMemoryStore<T> implements SafeStore<T> {
 
     private final Collection<T> mElements;
     private final Set<Characteristic> mCharacteristics;
@@ -119,7 +119,7 @@ public class InMemoryStore<T> implements Store<T> {
     }
 
     @Override
-    public Collection<T> getAll(boolean clear) {
+    public Collection<T> selectAll(boolean clear) {
         if (clear) {
             Collection<T> copy = new ArrayList<>(mElements);
             mElements.clear();

@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @NotThreadSafe
-public class InMemoryKeyStore<K, V> implements KeyStore<K, V> {
+public class InMemoryKeyStore<K, V> implements SafeKeyStore<K, V> {
 
     private final Map<K, V> mMap;
     private final Map<K, V> mDefaultValues;

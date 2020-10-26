@@ -37,6 +37,26 @@ public final class Stores {
         return newStore(Collections.emptySet());
     }
 
+    public static <T> SafeStore<T> newSafeStore(Set<Characteristic> characteristics) {
+        Collection<T> collection = collectionByCharacteristics(characteristics);
+
+        if (characteristics.contains(Characteristic.THREAD_SAFE)) {
+            return new ThreadSafeInMemoryStore<>(collection, characteristics);
+        } else {
+            return new InMemoryStore<>(collection, characteristics);
+        }
+    }
+
+    public static <T> SafeStore<T> newSafeStore(Characteristic... characteristics) {
+        Set<Characteristic> characteristicSet = new HashSet<>();
+        Collections.addAll(characteristicSet, characteristics);
+        return newSafeStore(characteristicSet);
+    }
+
+    public static <T> SafeStore<T> newSafeStore() {
+        return newSafeStore(Collections.emptySet());
+    }
+
     public static <K, V> KeyStore<K, V> newKeyStore(Set<Characteristic> characteristics) {
         if (characteristics.contains(Characteristic.THREAD_SAFE)) {
             ConcurrentMap<K, V> map = concurrentMapByCharacteristics(characteristics);
@@ -55,6 +75,26 @@ public final class Stores {
 
     public static <K, V> KeyStore<K, V> newKeyStore() {
         return newKeyStore(Characteristic.NO_DUPLICATIONS);
+    }
+
+    public static <K, V> SafeKeyStore<K, V> newSafeKeyStore(Set<Characteristic> characteristics) {
+        if (characteristics.contains(Characteristic.THREAD_SAFE)) {
+            ConcurrentMap<K, V> map = concurrentMapByCharacteristics(characteristics);
+            return new ThreadSafeInMemoryKeyStore<>(map);
+        } else {
+            Map<K, V> map = mapByCharacteristics(characteristics);
+            return new InMemoryKeyStore<>(map);
+        }
+    }
+
+    public static <K, V> SafeKeyStore<K, V> newSafeKeyStore(Characteristic... characteristics) {
+        Set<Characteristic> characteristicSet = new HashSet<>();
+        Collections.addAll(characteristicSet, characteristics);
+        return newSafeKeyStore(characteristicSet);
+    }
+
+    public static <K, V> SafeKeyStore<K, V> newSafeKeyStore() {
+        return newSafeKeyStore(Characteristic.NO_DUPLICATIONS);
     }
 
     private static <T> Collection<T> collectionByCharacteristics(Set<Characteristic> characteristics) {
