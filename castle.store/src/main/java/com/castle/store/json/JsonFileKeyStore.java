@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 public class JsonFileKeyStore<V> implements KeyStore<String, V> {
 
@@ -162,6 +164,72 @@ public class JsonFileKeyStore<V> implements KeyStore<String, V> {
             }
 
             return result;
+        } catch (Throwable t) {
+            throw Throwables.getAsType(t, StoreException.class, StoreException::new);
+        }
+    }
+
+    @Override
+    public Optional<V> retrieveFirst(BiPredicate<? super String, ? super V> filter) throws StoreException {
+        try {
+            JsonObject root = getRoot();
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                V value = mGson.fromJson(entry.getValue(), mValueType);
+                if (filter.test(entry.getKey(), value)) {
+                    return Optional.of(value);
+                }
+            }
+
+            return Optional.empty();
+        } catch (Throwable t) {
+            throw Throwables.getAsType(t, StoreException.class, StoreException::new);
+        }
+    }
+
+    @Override
+    public Map<String, V> retrieveAll(BiPredicate<? super String, ? super V> filter) throws StoreException {
+        try {
+            Map<String, V> values = new HashMap<>();
+
+            JsonObject root = getRoot();
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                V value = mGson.fromJson(entry.getValue(), mValueType);
+                if (filter.test(entry.getKey(), value)) {
+                    values.put(entry.getKey(), value);
+                }
+            }
+
+            return values;
+        } catch (Throwable t) {
+            throw Throwables.getAsType(t, StoreException.class, StoreException::new);
+        }
+    }
+
+    @Override
+    public Map<String, V> retrieveAll() throws StoreException {
+        try {
+            Map<String, V> values = new HashMap<>();
+
+            JsonObject root = getRoot();
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                V value = mGson.fromJson(entry.getValue(), mValueType);
+                values.put(entry.getKey(), value);
+            }
+
+            return values;
+        } catch (Throwable t) {
+            throw Throwables.getAsType(t, StoreException.class, StoreException::new);
+        }
+    }
+
+    @Override
+    public void forEach(BiConsumer<? super String, ? super V> consumer) throws StoreException {
+        try {
+            JsonObject root = getRoot();
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                V value = mGson.fromJson(entry.getValue(), mValueType);
+                consumer.accept(entry.getKey(), value);
+            }
         } catch (Throwable t) {
             throw Throwables.getAsType(t, StoreException.class, StoreException::new);
         }

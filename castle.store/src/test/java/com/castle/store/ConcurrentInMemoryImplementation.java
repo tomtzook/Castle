@@ -1,6 +1,5 @@
 package com.castle.store;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,14 +11,14 @@ class ConcurrentInMemoryImplementation implements KeyStoreTest.Implementation {
         @Override
         public KeyStoreTest.Implementation create() {
             ConcurrentMap<Object, Object> values = new ConcurrentHashMap<>();
-            KeyStore keyStore = new ThreadSafeInMemoryKeyStore(values, new HashMap());
+            KeyStore keyStore = new ThreadSafeInMemoryKeyStore(values);
             return new ConcurrentInMemoryImplementation(keyStore, values);
         }
 
         @Override
         public KeyStoreTest.Implementation create(Map<?, ?> values) {
             ConcurrentMap<Object, Object> map = new ConcurrentHashMap<>(values);
-            KeyStore keyStore = new ThreadSafeInMemoryKeyStore(map, new HashMap());
+            KeyStore keyStore = new ThreadSafeInMemoryKeyStore(map);
             return new ConcurrentInMemoryImplementation(keyStore, map);
         }
     }
