@@ -1,5 +1,6 @@
 package com.castle.store.json;
 
+import com.castle.annotations.NotThreadSafe;
 import com.castle.store.KeyStore;
 import com.castle.store.exceptions.KeyNotFoundException;
 import com.castle.store.exceptions.StoreException;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 
+@NotThreadSafe
 public class JsonFileKeyStore<V> implements KeyStore<String, V> {
 
     private final Path mPath;
