@@ -1,11 +1,13 @@
-package com.castle.nio.zip;
+package com.castle.code.finder;
 
 import com.castle.annotations.ThreadSafe;
 import com.castle.code.NativeLibrary;
-import com.castle.code.finder.ArchivedNativeLibrary;
+import com.castle.code.ArchivedNativeLibrary;
 import com.castle.code.finder.NativeLibraryFinder;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
+import com.castle.nio.zip.OpenZip;
+import com.castle.nio.zip.Zip;
 import com.castle.util.os.Architecture;
 import com.castle.util.os.System;
 

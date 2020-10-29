@@ -1,6 +1,7 @@
 package com.castle.nio.zip;
 
 import com.castle.code.NativeLibrary;
+import com.castle.code.finder.ArchivedNativeLibraryFinder;
 import com.castle.exceptions.FindException;
 import com.castle.nio.temp.TempPathGenerator;
 import com.castle.testutil.io.TemporaryPaths;

@@ -1,4 +1,4 @@
-package com.castle.code.finder;
+package com.castle.code;
 
 import com.castle.annotations.NotThreadSafe;
 import com.castle.code.TempNativeLibrary;
@@ -16,10 +16,14 @@ public class ArchivedNativeLibrary extends TempNativeLibrary {
     private final Zip mZip;
     private final String mInZipPath;
 
-    public ArchivedNativeLibrary(String name, Architecture architecture, Zip zip, Path inZipPath) {
+    public ArchivedNativeLibrary(String name, Architecture architecture, Zip zip, String inZipPath) {
         super(name, architecture);
         mZip = zip;
-        mInZipPath = inZipPath.toAbsolutePath().toString();
+        mInZipPath = inZipPath;
+    }
+
+    public ArchivedNativeLibrary(String name, Architecture architecture, Zip zip, Path inZipPath) {
+        this(name, architecture, zip, inZipPath.toAbsolutePath().toString());
     }
 
     @Override
