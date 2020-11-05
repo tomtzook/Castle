@@ -8,6 +8,8 @@ public interface SafeWritableStore<T> extends WritableStore<T> {
     @Override
     boolean insert(T element);
     @Override
+    boolean insertIfAbsent(T element);
+    @Override
     boolean insertAll(Collection<? extends T> collection);
 
     @Override

@@ -1,6 +1,7 @@
 package com.castle.store;
 
 import com.castle.annotations.NotThreadSafe;
+import com.castle.store.exceptions.StoreException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,15 @@ public class InMemoryStore<T> implements SafeStore<T> {
     @Override
     public boolean insert(T t) {
         return mElements.add(t);
+    }
+
+    @Override
+    public boolean insertIfAbsent(T element) {
+        if (mElements.contains(element)) {
+            return false;
+        }
+
+        return mElements.add(element);
     }
 
     @Override

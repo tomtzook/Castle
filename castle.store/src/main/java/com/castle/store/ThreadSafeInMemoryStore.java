@@ -1,6 +1,7 @@
 package com.castle.store;
 
 import com.castle.annotations.ThreadSafe;
+import com.castle.store.exceptions.StoreException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +38,28 @@ public class ThreadSafeInMemoryStore<T> implements SafeStore<T> {
             return mElements.add(element);
         } finally {
             mLock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public boolean insertIfAbsent(T element) {
+        if (mCharacteristics.contains(Characteristic.NO_DUPLICATIONS)) {
+            mLock.writeLock().lock();
+            try {
+                return mElements.add(element);
+            } finally {
+                mLock.writeLock().unlock();
+            }
+        } else {
+            mLock.writeLock().lock();
+            try {
+                if (mElements.contains(element)) {
+                    return false;
+                }
+                return mElements.add(element);
+            } finally {
+                mLock.writeLock().unlock();
+            }
         }
     }
 
