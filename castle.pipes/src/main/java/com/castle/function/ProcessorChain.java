@@ -8,16 +8,9 @@ class ProcessorChain implements Processor {
 
     private final Collection<Processor> mProcessors;
 
-    private ProcessorChain(Processor... processors) {
+    ProcessorChain(Processor... processors) {
         mProcessors = new ArrayList<>(processors.length);
         Collections.addAll(mProcessors, processors);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T, R, R2, E extends Exception> Processor<T, R2, E> create(
-            Processor<? super T, ? extends R, ? extends E> first,
-            Processor<? super R, ? extends R2, ? extends E> second) {
-        return new ProcessorChain(first, second);
     }
 
     @SuppressWarnings("unchecked")

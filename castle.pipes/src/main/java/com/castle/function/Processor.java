@@ -13,11 +13,11 @@ public interface Processor<T, R, E extends Exception> {
     R process(T t) throws E;
 
     default <R2> Processor<T, R2, E> andThen(Processor<? super R, ? extends R2, ? extends E> processor) {
-        return ProcessorChain.create(this, processor);
+        return ProcessorImpls.chain(this, processor);
     }
 
     default Pipeline<T, E> pipeTo(Pipeline<? super R, ? extends E> pipeline) {
-        return new ProcessorEnd<>(this, pipeline);
+        return ProcessorImpls.end(this, pipeline);
     }
 
     default SafeProcessor<T, R> safe() {
@@ -29,6 +29,10 @@ public interface Processor<T, R, E extends Exception> {
     }
 
     static <T, E extends Exception> Processor<T, T, E> identity() {
+        return ProcessorImpls.identity();
+    }
+
+    static <T, E extends Exception> Processor<T, T, E> identity(Class<T> input, Class<E> ex) {
         return ProcessorImpls.identity();
     }
 

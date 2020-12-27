@@ -3,11 +3,11 @@ package com.castle.function;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        /*Processor.<String, Exception>flatten()
-                .andThen(String::trim)
-                .andThen(String::getBytes)
-                .andThen((data)-> data.length)
+        Pipeline<String, Exception> pipeline = Processor.identity(String.class, Exception.class)
+                .andThen(Object::toString)
                 .pipeTo(System.out::println)
-        .process("hello");*/
+                .divergeTo(System.err::println);
+
+        pipeline.process("Hello");
     }
 }
