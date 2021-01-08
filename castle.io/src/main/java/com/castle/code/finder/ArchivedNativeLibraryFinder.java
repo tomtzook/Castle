@@ -29,8 +29,12 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
         mLibraryPatternFinder = libraryPatternFinder;
     }
 
+    public ArchivedNativeLibraryFinder(Zip zip, Platform targetPlatform, Collection<Path> searchPaths, LibraryPatternBuilder libraryPatternBuilder) {
+        this(zip, targetPlatform, searchPaths, new PatternLibraryFinder(targetPlatform, libraryPatternBuilder));
+    }
+
     public ArchivedNativeLibraryFinder(Zip zip, Platform targetPlatform, Collection<Path> searchPaths) {
-        this(zip, targetPlatform, searchPaths, new PatternLibraryFinder(targetPlatform));
+        this(zip, targetPlatform, searchPaths, new DefaultLibraryPatternBuilder());
     }
 
     public ArchivedNativeLibraryFinder(Zip zip, Platform targetPlatform, Path searchPath) {

@@ -17,9 +17,11 @@ import java.util.stream.StreamSupport;
 public class PatternLibraryFinder {
 
     private final Platform mTargetPlatform;
+    private final LibraryPatternBuilder mPathPatternBuilder;
 
-    public PatternLibraryFinder(Platform targetPlatform) {
+    public PatternLibraryFinder(Platform targetPlatform, LibraryPatternBuilder pathPatternBuilder) {
         mTargetPlatform = targetPlatform;
+        mPathPatternBuilder = pathPatternBuilder;
     }
 
     public Path findIn(String name, Iterable<Path> paths) throws FindException {
@@ -29,7 +31,13 @@ public class PatternLibraryFinder {
 
     public Path find(String name, Iterable<SearchPath> searchPaths) throws FindException {
         try {
-            Pattern filePattern = buildFindPattern(name);
+            Pattern filePattern;
+            if (mTargetPlatform == null) {
+                filePattern = mPathPatternBuilder.build(name);
+            } else {
+                filePattern = mPathPatternBuilder.build(mTargetPlatform, name);
+            }
+
             return findPath(searchPaths, filePattern);
         } catch (IOException e) {
             throw new FindException(e);
@@ -42,18 +50,6 @@ public class PatternLibraryFinder {
                 .entrySet().stream()
                 .map((entry)-> new SearchPath(new PatternPathFinder(entry.getKey()), entry.getValue()))
                 .collect(Collectors.toList());
-    }
-
-    private Pattern buildFindPattern(String name) {
-        if (mTargetPlatform == null) {
-            return Pattern.compile(String.format(".*%s\\.(dll|so|dylib)$",
-                    name));
-        } else {
-            return Pattern.compile(String.format(".*%s\\/%s\\/.*%s\\.(dll|so|dylib)$",
-                    mTargetPlatform.getOperatingSystem().name().toLowerCase(),
-                    mTargetPlatform.getArchitecture().name().toLowerCase(),
-                    name));
-        }
     }
 
     private Path findPath(Iterable<SearchPath> searchPaths, Pattern pattern) throws FindException, IOException {

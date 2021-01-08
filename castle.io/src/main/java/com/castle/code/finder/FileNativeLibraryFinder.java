@@ -20,8 +20,12 @@ public class FileNativeLibraryFinder implements NativeLibraryFinder {
         mSearchPaths = searchPaths;
     }
 
+    public FileNativeLibraryFinder(Iterable<Path> searchPaths, Platform platform, LibraryPatternBuilder libraryPatternBuilder) {
+        this(new PatternLibraryFinder(platform, libraryPatternBuilder), searchPaths, platform);
+    }
+
     public FileNativeLibraryFinder(Iterable<Path> searchPaths, Platform platform) {
-        this(new PatternLibraryFinder(platform), searchPaths, platform);
+        this(searchPaths, platform, new DefaultLibraryPatternBuilder());
     }
 
     public FileNativeLibraryFinder(Iterable<Path> searchPaths) {
