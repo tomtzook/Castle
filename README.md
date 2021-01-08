@@ -12,9 +12,9 @@ A Java toolbox library for performing all things. Need to extract data from a zi
 ### Thread-Safety Annotations
 
 __Castle__ uses source-annotations to designate
-the thread-safety of different classes, in the intention
-of informing users whether or not a class can be safetly used
-in multi-threaded environment.
+the thread-safety of different classes, with the intention
+of informing users whether a class can be safely used
+in a multi-threaded environment.
 
 There are several annotations:
 - `@NotThreadSafe`: indicates that the class cannot be safely used in
@@ -24,8 +24,8 @@ changes across classes. This however does not mean the class is not actually thr
 only that there is no guarantee made that all of its methods are.
 - `@Stateless`: indicates that the class has no actual state, and each
 method use is completely independent.
-- `@Immutable`: indicates that the class posses a state, however
-that state is immutable, and cannot be changed.
+- `@Immutable`: indicates that the class contains a state, however
+that state is immutable, and cannot be changed; thus making it thread-safe.
 - `@ThreadSafe`: indicates that the class takes measures to ensure
 thread-safety and thus can be used in multi-threaded environments without
 the need for additional user actions. How this is achieved depends on
@@ -34,4 +34,4 @@ the class, and generally should not matter.
 `@Stateless`, `@Immutable` and `@ThreadSafe` are all safe for use
 across multiple threads, for different reasons. However, when using
 `@NotThreadSafe`, ensure the class is used by the same thread only, or
-that any access to the class is done with appropriate locking.
+that any access to the class is done with appropriate thread-safety of your own implementation.
