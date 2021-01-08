@@ -1,4 +1,10 @@
 rootProject.name = 'castle'
 
-include 'castle', 'annotations'
-
+include 'annotations'
+include 'castle.core'
+include 'castle.io'
+include 'castle.net'
+include 'castle.concurrent'
+include 'castle.store'
+include 'castle.reflect'
+include 'castle.logging'
