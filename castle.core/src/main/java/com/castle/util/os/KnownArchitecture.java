@@ -13,7 +13,7 @@ public enum KnownArchitecture implements Architecture {
     AMD64("amd64", Bitness.BITS_64),
     AARCH64("aarch64", Bitness.BITS_64),
     PPC64LE("ppc64le", Bitness.BITS_64),
-    UNKNOWN("unknown", null);
+    UNKNOWN(null, null);
     ;
 
     private final String mOsArchName;

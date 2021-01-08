@@ -23,14 +23,13 @@ public class System {
     }
 
     public static OperatingSystem operatingSystem() {
-        String osName = java.lang.System.getProperty("os.name").toLowerCase();
-        for (OperatingSystem operatingSystem : OperatingSystem.values()) {
-            if (operatingSystem.doesNameMatch(osName)) {
+        for (KnownOperatingSystem operatingSystem : KnownOperatingSystem.values()) {
+            if (operatingSystem.isCurrent()) {
                 return operatingSystem;
             }
         }
 
-        throw new Error("unable to find current platform: " + osName);
+        return KnownOperatingSystem.UNKNOWN;
     }
 
     public static Platform platform() {
