@@ -52,6 +52,10 @@ public class OpenZip extends ReferencedCloseable {
         return mEntryExtractor;
     }
 
+    public Iterable<Path> getRootPaths() {
+        return mFileSystem.getRootDirectories();
+    }
+
     public Path getPath(String first, String... more) {
         return mFileSystem.getPath(first, more);
     }

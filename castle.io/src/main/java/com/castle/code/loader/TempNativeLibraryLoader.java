@@ -31,6 +31,11 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
     }
 
     @Override
+    public boolean supports(NativeLibrary nativeLibrary) {
+        return nativeLibrary.getTargetArchitecture().equals(mCurrentPlatform);
+    }
+
+    @Override
     public void load(NativeLibrary nativeLibrary) throws CodeLoadException {
         if (!mCurrentPlatform.equals(nativeLibrary.getTargetArchitecture())) {
             throw new IllegalArgumentException(String.format("library (%s) doesn't support current platform (%s)",

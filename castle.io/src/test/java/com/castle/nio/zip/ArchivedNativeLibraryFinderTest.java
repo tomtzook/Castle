@@ -43,7 +43,7 @@ public class ArchivedNativeLibraryFinderTest {
         try (FileSystem zipFs = new ZipBuilder(mTemporaryFolder.resolve("test.zip"))
                 .addContent(String.format("%s/%s/%s",
                         ARCH.getOperatingSystem().name().toLowerCase(),
-                        ARCH.getArchitecture(),
+                        ARCH.getArchitecture().name().toLowerCase(),
                         FULL_LIB_NAME), DATA)
                 .build()) {
             Zip zip = ZipMock.fromFileSystem(zipFs);

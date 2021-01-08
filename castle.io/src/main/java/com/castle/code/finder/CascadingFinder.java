@@ -9,11 +9,11 @@ import com.castle.util.throwables.Throwables;
 import java.util.Collection;
 
 @NotThreadSafe
-public class MultiNativeLibraryFinder implements NativeLibraryFinder {
+public class CascadingFinder implements NativeLibraryFinder {
 
     private final Collection<NativeLibraryFinder> mLibraryFinders;
 
-    public MultiNativeLibraryFinder(Collection<NativeLibraryFinder> libraryFinders) {
+    public CascadingFinder(Collection<NativeLibraryFinder> libraryFinders) {
         mLibraryFinders = libraryFinders;
     }
 

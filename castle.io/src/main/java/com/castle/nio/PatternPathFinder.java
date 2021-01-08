@@ -34,6 +34,11 @@ public class PatternPathFinder extends PathFinder {
         return findOne(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), root);
     }
 
+    public Path findOne(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Iterable<Path> roots) throws IOException {
+        PathMatcher pathMatcher = getPathMatcher(pattern);
+        return findOne(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), roots);
+    }
+
     public Collection<Path> findAll(Pattern pattern) throws IOException {
         PathMatcher pathMatcher = getPathMatcher(pattern);
         return findAll(PathMatching.pathMatcher(pathMatcher));
@@ -49,6 +54,11 @@ public class PatternPathFinder extends PathFinder {
         return findAll(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), root);
     }
 
+    public Collection<Path> findAll(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Iterable<Path> roots) throws IOException {
+        PathMatcher pathMatcher = getPathMatcher(pattern);
+        return findAll(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), roots);
+    }
+
     public Stream<Path> find(Pattern pattern) throws IOException {
         PathMatcher pathMatcher = getPathMatcher(pattern);
         return find(PathMatching.pathMatcher(pathMatcher));
@@ -62,6 +72,11 @@ public class PatternPathFinder extends PathFinder {
     public Stream<Path> find(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Path root) throws IOException {
         PathMatcher pathMatcher = getPathMatcher(pattern);
         return find(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), root);
+    }
+
+    public Stream<Path> find(Pattern pattern, Predicate<BasicFileAttributes> fileAttributesPredicate, Iterable<Path> roots) throws IOException {
+        PathMatcher pathMatcher = getPathMatcher(pattern);
+        return find(PathMatching.pathMatcher(pathMatcher, fileAttributesPredicate), roots);
     }
 
     private PathMatcher getPathMatcher(Pattern pattern) {
