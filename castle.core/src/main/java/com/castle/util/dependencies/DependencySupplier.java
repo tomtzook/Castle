@@ -3,7 +3,7 @@ package com.castle.util.dependencies;
 import com.castle.annotations.Immutable;
 import com.castle.annotations.ThreadSafe;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface DependencySupplier extends Supplier<Object> {
@@ -39,7 +39,7 @@ public interface DependencySupplier extends Supplier<Object> {
         private Object mReference;
 
         protected Lazy() {
-            mReference = new AtomicReference<>();
+            mReference = null;
         }
 
         @Override
@@ -56,5 +56,27 @@ public interface DependencySupplier extends Supplier<Object> {
         }
 
         abstract Object createInstance();
+    }
+
+    @ThreadSafe
+    class FunctionalLazy extends Lazy {
+
+        private final Predicate<Class<?>> mSupportFunction;
+        private final Supplier<Object> mCreateFunction;
+
+        public FunctionalLazy(Predicate<Class<?>> supportFunction, Supplier<Object> createFunction) {
+            mSupportFunction = supportFunction;
+            mCreateFunction = createFunction;
+        }
+
+        @Override
+        public boolean supports(Class<?> type) {
+            return mSupportFunction.test(type);
+        }
+
+        @Override
+        Object createInstance() {
+            return mCreateFunction.get();
+        }
     }
 }
