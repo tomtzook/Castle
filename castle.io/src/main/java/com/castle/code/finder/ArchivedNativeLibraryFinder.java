@@ -3,12 +3,11 @@ package com.castle.code.finder;
 import com.castle.annotations.ThreadSafe;
 import com.castle.code.NativeLibrary;
 import com.castle.code.ArchivedNativeLibrary;
-import com.castle.code.finder.NativeLibraryFinder;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
 import com.castle.nio.zip.OpenZip;
 import com.castle.nio.zip.Zip;
-import com.castle.util.os.Architecture;
+import com.castle.util.os.Platform;
 import com.castle.util.os.System;
 
 import java.io.IOException;
@@ -21,24 +20,24 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
 
     private final Zip mZip;
     private final Path mArchiveBasePath;
-    private final Architecture mTargetArchitecture;
+    private final Platform mTargetPlatform;
 
-    public ArchivedNativeLibraryFinder(Zip zip, Path archiveBasePath, Architecture targetArchitecture) {
+    public ArchivedNativeLibraryFinder(Zip zip, Path archiveBasePath, Platform targetPlatform) {
         mZip = zip;
         mArchiveBasePath = archiveBasePath;
-        mTargetArchitecture = targetArchitecture;
+        mTargetPlatform = targetPlatform;
     }
 
     public ArchivedNativeLibraryFinder(Zip zip, Path archiveBasePath) {
-        this(zip, archiveBasePath, System.architecture());
+        this(zip, archiveBasePath, System.platform());
     }
 
-    public ArchivedNativeLibraryFinder(Zip zip, Architecture architecture) {
-        this(zip, null, architecture);
+    public ArchivedNativeLibraryFinder(Zip zip, Platform platform) {
+        this(zip, null, platform);
     }
 
     public ArchivedNativeLibraryFinder(Zip zip) {
-        this(zip, null, System.architecture());
+        this(zip, null, System.platform());
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
             Pattern filePattern = buildFindPattern(name);
 
             Path path = findPath(zip, filePattern);
-            return new ArchivedNativeLibrary(name, mTargetArchitecture, mZip, path);
+            return new ArchivedNativeLibrary(name, mTargetPlatform, mZip, path);
         } catch (IOException e) {
             throw new FindException(e);
         }
@@ -56,14 +55,14 @@ public class ArchivedNativeLibraryFinder implements NativeLibraryFinder {
     private Pattern buildFindPattern(String name) {
         if (mArchiveBasePath == null) {
             return Pattern.compile(String.format(".*%s\\/%s\\/.*%s\\.(dll|so|dylib)$",
-                    mTargetArchitecture.getOperatingSystem().name().toLowerCase(),
-                    mTargetArchitecture.getArchName(),
+                    mTargetPlatform.getOperatingSystem().name().toLowerCase(),
+                    mTargetPlatform.getArchitecture(),
                     name));
         } else {
             return Pattern.compile(String.format("^%s\\/%s\\/%s\\/.*%s\\.(dll|so|dylib)$",
                     mArchiveBasePath.toString(),
-                    mTargetArchitecture.getOperatingSystem().name().toLowerCase(),
-                    mTargetArchitecture.getArchName(),
+                    mTargetPlatform.getOperatingSystem().name().toLowerCase(),
+                    mTargetPlatform.getArchitecture(),
                     name));
         }
     }

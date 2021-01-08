@@ -1,17 +1,17 @@
 package com.castle.code;
 
 import com.castle.annotations.Immutable;
-import com.castle.util.os.Architecture;
+import com.castle.util.os.Platform;
 
 @Immutable
 public abstract class NativeLibraryBase implements NativeLibrary {
 
     private final String mName;
-    private final Architecture mArchitecture;
+    private final Platform mPlatform;
 
-    protected NativeLibraryBase(String name, Architecture architecture) {
+    protected NativeLibraryBase(String name, Platform platform) {
         mName = name;
-        mArchitecture = architecture;
+        mPlatform = platform;
     }
 
     @Override
@@ -20,7 +20,7 @@ public abstract class NativeLibraryBase implements NativeLibrary {
     }
 
     @Override
-    public Architecture getTargetArchitecture() {
-        return mArchitecture;
+    public Platform getTargetArchitecture() {
+        return mPlatform;
     }
 }

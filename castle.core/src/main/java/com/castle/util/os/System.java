@@ -5,18 +5,21 @@ import com.castle.annotations.Stateless;
 @Stateless
 public class System {
 
-    private static final String X86_ARCH = "x86";
-
     private System() {
     }
 
     public static Bitness bitness() {
-        String property = java.lang.System.getProperty("os.arch");
-        if (X86_ARCH.equalsIgnoreCase(property)) {
-            return Bitness.x86;
+        return architecture().bitness();
+    }
+
+    public static Architecture architecture() {
+        for (KnownArchitecture architecture : KnownArchitecture.values()) {
+            if (architecture.isCurrent()) {
+                return architecture;
+            }
         }
 
-        return Bitness.x64;
+        return KnownArchitecture.UNKNOWN;
     }
 
     public static OperatingSystem operatingSystem() {
@@ -30,7 +33,7 @@ public class System {
         throw new Error("unable to find current platform: " + osName);
     }
 
-    public static Architecture architecture() {
-        return new Architecture(operatingSystem(), java.lang.System.getProperty("os.arch"));
+    public static Platform platform() {
+        return new Platform(operatingSystem(), architecture());
     }
 }

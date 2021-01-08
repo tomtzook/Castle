@@ -1,11 +1,11 @@
 package com.castle.code;
 
 import com.castle.io.streams.data.ReadOnlyStreamable;
-import com.castle.util.os.Architecture;
+import com.castle.util.os.Platform;
 
 public interface NativeLibrary extends ReadOnlyStreamable {
 
     String getName();
 
-    Architecture getTargetArchitecture();
+    Platform getTargetArchitecture();
 }

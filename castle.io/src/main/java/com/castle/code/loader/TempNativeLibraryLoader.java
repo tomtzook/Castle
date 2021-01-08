@@ -7,7 +7,7 @@ import com.castle.exceptions.CodeLoadException;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
 import com.castle.io.streams.IoStreams;
-import com.castle.util.os.Architecture;
+import com.castle.util.os.Platform;
 import com.castle.util.os.System;
 
 import java.io.IOException;
@@ -19,23 +19,23 @@ import java.nio.file.Files;
 public class TempNativeLibraryLoader implements NativeLibraryLoader {
 
     private final TempPathGenerator mPathGenerator;
-    private final Architecture mCurrentArchitecture;
+    private final Platform mCurrentPlatform;
 
-    public TempNativeLibraryLoader(TempPathGenerator pathGenerator, Architecture currentArchitecture) {
+    public TempNativeLibraryLoader(TempPathGenerator pathGenerator, Platform currentPlatform) {
         mPathGenerator = pathGenerator;
-        mCurrentArchitecture = currentArchitecture;
+        mCurrentPlatform = currentPlatform;
     }
 
     public TempNativeLibraryLoader() {
-        this(new TempPathGenerator(), System.architecture());
+        this(new TempPathGenerator(), System.platform());
     }
 
     @Override
     public void load(NativeLibrary nativeLibrary) throws CodeLoadException {
-        if (!mCurrentArchitecture.equals(nativeLibrary.getTargetArchitecture())) {
+        if (!mCurrentPlatform.equals(nativeLibrary.getTargetArchitecture())) {
             throw new IllegalArgumentException(String.format("library (%s) doesn't support current platform (%s)",
                     nativeLibrary.getTargetArchitecture(),
-                    mCurrentArchitecture));
+                    mCurrentPlatform));
         }
 
         if (nativeLibrary instanceof TempNativeLibrary) {
