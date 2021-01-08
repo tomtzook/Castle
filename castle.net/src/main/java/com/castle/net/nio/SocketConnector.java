@@ -1,4 +1,4 @@
-package com.castle.net.tcp;
+package com.castle.net.nio;
 
 import com.castle.net.ChannelConnection;
 import com.castle.net.Connector;

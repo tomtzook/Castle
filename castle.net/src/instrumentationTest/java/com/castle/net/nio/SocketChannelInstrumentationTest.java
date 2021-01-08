@@ -1,8 +1,6 @@
-package com.castle.net.tcp;
+package com.castle.net.nio;
 
 import com.castle.net.ChannelConnection;
-import com.castle.net.tcp.ServerSocketConnector;
-import com.castle.net.tcp.SocketConnector;
 import com.castle.time.Time;
 import com.castle.util.closeables.Closer;
 import org.junit.internal.Throwables;
