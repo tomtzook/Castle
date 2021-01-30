@@ -21,5 +21,3 @@ task instrumentationTest(type: Test) {
     outputs.upToDateWhen { false }
     mustRunAfter test
 }
-
-check.dependsOn instrumentationTest
