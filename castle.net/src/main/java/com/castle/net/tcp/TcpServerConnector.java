@@ -12,6 +12,7 @@ import com.castle.util.function.ThrowingSupplier;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -42,8 +43,13 @@ public class TcpServerConnector implements Connector<StreamConnection> {
                 });
     }
 
-    public TcpServerConnector(int serverPort, int readTimeoutMs) {
-        this(() -> new ServerSocket(serverPort),
+    public TcpServerConnector(SocketAddress bindAddress, int readTimeoutMs) {
+        this(
+                () -> {
+                    ServerSocket serverSocket = new ServerSocket();
+                    serverSocket.bind(bindAddress);
+                    return serverSocket;
+                },
                 (serverSocket) -> {
                     Socket socket = serverSocket.accept();
                     return Closer.with(socket).run(() -> {
