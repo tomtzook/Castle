@@ -1,5 +1,6 @@
 package com.castle.commands;
 
+import com.castle.commands.exceptions.RedoCommandException;
 import com.castle.time.Clock;
 import com.castle.time.Time;
 import com.castle.util.dependencies.DependencyContainer;
@@ -34,6 +35,8 @@ public class CommandContext<R> {
         try {
             R result = mCommand.execute(container, mParameters);
             mStatus.success(result);
+        } catch (RedoCommandException e) {
+            return ExecutionResult.REDO;
         } catch (Throwable t) {
             mStatus.fail(t);
         }
