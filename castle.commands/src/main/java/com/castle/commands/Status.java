@@ -1,12 +1,16 @@
 package com.castle.commands;
 
-public interface Result<R> {
+import com.castle.time.Time;
+
+public interface Status<R> {
 
     boolean isDone();
     boolean didSucceed();
     boolean isCanceled();
 
-    R get();
+    Time getStartTime();
+
+    R getResult();
     Throwable getError();
 
     void cancel();

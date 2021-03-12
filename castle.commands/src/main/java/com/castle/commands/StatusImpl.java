@@ -1,14 +1,19 @@
 package com.castle.commands;
 
+import com.castle.time.Time;
+
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ResultImpl<R> implements InnerResult<R> {
+public class StatusImpl<R> implements InnerStatus<R> {
 
+    private final Time mStartTime;
     private final AtomicReference<ExecutionStatus> mStatus;
     private final AtomicReference<R> mResult;
     private final AtomicReference<Throwable> mError;
 
-    public ResultImpl() {
+    public StatusImpl(Time startTime) {
+        mStartTime = startTime;
+
         mStatus = new AtomicReference<>(ExecutionStatus.PENDING);
         mResult = new AtomicReference<>(null);
         mError = new AtomicReference<>(null);
@@ -30,7 +35,12 @@ public class ResultImpl<R> implements InnerResult<R> {
     }
 
     @Override
-    public R get() {
+    public Time getStartTime() {
+        return mStartTime;
+    }
+
+    @Override
+    public R getResult() {
         return mResult.get();
     }
 
@@ -61,13 +71,13 @@ public class ResultImpl<R> implements InnerResult<R> {
         ExecutionStatus status = mStatus.get();
         switch (status) {
             case SUCCESSFUL:
-                return String.format("Result{SUCCESSFUL, %s}", mResult.get());
+                return String.format("Result{SUCCESSFUL, RESULT=%s}", mResult.get());
             case FAILED:
-                return String.format("Result{FAILED, %s: %s}",
+                return String.format("Result{FAILED, ERROR=%s: %s}",
                         mError.get().getClass().getName(),
                         mError.get().getMessage());
             default:
-                return String.format("Result{%s}", status.name());
+                return String.format("Result{%s, START_TIME=%s}", status.name(), mStartTime);
         }
     }
 }

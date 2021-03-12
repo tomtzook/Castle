@@ -1,6 +1,6 @@
 package com.castle.commands;
 
-public interface InnerResult<R> extends Result<R> {
+public interface InnerStatus<R> extends Status<R> {
 
     void success(R result);
     void fail(Throwable cause);

@@ -1,29 +1,41 @@
 package com.castle.commands;
 
+import com.castle.time.Clock;
+import com.castle.time.Time;
 import com.castle.util.dependencies.DependencyContainer;
 
 public class CommandContext<R> {
 
+    private final Clock mClock;
     private final Command<R> mCommand;
     private final Parameters mParameters;
-    private final InnerResult<R> mResult;
+    private final Time mStartDelay;
+    private final InnerStatus<R> mStatus;
 
-    public CommandContext(Command<R> command, Parameters parameters, InnerResult<R> result) {
+    public CommandContext(Clock clock, Command<R> command,
+                          Parameters parameters, Time delay, InnerStatus<R> status) {
+        mClock = clock;
         mCommand = command;
         mParameters = parameters;
-        mResult = result;
+        mStartDelay = delay;
+        mStatus = status;
     }
 
     public ExecutionResult execute(DependencyContainer container) {
-        if (mResult.isCanceled()) {
+        if (mStatus.isCanceled()) {
             return ExecutionResult.DONE;
+        }
+
+        Time now = mClock.currentTime();
+        if (mStartDelay.isValid() && !now.sub(mStatus.getStartTime()).after(mStartDelay)) {
+            return ExecutionResult.REDO;
         }
 
         try {
             R result = mCommand.execute(container, mParameters);
-            mResult.success(result);
+            mStatus.success(result);
         } catch (Throwable t) {
-            mResult.fail(t);
+            mStatus.fail(t);
         }
 
         return ExecutionResult.DONE;
