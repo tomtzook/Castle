@@ -24,6 +24,7 @@ public class ExecutionTask implements Runnable {
                     case REDO:
                         mQueue.add(context);
                         break;
+                    default: throw new AssertionError("unexpected ExecutionResult " + result);
                 }
             } catch (InterruptedException e) {
                 break;
