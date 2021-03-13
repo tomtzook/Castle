@@ -1,11 +1,13 @@
-package com.castle.commands;
+package com.castle.scheduling;
 
 import com.castle.time.Time;
 
 public interface Status<R> {
 
+    boolean isPending();
     boolean isDone();
-    boolean didSucceed();
+    boolean isSuccessful();
+    boolean isErrored();
     boolean isCanceled();
 
     Time getStartTime();

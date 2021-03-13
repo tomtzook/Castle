@@ -1,11 +1,13 @@
 package com.castle.commands;
 
 import com.castle.commands.exceptions.RedoCommandException;
+import com.castle.scheduling.ExecutionContext;
+import com.castle.scheduling.InnerStatus;
 import com.castle.time.Clock;
 import com.castle.time.Time;
 import com.castle.util.dependencies.DependencyContainer;
 
-public class CommandContext<R> {
+public class CommandContext<R> implements ExecutionContext {
 
     private final Clock mClock;
     private final Command<R> mCommand;
@@ -22,25 +24,30 @@ public class CommandContext<R> {
         mStatus = status;
     }
 
-    public ExecutionResult execute(DependencyContainer container) {
+    @Override
+    public boolean execute(DependencyContainer container) {
         if (mStatus.isCanceled()) {
-            return ExecutionResult.DONE;
+            return true;
         }
 
-        Time now = mClock.currentTime();
-        if (mStartDelay.isValid() && !now.sub(mStatus.getStartTime()).after(mStartDelay)) {
-            return ExecutionResult.REDO;
+        if (mStatus.isPending()) {
+            Time now = mClock.currentTime();
+            if (mStartDelay.isValid() && !now.sub(mStatus.getQueuedTime()).after(mStartDelay)) {
+                return false;
+            }
+
+            mStatus.markStarted(now);
         }
 
         try {
             R result = mCommand.execute(container, mParameters);
-            mStatus.success(result);
+            mStatus.markFinished(result);
         } catch (RedoCommandException e) {
-            return ExecutionResult.REDO;
+            return false;
         } catch (Throwable t) {
-            mStatus.fail(t);
+            mStatus.markErrored(t);
         }
 
-        return ExecutionResult.DONE;
+        return true;
     }
 }
