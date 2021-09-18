@@ -4,7 +4,6 @@ import com.castle.annotations.Immutable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 @Immutable
 public class Types {
@@ -13,7 +12,6 @@ public class Types {
     }
 
     private static final Map<Class<?>, Class<?>> sPrimitivesToWrappers;
-    private static final TypeAdapter<Number> sNumberAdapter;
 
     static {
         sPrimitivesToWrappers = new HashMap<>();
@@ -25,8 +23,6 @@ public class Types {
         sPrimitivesToWrappers.put(long.class, Long.class);
         sPrimitivesToWrappers.put(float.class, Float.class);
         sPrimitivesToWrappers.put(double.class, Double.class);
-
-        sNumberAdapter = new NumberAdapter();
     }
 
     public static Class<?> toWrapperClass(Class<?> primitiveType) {
@@ -38,9 +34,5 @@ public class Types {
         }
 
         return sPrimitivesToWrappers.get(primitiveType);
-    }
-
-    public static TypeAdapter<Number> numberAdapter() {
-        return sNumberAdapter;
     }
 }
