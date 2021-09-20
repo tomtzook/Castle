@@ -58,10 +58,10 @@ public class DependencyContainerImpl implements DependencyContainer {
         }
     }
 
-    private final Collection<DependencySupplier> mSuppliers;
+    private final Collection<? extends DependencySupplier> mSuppliers;
 
     public DependencyContainerImpl(Collection<? extends DependencySupplier> suppliers) {
-        mSuppliers = new ArrayList<>(suppliers);
+        mSuppliers = suppliers;
     }
 
     @Override
