@@ -87,4 +87,18 @@ public class DependencyContainer {
 
         return Optional.of(type.cast(instance));
     }
+
+    public <T> Collection<T> getAllMatching(Class<T> type) {
+        Collection<T> matching = new HashSet<>();
+        for (DependencySupplier dependency : mSuppliers) {
+            if (!dependency.supports(type)) {
+                continue;
+            }
+
+            T object = type.cast(dependency.get());
+            matching.add(object);
+        }
+
+        return matching;
+    }
 }
