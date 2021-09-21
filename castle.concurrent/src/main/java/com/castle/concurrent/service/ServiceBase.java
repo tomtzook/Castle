@@ -18,6 +18,10 @@ public abstract class ServiceBase implements Service {
 
     @Override
     public synchronized void start() throws ServiceException {
+        if (!isRunning()) {
+            mServiceControl.markStopped();
+        }
+
         mServiceControl.ensureCanStart();
         startRunning();
         mServiceControl.markStarted();
@@ -25,13 +29,17 @@ public abstract class ServiceBase implements Service {
 
     @Override
     public synchronized void stop() {
+        if (!isRunning()) {
+            mServiceControl.markStopped();
+        }
+
         mServiceControl.ensureCanStop();
         stopRunning();
         mServiceControl.markStopped();
     }
 
     @Override
-    public final boolean isRunning() {
+    public boolean isRunning() {
         return mServiceControl.isRunning();
     }
 
