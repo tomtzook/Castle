@@ -4,4 +4,5 @@ public interface OperatingSystem {
 
     String name();
     boolean isCurrent();
+    String nativeLibraryExtension();
 }
