@@ -35,7 +35,11 @@ public class ArchiveLibrarySearchPath implements LibrarySearchPath {
         this(zip, new DefaultLibraryPatternBuilder(), new DefaultLibraryClassifier());
     }
 
-                                    @Override
+    public ArchiveLibrarySearchPath(Path path) {
+        this(Zip.fromPath(path));
+    }
+
+    @Override
     public NativeLibrary find(Platform targetPlatform, String name) throws IOException, FindException {
         ThrowableChain chain = Throwables.newChain();
 

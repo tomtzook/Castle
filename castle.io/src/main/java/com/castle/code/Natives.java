@@ -42,7 +42,7 @@ public class Natives {
         String path = System.getProperty("java.class.path");
         Collection<LibrarySearchPath> paths = Arrays.stream(path.split(File.pathSeparator))
                 .map(Paths::get)
-                .map(DirectoryLibrarySearchPath::new)
+                .map(ArchiveLibrarySearchPath::new)
                 .collect(Collectors.toList());
 
         return new CascadingSearchPath(paths);

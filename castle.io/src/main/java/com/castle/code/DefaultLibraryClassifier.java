@@ -1,5 +1,6 @@
 package com.castle.code;
 
+import com.castle.io.FileNames;
 import com.castle.util.os.Architecture;
 import com.castle.util.os.KnownArchitecture;
 import com.castle.util.os.KnownOperatingSystem;
@@ -39,14 +40,8 @@ public class DefaultLibraryClassifier implements LibraryClassifier {
     }
 
     private static boolean isPe(Path path) {
-        String strPath = path.getFileName().toString();
-        int lastIndex = strPath.lastIndexOf('.');
-        if (lastIndex < 0) {
-            return false;
-        }
-
-        String ext = strPath.substring(lastIndex);
-        return ext.equals(".dll");
+        String ext = FileNames.extension(path);
+        return ext.equals("dll");
     }
 
     private static Architecture getArchFromPe(Path path) throws IOException {
@@ -75,14 +70,8 @@ public class DefaultLibraryClassifier implements LibraryClassifier {
     }
 
     private static boolean isElf(Path path) {
-        String strPath = path.getFileName().toString();
-        int lastIndex = strPath.lastIndexOf('.');
-        if (lastIndex < 0) {
-            return false;
-        }
-
-        String ext = strPath.substring(lastIndex);
-        return ext.equals(".so");
+        String ext = FileNames.extension(path);
+        return ext.equals("so");
     }
 
     private static Architecture getArchFromElf(Path path) throws IOException {
