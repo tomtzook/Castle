@@ -4,13 +4,14 @@ import com.castle.code.NativeLibrary;
 import com.castle.exceptions.CodeLoadException;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 public class CascadingLoader implements NativeLibraryLoader {
 
-    private final Collection<NativeLibraryLoader> mLoaders;
+    private final Collection<? extends NativeLibraryLoader> mLoaders;
 
-    public CascadingLoader(Collection<NativeLibraryLoader> loaders) {
-        mLoaders = loaders;
+    public CascadingLoader(Collection<? extends NativeLibraryLoader> loaders) {
+        mLoaders = new HashSet<>(loaders);
     }
 
     @Override

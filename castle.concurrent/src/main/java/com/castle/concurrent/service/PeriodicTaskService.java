@@ -25,6 +25,13 @@ public class PeriodicTaskService extends TerminalServiceBase {
     }
 
     @Override
+    public boolean isRunning() {
+        return super.isRunning() &&
+                mTaskFuture != null &&
+                !mTaskFuture.isDone();
+    }
+
+    @Override
     protected void startRunning() {
         Time period = mPeriodSupplier.get();
         mTaskFuture = mExecutorService.scheduleAtFixedRate(mTask,

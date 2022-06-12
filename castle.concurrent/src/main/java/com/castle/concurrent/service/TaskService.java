@@ -20,6 +20,13 @@ public class TaskService extends TerminalServiceBase {
     }
 
     @Override
+    public boolean isRunning() {
+        return super.isRunning() &&
+                mTaskFuture != null &&
+                !mTaskFuture.isDone();
+    }
+
+    @Override
     protected void startRunning() throws ServiceException {
         mTaskFuture = mExecutorService.submit(mTask);
     }

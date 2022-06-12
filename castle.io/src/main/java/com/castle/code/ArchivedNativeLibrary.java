@@ -6,6 +6,7 @@ import com.castle.nio.zip.OpenZip;
 import com.castle.nio.zip.Zip;
 import com.castle.util.os.Platform;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -15,14 +16,10 @@ public class ArchivedNativeLibrary extends TempNativeLibrary {
     private final Zip mZip;
     private final String mInZipPath;
 
-    public ArchivedNativeLibrary(String name, Platform platform, Zip zip, String inZipPath) {
-        super(name, platform);
+    public ArchivedNativeLibrary(Platform platform, Zip zip, String inZipPath) {
+        super(new File(inZipPath).getName(), platform);
         mZip = zip;
         mInZipPath = inZipPath;
-    }
-
-    public ArchivedNativeLibrary(String name, Platform platform, Zip zip, Path inZipPath) {
-        this(name, platform, zip, inZipPath.toAbsolutePath().toString());
     }
 
     @Override

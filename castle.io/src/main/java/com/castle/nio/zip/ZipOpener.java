@@ -5,7 +5,7 @@ import com.castle.util.closeables.ReferenceCounter;
 import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 
-public interface ZipOpener {
+public interface ZipOpener<T extends OpenZip> {
 
-    OpenZip open(ReferenceCounter referenceCounter, Lock closeLock) throws IOException;
+    T open(ReferenceCounter referenceCounter, Lock closeLock) throws IOException;
 }
