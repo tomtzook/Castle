@@ -2,10 +2,10 @@ package com.castle.reflect.data;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 public interface KnownDataTypes<K, T extends DataType<K>> {
 
-    Collection<? extends T> getAll();
     T getFromKey(K key);
 
     static <K, T extends DataType<K>> KnownDataTypes<K, T> of(Collection<? extends T> types) {
@@ -26,11 +26,6 @@ public interface KnownDataTypes<K, T extends DataType<K>> {
         }
 
         @Override
-        public Collection<? extends T> getAll() {
-            return mTypes;
-        }
-
-        @Override
         public T getFromKey(K key) {
             for (T type : mTypes) {
                 if (type.matchesKey(key)) {
@@ -38,7 +33,7 @@ public interface KnownDataTypes<K, T extends DataType<K>> {
                 }
             }
 
-            throw new IllegalArgumentException("Unknown type: " + key);
+            throw new NoSuchElementException("Unknown type: " + key);
         }
     }
 }

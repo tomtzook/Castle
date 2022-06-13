@@ -4,4 +4,5 @@ dependencies {
     api project(':castle.core')
     api project(':castle.concurrent')
     api project(':castle.reflect')
+    api project(':castle.io')
 }
