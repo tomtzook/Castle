@@ -98,7 +98,7 @@ public class Closer implements AutoCloseable {
     }
 
     public Closer addAll(Collection<? extends AutoCloseable> closeables) {
-        mCloseables.addAll(closeables);
+        closeables.forEach(this::add);
         return this;
     }
 
