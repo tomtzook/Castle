@@ -29,16 +29,14 @@ import java.util.Deque;
  *         }
  *     </pre>
  *     <em>resource1</em> and <em>resource2</em> will both be closed.
- * </p>
  * <p>
  *     Alternatively, using {@link #run(ThrowingSupplier, Class, CloseOption) run}
  *     <pre>
-*          Closer closer = Closer.with(resource);
- *         closer.run(()-> {
+ *         Closer closer = Closer.with(resource);
+ *         closer.run(()-&lt {
  *             // do some stuff with resource
  *         }, ExpectedException.class, Closer.CloserOption.ON_ERROR);
  *     </pre>
- * </p>
  */
 @NotThreadSafe
 public class Closer implements AutoCloseable {
