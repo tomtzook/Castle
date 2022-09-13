@@ -1,10 +1,10 @@
 package com.castle.code.finder;
 
 import com.castle.code.ArchivedNativeLibrary;
-import com.castle.code.DefaultLibraryClassifier;
-import com.castle.code.FileNativeLibrary;
-import com.castle.code.LibraryClassifier;
+import com.castle.code.DefaultNativeCodeClassifier;
+import com.castle.code.NativeCodeClassifier;
 import com.castle.code.NativeLibrary;
+import com.castle.code.UnableToClassifyException;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
 import com.castle.nio.zip.OpenZip;
@@ -23,16 +23,16 @@ public class ArchiveLibrarySearchPath implements LibrarySearchPath {
 
     private final Zip mZip;
     private final LibraryPatternBuilder mPatternBuilder;
-    private final LibraryClassifier mClassifier;
+    private final NativeCodeClassifier mClassifier;
 
-    public ArchiveLibrarySearchPath(Zip zip, LibraryPatternBuilder patternBuilder, LibraryClassifier classifier) {
+    public ArchiveLibrarySearchPath(Zip zip, LibraryPatternBuilder patternBuilder, NativeCodeClassifier classifier) {
         mZip = zip;
         mPatternBuilder = patternBuilder;
         mClassifier = classifier;
     }
 
     public ArchiveLibrarySearchPath(Zip zip) {
-        this(zip, new DefaultLibraryPatternBuilder(), new DefaultLibraryClassifier());
+        this(zip, new DefaultLibraryPatternBuilder(), new DefaultNativeCodeClassifier());
     }
 
     public ArchiveLibrarySearchPath(Path path) {
@@ -69,9 +69,13 @@ public class ArchiveLibrarySearchPath implements LibrarySearchPath {
         try (OpenZip openZip = mZip.open();
              Stream<Path> stream = openZip.pathFinder().find(pattern, PathMatching.fileMatcher())) {
             for (Path path : stream.collect(Collectors.toSet())) {
-                Platform platform = mClassifier.targetPlatform(path);
-                if (platform.equals(targetPlatform)) {
-                    return new ArchivedNativeLibrary(platform, mZip, path.toAbsolutePath().toString());
+                try {
+                    Platform platform = mClassifier.targetPlatform(path);
+                    if (platform.equals(targetPlatform)) {
+                        return new ArchivedNativeLibrary(platform, mZip, path.toAbsolutePath().toString());
+                    }
+                } catch (UnableToClassifyException e) {
+                    chain.chain(e);
                 }
             }
         }

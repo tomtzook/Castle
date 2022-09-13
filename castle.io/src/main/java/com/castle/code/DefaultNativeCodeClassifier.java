@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class DefaultLibraryClassifier implements LibraryClassifier {
+public class DefaultNativeCodeClassifier implements NativeCodeClassifier {
 
     @Override
     public Platform targetPlatform(Path path) throws IOException {
@@ -47,6 +47,6 @@ public class DefaultLibraryClassifier implements LibraryClassifier {
             chain.throwIfType(IOException.class);
         }
 
-        return new Platform(KnownOperatingSystem.UNKNOWN, KnownArchitecture.UNKNOWN);
+        throw new UnableToClassifyException();
     }
 }

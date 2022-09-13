@@ -1,9 +1,10 @@
 package com.castle.code.finder;
 
-import com.castle.code.DefaultLibraryClassifier;
+import com.castle.code.DefaultNativeCodeClassifier;
 import com.castle.code.FileNativeLibrary;
-import com.castle.code.LibraryClassifier;
+import com.castle.code.NativeCodeClassifier;
 import com.castle.code.NativeLibrary;
+import com.castle.code.UnableToClassifyException;
 import com.castle.exceptions.FindException;
 import com.castle.nio.PathMatching;
 import com.castle.nio.PatternPathFinder;
@@ -22,9 +23,9 @@ public class DirectoryLibrarySearchPath implements LibrarySearchPath {
     private final Path mRoot;
     private final PatternPathFinder mPathFinder;
     private final LibraryPatternBuilder mPatternBuilder;
-    private final LibraryClassifier mClassifier;
+    private final NativeCodeClassifier mClassifier;
 
-    public DirectoryLibrarySearchPath(Path path, LibraryPatternBuilder patternBuilder, LibraryClassifier classifier) {
+    public DirectoryLibrarySearchPath(Path path, LibraryPatternBuilder patternBuilder, NativeCodeClassifier classifier) {
         mRoot = path;
         mPathFinder = new PatternPathFinder(path.getFileSystem());
         mPatternBuilder = patternBuilder;
@@ -32,7 +33,7 @@ public class DirectoryLibrarySearchPath implements LibrarySearchPath {
     }
 
     public DirectoryLibrarySearchPath(Path path) {
-        this(path, new DefaultLibraryPatternBuilder(), new DefaultLibraryClassifier());
+        this(path, new DefaultLibraryPatternBuilder(), new DefaultNativeCodeClassifier());
     }
 
     @Override
@@ -60,15 +61,21 @@ public class DirectoryLibrarySearchPath implements LibrarySearchPath {
 
     @Override
     public NativeLibrary find(Platform targetPlatform, Pattern pattern) throws FindException, IOException {
+        ThrowableChain chain = Throwables.newChain();
+
         try (Stream<Path> stream = mPathFinder.find(pattern, PathMatching.fileMatcher(), mRoot)) {
             for (Path path : stream.collect(Collectors.toSet())) {
-                Platform platform = mClassifier.targetPlatform(path);
-                if (platform.equals(targetPlatform)) {
-                    return new FileNativeLibrary(path, platform);
+                try {
+                    Platform platform = mClassifier.targetPlatform(path);
+                    if (platform.equals(targetPlatform)) {
+                        return new FileNativeLibrary(path, platform);
+                    }
+                } catch (UnableToClassifyException e) {
+                    chain.chain(e);
                 }
             }
         }
 
-        throw new FindException("not found: " + pattern.pattern());
+        throw new FindException("not found: " + pattern.pattern(), chain.getTopThrowable().orElse(null));
     }
 }

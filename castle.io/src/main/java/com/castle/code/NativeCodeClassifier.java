@@ -5,7 +5,7 @@ import com.castle.util.os.Platform;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public interface LibraryClassifier {
+public interface NativeCodeClassifier {
 
     Platform targetPlatform(Path path) throws IOException;
 }
