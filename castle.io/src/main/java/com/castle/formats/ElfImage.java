@@ -25,6 +25,7 @@ public class ElfImage {
         MACHINE_INTEL386(3, KnownArchitecture.I386),
         MACHINE_PPC(20, KnownArchitecture.PPC),
         MACHINE_AARCH64(183, KnownArchitecture.AARCH64),
+        MACHINE_ARM(40, KnownArchitecture.ARM32)
         ;
 
         private final int mCode;

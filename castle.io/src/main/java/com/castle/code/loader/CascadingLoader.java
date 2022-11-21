@@ -30,6 +30,7 @@ public class CascadingLoader implements NativeLibraryLoader {
         for (NativeLibraryLoader loader : mLoaders) {
             if (loader.supports(nativeLibrary)) {
                 loader.load(nativeLibrary);
+                return;
             }
         }
 

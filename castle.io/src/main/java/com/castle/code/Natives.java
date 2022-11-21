@@ -16,10 +16,13 @@ import com.castle.nio.zip.Zip;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -32,7 +35,8 @@ public class Natives {
         String path = System.getProperty("java.library.path");
         Collection<LibrarySearchPath> paths = Arrays.stream(path.split(File.pathSeparator))
                 .map(Paths::get)
-                .map(DirectoryLibrarySearchPath::new)
+                .map(Natives::newSearchPath)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return new CascadingSearchPath(paths);
@@ -42,10 +46,23 @@ public class Natives {
         String path = System.getProperty("java.class.path");
         Collection<LibrarySearchPath> paths = Arrays.stream(path.split(File.pathSeparator))
                 .map(Paths::get)
-                .map(ArchiveLibrarySearchPath::new)
+                .map(Natives::newSearchPath)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return new CascadingSearchPath(paths);
+    }
+
+    private static LibrarySearchPath newSearchPath(Path path) {
+        if (!Files.exists(path)) {
+            return null;
+        } else if (Files.isDirectory(path)) {
+            return new DirectoryLibrarySearchPath(path);
+        } else if (Files.isRegularFile(path)) {
+            return new ArchiveLibrarySearchPath(path);
+        } else {
+            throw new IllegalArgumentException("Unable to create search path for path");
+        }
     }
 
     public static Loader newLoader() {
