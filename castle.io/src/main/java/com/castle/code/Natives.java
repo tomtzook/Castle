@@ -2,10 +2,10 @@ package com.castle.code;
 
 import com.castle.annotations.NotThreadSafe;
 import com.castle.annotations.Stateless;
-import com.castle.code.finder.ArchivedNativeLibraryFinder;
-import com.castle.code.finder.CascadingFinder;
-import com.castle.code.finder.FileNativeLibraryFinder;
-import com.castle.code.finder.NativeLibraryFinder;
+import com.castle.code.finder.ArchiveLibrarySearchPath;
+import com.castle.code.finder.CascadingSearchPath;
+import com.castle.code.finder.DirectoryLibrarySearchPath;
+import com.castle.code.finder.LibrarySearchPath;
 import com.castle.code.loader.CascadingLoader;
 import com.castle.code.loader.FileNativeLibraryLoader;
 import com.castle.code.loader.NativeLibraryLoader;
@@ -15,11 +15,14 @@ import com.castle.exceptions.FindException;
 import com.castle.nio.zip.Zip;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -28,36 +31,44 @@ public class Natives {
     private Natives() {
     }
 
-    public static NativeLibraryFinder finderForArchives(Zip... zips) {
-        Collection<NativeLibraryFinder> nativeLibraryFinders = new ArrayList<>();
-        for (Zip zip : zips) {
-            nativeLibraryFinders.add(new ArchivedNativeLibraryFinder(zip));
-        }
-
-        return new CascadingFinder(nativeLibraryFinders);
-    }
-
-    public static NativeLibraryFinder finderForArchives(Path baseSearchPath, Zip... zips) {
-        Collection<NativeLibraryFinder> nativeLibraryFinders = new ArrayList<>();
-        for (Zip zip : zips) {
-            nativeLibraryFinders.add(new ArchivedNativeLibraryFinder(zip, baseSearchPath));
-        }
-
-        return new CascadingFinder(nativeLibraryFinders);
-    }
-
-    public static NativeLibraryFinder javaLibraryPathFinder() {
+    public static LibrarySearchPath javaLibraryPathFinder() {
         String path = System.getProperty("java.library.path");
-        Collection<Path> paths = Arrays.stream(path.split(File.pathSeparator))
+        Collection<LibrarySearchPath> paths = Arrays.stream(path.split(File.pathSeparator))
                 .map(Paths::get)
+                .map(Natives::newSearchPath)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        return new FileNativeLibraryFinder(paths);
+        return new CascadingSearchPath(paths);
     }
 
-    public static Loader startLoading() {
+    public static LibrarySearchPath javaClassPathFinder() {
+        String path = System.getProperty("java.class.path");
+        Collection<LibrarySearchPath> paths = Arrays.stream(path.split(File.pathSeparator))
+                .map(Paths::get)
+                .map(Natives::newSearchPath)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return new CascadingSearchPath(paths);
+    }
+
+    private static LibrarySearchPath newSearchPath(Path path) {
+        if (!Files.exists(path)) {
+            return null;
+        } else if (Files.isDirectory(path)) {
+            return new DirectoryLibrarySearchPath(path);
+        } else if (Files.isRegularFile(path)) {
+            return new ArchiveLibrarySearchPath(path);
+        } else {
+            throw new IllegalArgumentException("Unable to create search path for path");
+        }
+    }
+
+    public static Loader newLoader() {
         return new Loader()
                 .from(javaLibraryPathFinder())
+                .from(javaClassPathFinder())
                 .withLoader(new FileNativeLibraryLoader())
                 .withLoader(new TempNativeLibraryLoader());
     }
@@ -65,25 +76,21 @@ public class Natives {
     @NotThreadSafe
     public static class Loader {
 
-        private final Collection<NativeLibraryFinder> mFinders;
+        private final Collection<LibrarySearchPath> mSearchPaths;
         private final Collection<NativeLibraryLoader> mLoaders;
 
         public Loader() {
-            mFinders = new ArrayList<>();
+            mSearchPaths = new ArrayList<>();
             mLoaders = new ArrayList<>();
         }
 
-        public Loader from(NativeLibraryFinder finder) {
-            mFinders.add(finder);
+        public Loader from(LibrarySearchPath searchPath) {
+            mSearchPaths.add(searchPath);
             return this;
         }
 
-        public Loader from(Zip zip, Path basePath) {
-            return from(new ArchivedNativeLibraryFinder(zip, basePath));
-        }
-
         public Loader from(Zip zip) {
-            return from(new ArchivedNativeLibraryFinder(zip));
+            return from(new ArchiveLibrarySearchPath(zip));
         }
 
         public Loader withLoader(NativeLibraryLoader loader) {
@@ -91,16 +98,16 @@ public class Natives {
             return this;
         }
 
-        public void loadAll(String... names) throws FindException, CodeLoadException {
-            loadAll(Arrays.asList(names));
+        public void load(String... names) throws FindException, CodeLoadException, IOException {
+            load(Arrays.asList(names));
         }
 
-        public void loadAll(Collection<String> names) throws FindException, CodeLoadException {
-            NativeLibraryFinder finder = new CascadingFinder(mFinders);
+        public void load(Collection<String> names) throws FindException, CodeLoadException, IOException {
+            LibrarySearchPath searchPath = new CascadingSearchPath(mSearchPaths);
             NativeLibraryLoader loader = new CascadingLoader(mLoaders);
 
             for (String name : names) {
-                NativeLibrary nativeLibrary = finder.find(name);
+                NativeLibrary nativeLibrary = searchPath.find(name);
                 if (!loader.supports(nativeLibrary)) {
                     throw new IllegalArgumentException("Unsupported library: " + nativeLibrary);
                 }

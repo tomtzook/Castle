@@ -3,6 +3,7 @@ package com.castle.util.os;
 /**
  * <a href="https://github.com/openjdk/jdk/blob/9604ee82690f89320614b37bfef4178abc869777/src/java.base/windows/native/libjava/java_props_md.c">OpenJdk sources: /jdk/src/java.base/windows/native/libjava/java_props_md.c </a>
  * <a href="https://github.com/openjdk/jdk/blob/05a764f4ffb8030d6b768f2d362c388e5aabd92d/src/java.base/unix/native/libjava/java_props_md.c">OpenJdk sources: /jdk/src/java.base/unix/native/libjava/java_props_md.c</a>
+ * <a href="https://github.com/trustin/os-maven-plugin/blob/master/src/main/java/kr/motd/maven/os/Detector.java">os-maven-plugin Detector.java</a>
  */
 public enum KnownArchitecture implements Architecture {
     X86("x86", Bitness.BITS_32),
@@ -12,6 +13,7 @@ public enum KnownArchitecture implements Architecture {
     IA64("ia64", Bitness.BITS_64),
     AMD64("amd64", Bitness.BITS_64),
     AARCH64("aarch64", Bitness.BITS_64),
+    ARM32("arm32", Bitness.BITS_32),
     PPC64LE("ppc64le", Bitness.BITS_64),
     UNKNOWN(null, null);
     ;

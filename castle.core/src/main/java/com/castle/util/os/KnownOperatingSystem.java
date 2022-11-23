@@ -1,23 +1,30 @@
 package com.castle.util.os;
 
 public enum KnownOperatingSystem implements OperatingSystem {
-    WINDOWS("win"),
-    LINUX("linux"),
-    MAC("max"),
-    SOLARIS("sunos"),
-    UNKNOWN(null)
+    WINDOWS("win", ".dll"),
+    LINUX("linux", ".so"),
+    MAC("max", ".dylib"),
+    SOLARIS("sunos", ".so"),
+    UNKNOWN(null, null)
     ;
 
     private final String mOsName;
+    private final String mNativeLibExt;
 
-    KnownOperatingSystem(String osName) {
+    KnownOperatingSystem(String osName, String nativeLibExt) {
         mOsName = osName;
+        mNativeLibExt = nativeLibExt;
     }
 
     @Override
     public boolean isCurrent() {
         String osName = java.lang.System.getProperty("os.name").toLowerCase();
         return doesMatchProperty(osName);
+    }
+
+    @Override
+    public String nativeLibraryExtension() {
+        return mNativeLibExt;
     }
 
     boolean doesMatchProperty(String fullOsName) {

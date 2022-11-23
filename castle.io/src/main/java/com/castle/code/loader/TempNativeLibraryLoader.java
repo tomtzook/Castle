@@ -27,7 +27,10 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
     }
 
     public TempNativeLibraryLoader() {
-        this(new TempPathGenerator(), System.platform());
+        this(new TempPathGenerator(
+                "lib",
+                        System.platform().getOperatingSystem().nativeLibraryExtension()),
+                System.platform());
     }
 
     @Override

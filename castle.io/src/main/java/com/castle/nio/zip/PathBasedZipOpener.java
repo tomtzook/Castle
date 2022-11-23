@@ -11,21 +11,23 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 @NotThreadSafe
-public class PathBasedZipOpener implements ZipOpener {
+public class PathBasedZipOpener<T extends OpenZip> implements ZipOpener<T> {
 
     private final FileSystemProvider mFileSystemProvider;
     private final Map<String, ?> mFileSystemEnv;
     private final Path mPath;
+    private final ToOpenZip<T> mOpenZip;
 
-    public PathBasedZipOpener(FileSystemProvider fileSystemProvider, Map<String, ?> fileSystemEnv, Path path) {
+    public PathBasedZipOpener(FileSystemProvider fileSystemProvider, Map<String, ?> fileSystemEnv, Path path, ToOpenZip<T> openZip) {
         mFileSystemProvider = fileSystemProvider;
         mFileSystemEnv = fileSystemEnv;
         mPath = path;
+        mOpenZip = openZip;
     }
 
     @Override
-    public OpenZip open(ReferenceCounter referenceCounter, Lock closeLock) throws IOException {
+    public T open(ReferenceCounter referenceCounter, Lock closeLock) throws IOException {
         FileSystem zipFs = mFileSystemProvider.newFileSystem(mPath, mFileSystemEnv);
-        return new OpenZip(zipFs, referenceCounter, closeLock);
+        return mOpenZip.newInstance(zipFs, referenceCounter, closeLock);
     }
 }
