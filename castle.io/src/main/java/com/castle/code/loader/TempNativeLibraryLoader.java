@@ -2,7 +2,6 @@ package com.castle.code.loader;
 
 import com.castle.annotations.NotThreadSafe;
 import com.castle.code.NativeLibrary;
-import com.castle.code.TempNativeLibrary;
 import com.castle.exceptions.CodeLoadException;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
@@ -46,19 +45,7 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
                     mCurrentPlatform));
         }
 
-        if (nativeLibrary instanceof TempNativeLibrary) {
-            loadFromTemp((TempNativeLibrary) nativeLibrary);
-        } else {
-            generateTempAndLoad(nativeLibrary);
-        }
-    }
-
-    private void loadFromTemp(TempNativeLibrary nativeLibrary) throws CodeLoadException {
-        try (TempPath tempPath = nativeLibrary.makeTempFile()) {
-            java.lang.System.load(tempPath.toString());
-        } catch (IOException e) {
-            throw new CodeLoadException(e);
-        }
+        generateTempAndLoad(nativeLibrary);
     }
 
     private void generateTempAndLoad(NativeLibrary nativeLibrary) throws CodeLoadException {
