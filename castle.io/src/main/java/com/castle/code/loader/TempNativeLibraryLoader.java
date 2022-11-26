@@ -3,9 +3,11 @@ package com.castle.code.loader;
 import com.castle.annotations.NotThreadSafe;
 import com.castle.code.NativeLibrary;
 import com.castle.exceptions.CodeLoadException;
+import com.castle.io.streams.IoStreams;
 import com.castle.nio.temp.TempPath;
 import com.castle.nio.temp.TempPathGenerator;
-import com.castle.io.streams.IoStreams;
+import com.castle.util.closeables.Closer;
+import com.castle.util.os.KnownOperatingSystem;
 import com.castle.util.os.Platform;
 import com.castle.util.os.System;
 
@@ -39,24 +41,27 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
 
     @Override
     public void load(NativeLibrary nativeLibrary) throws CodeLoadException {
-        if (!mCurrentPlatform.equals(nativeLibrary.getTargetArchitecture())) {
-            throw new IllegalArgumentException(String.format("library (%s) doesn't support current platform (%s)",
-                    nativeLibrary.getTargetArchitecture(),
-                    mCurrentPlatform));
+        if (!supports(nativeLibrary)) {
+            throw new IllegalArgumentException("unsupported library");
         }
 
         generateTempAndLoad(nativeLibrary);
     }
 
     private void generateTempAndLoad(NativeLibrary nativeLibrary) throws CodeLoadException {
-        try (TempPath tempPath = mPathGenerator.generateFile()) {
+        try (Closer closer = Closer.empty()) {
+            TempPath tempPath = mPathGenerator.generateFile();
+            if (!mCurrentPlatform.getOperatingSystem().equals(KnownOperatingSystem.WINDOWS)) {
+                closer.add(tempPath);
+            }
+
             try (OutputStream tempOutputStream = Files.newOutputStream(tempPath);
                  InputStream codeStream = nativeLibrary.openRead()) {
                 IoStreams.copy(codeStream, tempOutputStream);
             }
 
             java.lang.System.load(tempPath.toAbsolutePath().toString());
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new CodeLoadException(e);
         }
     }
