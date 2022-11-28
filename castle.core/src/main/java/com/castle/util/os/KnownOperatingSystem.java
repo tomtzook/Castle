@@ -3,7 +3,7 @@ package com.castle.util.os;
 public enum KnownOperatingSystem implements OperatingSystem {
     WINDOWS("win", ".dll"),
     LINUX("linux", ".so"),
-    MAC("max", ".dylib"),
+    MAC("mac", ".dylib"),
     SOLARIS("sunos", ".so"),
     UNKNOWN(null, null)
     ;
