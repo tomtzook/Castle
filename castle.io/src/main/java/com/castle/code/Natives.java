@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -76,8 +77,8 @@ public class Natives {
     @NotThreadSafe
     public static class Loader {
 
-        private final Collection<LibrarySearchPath> mSearchPaths;
-        private final Collection<NativeLibraryLoader> mLoaders;
+        private final List<LibrarySearchPath> mSearchPaths;
+        private final List<NativeLibraryLoader> mLoaders;
 
         public Loader() {
             mSearchPaths = new ArrayList<>();
@@ -89,9 +90,35 @@ public class Natives {
             return this;
         }
 
+        public Loader from(Path path) {
+            if (!Files.isDirectory(path)) {
+                throw new IllegalArgumentException("expected directory");
+            }
+
+            return from(new DirectoryLibrarySearchPath(path));
+        }
+
         public Loader from(Zip zip) {
             return from(new ArchiveLibrarySearchPath(zip));
         }
+
+        public Loader firstFrom(LibrarySearchPath searchPath) {
+            mSearchPaths.add(0, searchPath);
+            return this;
+        }
+
+        public Loader firstFrom(Path path) {
+            if (!Files.isDirectory(path)) {
+                throw new IllegalArgumentException("expected directory");
+            }
+
+            return firstFrom(new DirectoryLibrarySearchPath(path));
+        }
+
+        public Loader firstFrom(Zip zip) {
+            return firstFrom(new ArchiveLibrarySearchPath(zip));
+        }
+
 
         public Loader withLoader(NativeLibraryLoader loader) {
             mLoaders.add(loader);

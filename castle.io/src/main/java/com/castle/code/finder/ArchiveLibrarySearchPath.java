@@ -14,6 +14,7 @@ import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,14 +47,14 @@ public class ArchiveLibrarySearchPath implements LibrarySearchPath {
         try {
             Pattern pattern = mPatternBuilder.build(targetPlatform, name);
             return find(targetPlatform, pattern);
-        } catch (FindException | IOException e) {
+        } catch (FindException | IOException | UncheckedIOException e) {
             chain.chain(e);
         }
 
         try {
             Pattern pattern = mPatternBuilder.build(name);
             return find(targetPlatform, pattern);
-        } catch (FindException | IOException e) {
+        } catch (FindException | IOException | UncheckedIOException e) {
             chain.chain(e);
         }
 
