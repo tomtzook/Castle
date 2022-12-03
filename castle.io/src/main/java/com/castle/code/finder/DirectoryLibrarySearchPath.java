@@ -13,6 +13,7 @@ import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -74,6 +75,8 @@ public class DirectoryLibrarySearchPath implements LibrarySearchPath {
                     chain.chain(e);
                 }
             }
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
         }
 
         throw new FindException("not found: " + pattern.pattern(), chain.getTopThrowable().orElse(null));
