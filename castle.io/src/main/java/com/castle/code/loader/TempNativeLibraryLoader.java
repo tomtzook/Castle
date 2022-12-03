@@ -50,17 +50,17 @@ public class TempNativeLibraryLoader implements NativeLibraryLoader {
 
     private void generateTempAndLoad(NativeLibrary nativeLibrary) throws CodeLoadException {
         try (Closer closer = Closer.empty()) {
-            TempPath tempPath = mPathGenerator.generateFile();
+            TempPath tempPath = mPathGenerator.generateFile(nativeLibrary.getName());
             if (!mCurrentPlatform.getOperatingSystem().equals(KnownOperatingSystem.WINDOWS)) {
                 closer.add(tempPath);
             }
 
-            try (OutputStream tempOutputStream = Files.newOutputStream(tempPath);
+            try (OutputStream tempOutputStream = Files.newOutputStream(tempPath.originalPath());
                  InputStream codeStream = nativeLibrary.openRead()) {
                 IoStreams.copy(codeStream, tempOutputStream);
             }
 
-            java.lang.System.load(tempPath.toAbsolutePath().toString());
+            java.lang.System.load(tempPath.originalPath().toAbsolutePath().toString());
         } catch (Exception e) {
             throw new CodeLoadException(e);
         }

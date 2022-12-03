@@ -1,5 +1,6 @@
 package com.castle.code;
 
+import com.castle.util.io.FilenameHelper;
 import com.castle.util.os.Platform;
 
 import java.io.FileInputStream;
@@ -23,7 +24,7 @@ public class FileNativeLibrary implements NativeLibrary {
 
     @Override
     public String getName() {
-        return mPath.getName(mPath.getNameCount() - 1).toString();
+        return FilenameHelper.removeFileExtension(mPath.getName(mPath.getNameCount() - 1).toString());
     }
 
     @Override

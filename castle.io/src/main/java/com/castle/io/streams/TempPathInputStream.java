@@ -22,6 +22,8 @@ public class TempPathInputStream extends FileInputStream {
     @Override
     public void close() throws IOException {
         try {
+            super.close();
+
             Closer.empty()
                     .addAll(super::close, mPath)
                     .close();

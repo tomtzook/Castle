@@ -95,6 +95,13 @@ public class TempPathGenerator {
         return new TempPath(mFileSystemProvider, path);
     }
 
+    public TempPath generateFile(String baseName, FileAttribute<?>... attributes) throws IOException {
+        Path path = generatePath(baseName);
+        createFile(path, attributes);
+
+        return new TempPath(mFileSystemProvider, path);
+    }
+
     public TempPath generateDirectory(FileAttribute<?>... attributes) throws IOException {
         Path path = generatePath();
         mFileSystemProvider.createDirectory(path, attributes);
@@ -104,6 +111,11 @@ public class TempPathGenerator {
 
     public Path generatePath() {
         String name = generateRandomName();
+        return mParent.resolve(name);
+    }
+
+    public Path generatePath(String baseName) {
+        String name = generateRandomName(baseName);
         return mParent.resolve(name);
     }
 
@@ -117,5 +129,10 @@ public class TempPathGenerator {
     private String generateRandomName() {
         long random = mRandom.nextLong();
         return String.format("%s%d%s", mPrefix, random, mSuffix);
+    }
+
+    private String generateRandomName(String baseName) {
+        long random = mRandom.nextLong();
+        return String.format("%s%d%s%s", mPrefix, random, baseName, mSuffix);
     }
 }
