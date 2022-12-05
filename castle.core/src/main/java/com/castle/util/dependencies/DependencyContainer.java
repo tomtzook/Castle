@@ -13,4 +13,6 @@ public interface DependencyContainer {
     <T> Optional<T> tryGet(Class<T> type);
 
     <T> Collection<T> getAllMatching(Class<T> type);
+
+    void add(DependencySupplier supplier);
 }
