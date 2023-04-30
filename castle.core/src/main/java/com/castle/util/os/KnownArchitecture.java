@@ -13,7 +13,7 @@ public enum KnownArchitecture implements Architecture {
     IA64("ia64", Bitness.BITS_64),
     AMD64("amd64", Bitness.BITS_64),
     AARCH64("aarch64", Bitness.BITS_64),
-    ARM32("arm32", Bitness.BITS_32),
+    ARM32("arm", Bitness.BITS_32),
     PPC64LE("ppc64le", Bitness.BITS_64),
     UNKNOWN(null, null);
     ;

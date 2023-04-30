@@ -58,9 +58,9 @@ public class DependencyContainerImpl implements DependencyContainer {
         }
     }
 
-    private final Collection<? extends DependencySupplier> mSuppliers;
+    private final Collection<DependencySupplier> mSuppliers;
 
-    public DependencyContainerImpl(Collection<? extends DependencySupplier> suppliers) {
+    public DependencyContainerImpl(Collection<DependencySupplier> suppliers) {
         mSuppliers = suppliers;
     }
 
@@ -107,5 +107,10 @@ public class DependencyContainerImpl implements DependencyContainer {
         }
 
         return matching;
+    }
+
+    @Override
+    public void add(DependencySupplier supplier) {
+        mSuppliers.add(supplier);
     }
 }
